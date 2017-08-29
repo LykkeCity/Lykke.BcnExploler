@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 using Lykke.Service.BcnExploler.Core.Services;
-using Lykke.Service.BcnExploler.Models;
+using Lykke.Service.BcnExploler.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
 

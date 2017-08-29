@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lykke.Service.BcnExploler.Models
+namespace Lykke.Service.BcnExploler.Web.Models
 {
     public class IsAliveResponse
     {

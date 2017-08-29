@@ -7,7 +7,7 @@ using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core;
-using Lykke.Service.BcnExploler.Modules;
+using Lykke.Service.BcnExploler.Web.Modules;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using Microsoft.AspNetCore.Builder;
@@ -69,9 +69,7 @@ namespace Lykke.Service.BcnExploler
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseLykkeMiddleware("BcnExploler", ex => new {Message = "Technical problem"});
-
+            
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUi();

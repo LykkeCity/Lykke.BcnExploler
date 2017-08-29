@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Lykke.Service.BcnExploler.Models
+namespace Lykke.Service.BcnExploler.Web.Models
 {
     public class ErrorResponse
     {

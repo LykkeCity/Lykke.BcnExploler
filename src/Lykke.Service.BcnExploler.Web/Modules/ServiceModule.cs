@@ -6,7 +6,7 @@ using Lykke.Service.BcnExploler.Core.Services;
 using Lykke.Service.BcnExploler.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lykke.Service.BcnExploler.Modules
+namespace Lykke.Service.BcnExploler.Web.Modules
 {
     public class ServiceModule : Module
     {
