@@ -9,6 +9,7 @@
     public class BcnExplolerSettings
     {
         public DbSettings Db { get; set; }
+        public string NinjaUrl { get; set; }
     }
 
     public class DbSettings

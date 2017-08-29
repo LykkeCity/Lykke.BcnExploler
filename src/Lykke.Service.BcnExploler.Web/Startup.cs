@@ -56,7 +56,7 @@ namespace Lykke.Service.BcnExploler
                 : HttpSettingsLoader.Load<AppSettings>(Configuration.GetValue<string>("SettingsUrl"));
             var log = CreateLogWithSlack(services, appSettings);
 
-            builder.RegisterModule(new ServiceModule(appSettings.BcnExplolerService, log));
+            builder.RegisterModule(new ServiceModule(appSettings, log));
             builder.Populate(services);
             ApplicationContainer = builder.Build();
 

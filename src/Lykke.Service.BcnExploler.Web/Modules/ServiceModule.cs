@@ -10,12 +10,12 @@ namespace Lykke.Service.BcnExploler.Web.Modules
 {
     public class ServiceModule : Module
     {
-        private readonly BcnExplolerSettings _settings;
+        private readonly AppSettings _settings;
         private readonly ILog _log;
         // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
         private readonly IServiceCollection _services;
 
-        public ServiceModule(BcnExplolerSettings settings, ILog log)
+        public ServiceModule(AppSettings settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -36,7 +36,7 @@ namespace Lykke.Service.BcnExploler.Web.Modules
                 .As<IHealthService>()
                 .SingleInstance();
 
-            // TODO: Add your dependencies here
+            builder.BindCommonServices(_settings, _log);
 
             builder.Populate(_services);
         }
