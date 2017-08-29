@@ -20,6 +20,5 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
             var lastBlock = await _blockService.GetLastBlockHeaderAsync();
             return View(BlockHeaderViewModel.Create(lastBlock));
         }
-
     }
 }

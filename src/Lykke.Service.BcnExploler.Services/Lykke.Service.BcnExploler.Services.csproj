@@ -10,8 +10,9 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="2.16.3" />
     <PackageReference Include="Flurl.Http" Version="1.2.0" />
-    <PackageReference Include="Lykke.Common" Version="1.1.93" />
+    <PackageReference Include="Lykke.Common" Version="1.1.94" />
     <PackageReference Include="NBitcoin.Indexer" Version="2.0.7.24" />
+    <PackageReference Include="WindowsAzure.Storage" Version="8.4.0" />
   </ItemGroup>
 
   <ItemGroup>

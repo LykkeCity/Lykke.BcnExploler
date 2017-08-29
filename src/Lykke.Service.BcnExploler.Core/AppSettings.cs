@@ -9,7 +9,19 @@
     public class BcnExplolerSettings
     {
         public DbSettings Db { get; set; }
+
         public string NinjaUrl { get; set; }
+        public string Network { get; set; }
+
+        public NinjaIndexerCredentials NinjaIndexerCredentials { get; set; }
+    }
+
+    public class NinjaIndexerCredentials
+    {
+        public string AzureName { get; set; }
+
+
+        public string AzureKey { get; set; }
     }
 
     public class DbSettings
