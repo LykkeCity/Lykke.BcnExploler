@@ -6,9 +6,8 @@ using Lykke.Service.BcnExploler.Core.Domain.Block;
 using Lykke.Service.BcnExploler.Core.Services;
 using Lykke.Service.BcnExploler.Services.Domain;
 using Lykke.Service.BcnExploler.Services.Domain.Settings;
+using Lykke.Service.BcnExploler.Services.Ninja;
 using Microsoft.WindowsAzure.Storage.Auth;
-using NBitcoin;
-using NBitcoin.Indexer;
 
 namespace Lykke.Service.BcnExploler.Services
 {
@@ -26,7 +25,7 @@ namespace Lykke.Service.BcnExploler.Services
                 generalSettings.BcnExplolerService.NinjaIndexerCredentials.AzureKey),
                 Network = generalSettings.BcnExplolerService.UsedNetwork()
             };
-            builder.Register(p => new IndexerClient(indexerConfiguration) {ColoredBalance = true}).AsSelf().InstancePerDependency();
+            builder.Register(p => new IndexerClient(indexerConfiguration)).AsSelf().InstancePerDependency();
 
             builder.RegisterType<BlockService>()
                 .As<IBlockService>()

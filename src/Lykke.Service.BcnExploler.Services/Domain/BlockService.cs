@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
 using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.Domain.Block;
-using Lykke.Service.BcnExploler.Services.Domain.Settings;
 using Lykke.Service.BcnExploler.Services.Ninja.Contracts.Ninja;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 using NBitcoin;
-using NBitcoin.Indexer;
 using NBitcoin.OpenAsset;
 
 namespace Lykke.Service.BcnExploler.Services.Domain
@@ -119,7 +112,7 @@ namespace Lykke.Service.BcnExploler.Services.Domain
 
             var fillDbDataTask = Task.Run(async () =>
             {
-                var block = await GetBlock(hash);
+                var block = await _indexerClient.GetBlock(hash);
                 if (block != null)
                 {
                     FillBlockDataFromDb(block, result.Value);
@@ -137,7 +130,7 @@ namespace Lykke.Service.BcnExploler.Services.Domain
             if (header != null)
             {
                 var result = new Block();
-                var block = await GetBlock(uint256.Parse(header.Hash));
+                var block = await _indexerClient.GetBlock(uint256.Parse(header.Hash));
 
                 FillHeaderData(header, result);
                 FillBlockDataFromDb(block, result);
@@ -147,37 +140,7 @@ namespace Lykke.Service.BcnExploler.Services.Domain
 
             return null;
         }
-
-
-        #region read block from db
-
-        //copy code from nbitcoin indexer cause nuget pckg doest work properly on this method
-        public async Task<NBitcoin.Block> GetBlock(uint256 blockId)
-        {
-            var ms = new MemoryStream();
-
-            var container = _indexerClient.Configuration.GetBlocksContainer();
-            try
-            {
-                await container.GetPageBlobReference(blockId.ToString()).DownloadToStreamAsync(ms);
-
-                ms.Position = 0;
-                NBitcoin.Block b = new NBitcoin.Block();
-                b.ReadWrite(ms, false);
-                return b;
-            }
-            catch (StorageException ex)
-            {
-                if (ex.RequestInformation != null && ex.RequestInformation.HttpStatusCode == 404)
-                {
-                    return null;
-                }
-                throw;
-            }
-        }
-
-        #endregion
-
+        
 
         private void FillHeaderData(IBlockHeader header, Block result)
         {
