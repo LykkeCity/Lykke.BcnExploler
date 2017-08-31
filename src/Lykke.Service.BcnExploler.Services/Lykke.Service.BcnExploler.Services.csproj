@@ -11,7 +11,7 @@
     <PackageReference Include="CsvHelper" Version="2.16.3" />
     <PackageReference Include="Flurl.Http" Version="1.2.0" />
     <PackageReference Include="Lykke.Common" Version="1.1.94" />
-    <PackageReference Include="NBitcoin" Version="4.0.0.33" />
+    <PackageReference Include="NBitcoin" Version="4.0.0.34" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.4.0" />
   </ItemGroup>
 
