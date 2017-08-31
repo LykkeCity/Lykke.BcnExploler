@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lykke.Service.BcnExploler.Core.Domain.Block;
+using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Web.Models.Block;
 using Microsoft.AspNetCore.Mvc;
 

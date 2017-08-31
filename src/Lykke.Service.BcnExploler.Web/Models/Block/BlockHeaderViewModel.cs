@@ -1,4 +1,4 @@
-﻿using Lykke.Service.BcnExploler.Core.Domain.Block;
+﻿using Lykke.Service.BcnExploler.Core.Block;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Block
 {

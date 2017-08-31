@@ -1,9 +1,12 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
+using Lykke.Service.BcnExploler.AzureRepositories;
 using Lykke.Service.BcnExploler.Core;
-using Lykke.Service.BcnExploler.Core.Services;
+using Lykke.Service.BcnExploler.Core.Health;
+using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Services;
+using Lykke.Service.BcnExploler.Services.Health;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.BcnExploler.Web.Modules
@@ -35,7 +38,8 @@ namespace Lykke.Service.BcnExploler.Web.Modules
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
-
+            
+            builder.BindAzureRepositories(_settings, _log);
             builder.BindCommonServices(_settings, _log);
 
             builder.Populate(_services);

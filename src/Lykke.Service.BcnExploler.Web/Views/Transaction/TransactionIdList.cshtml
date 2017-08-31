@@ -1,0 +1,57 @@
+﻿@*@using Common
+@model TransactionIdList
+@{
+    Layout = null;
+}
+<div class="js-transaction-cathegory">
+    <div class="section section--heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h3>
+                        Transactions 
+                        
+                        <span class="js-tx-count-container @(Model.FullLoaded ? "" : "hidden")">
+                            <span class="js-loaded-tx-count">0</span>
+                            <span>
+                                of 
+                                <span class="js-tx-count">
+                                    @Model.TotalItems
+                                </span>
+                            </span>                              
+                        </span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <ul class="transactions-list">
+        @foreach (var page in Model.Pages)
+        {
+            <li class="hidden transactions-container js-transactions-container"
+                data-page="@page"
+                data-transaction-ids="@Model.GetPage(page).ToArray().ToJson()" data-load-url="@Url.Action("List", "Transaction")">
+
+                @if (Model.CurrentPage != page)
+                {
+                    <div class="show_more">
+                        <a class="btn js-load-trans">Show More</a>
+                    </div>
+                }
+            </li>
+        }
+    </ul>
+    @if (Model.TotalItems != 0)
+    {
+        <div class="js-loader">
+            <div class="spinner_container">
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>*@
+

@@ -1,0 +1,110 @@
+﻿@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Transaction
+@model Lykke.Service.BcnExploler.Web.Models.Transaction.BtcInOutsViewModel
+
+<div class="transaction_details__body">
+    <div class="transaction_item">
+        <div class="transaction_item__left">
+            <div class="transaction_list">
+                @if (Model.Bitcoin.IsCoinBase)
+                    {
+                    <div class="transaction_list__item">
+                        <div class="links_group">
+                            <i class="icon icon--info"></i> Mined coins
+                        </div>
+                    </div>
+                    }
+                else
+                {
+                foreach (var input in Model.AggregatedIns)
+                {
+                    var aggregatedContainerId = Guid.NewGuid().ToString("N");
+                    @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(input.TitleItem, aggregatedContainerId))
+
+                    <text>
+                    @if (input.ShowAggregatedTransactions)
+                     {
+                        <div class="transaction_list__advanced" style="display: none;" id="@aggregatedContainerId">
+                            @foreach (var aggregated in input.AggregatedTransactions)
+                            {
+                                @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(aggregated, aggregatedContainerId))
+                            }
+                        </div>
+                    }
+                    </text>
+                }
+                if (Model.ShowConsumedReleased && Model.Bitcoin.ShowColoredEquivalentLeft)
+                    {
+                        <div class="transaction_list__item">
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <div class="links_group">
+                                        Consumed for color
+                                    </div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <span>@Model.Bitcoin.ColoredEquivalentValue.ToStringBtcFormat()</span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                }
+            </div>
+        </div>
+
+        <div class="transaction_item__center">
+            <div class="transaction_arrow"><i class="icon icon--arrow_right_circle"></i></div>
+        </div>
+
+        <div class="transaction_item__right">
+            <div class="transaction_list">
+                @foreach (var output in Model.Bitcoin.AggregatedOuts)
+                    {
+                        var aggregatedContainerId = Guid.NewGuid().ToString("N");
+                        @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(output.TitleItem, aggregatedContainerId))
+
+                        <text>
+                            @if (output.ShowAggregatedTransactions)
+                            {
+                                <div class="transaction_list__advanced" style="display: none;" id="@aggregatedContainerId">
+                                    @foreach (var aggregated in output.AggregatedTransactions)
+                                    {
+
+                                        @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(aggregated))
+                                    }
+                                </div>
+                            }
+                        </text>
+
+                }
+                @if (Model.ShowConsumedReleased && Model.Bitcoin.ShowColoredEquivalentRight)
+                    {
+                        <div class="transaction_list__item">
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <div class="links_group">
+                                        Consumed for color
+                                    </div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <span>@Model.Bitcoin.ColoredEquivalentValue.ToStringBtcFormat()</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                <div class="transaction_list__item">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="links_group">
+                                Fees
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <span>@Model.Bitcoin.FeesDescription</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

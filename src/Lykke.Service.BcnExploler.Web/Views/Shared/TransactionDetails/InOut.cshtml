@@ -1,0 +1,57 @@
+﻿@model Lykke.Service.BcnExploler.Web.Models.Transaction.InOutsViewModel
+<div class="transaction_list__item" data-address="@Model.InOut.Address">
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="links_group">
+                @if (Model.InOut.ShowPreviousTransaction)
+                    {
+                    <a href="@Url.Action("Index", "Transaction", new {id = Model.InOut.PreviousTransactionId})" class="btn btn--icon transaction_prev_link"><i class="icon icon--prev_transaction"></i></a>
+                    }
+
+                @if (Model.InOut.IsUnrecoginzedAddress)
+                    {
+                    <span>Unrecognized address</span>
+                    }
+                    else
+                    {
+                    <a href="@Url.Action("Index", "Address", new {id = Model.InOut.Address})" class="transaction_current_link">
+                        @Html.Truncate(Model.InOut.Address)
+                    </a>
+                    }
+
+            </div>
+        </div>
+        <div class="col-xs-4">
+
+            @if (Model.InOut.ShowAggregatedTransactions)
+                {
+
+                <a href="#@Model.AggregatedTransContainerId" class="open_hidden_content _word_break">
+                    @Model.InOut.ValueDescription
+                    <span class="_no_break">
+                        @Model.InOut.AssetDescription
+                        (@Model.InOut.AggregatedTransactionCount)
+
+                    </span>
+                    <i class="icon icon--chevron-thin-down"></i>
+                </a>
+                }
+                else
+                {
+                <text>
+                @Model.InOut.ValueDescription
+                <span class="_no_break">
+                    @Model.InOut.AssetDescription
+                </span>
+                </text>
+                }
+            @if (Model.InOut.HasColoredEquivalent)
+                {
+                <div class="btn_colored_coin js-tranasction-popover" data-toggle="popover" data-placement="top"
+                     data-content="@Model.InOut.ColoredEquivalentDescription colored">
+                    <span class="btn_colored_coin__icon"></span>
+                </div>
+                }
+        </div>
+    </div>
+</div>

@@ -1,13 +1,19 @@
 ﻿using Autofac;
-using Autofac.Builder;
+using Common;
 using Common.Log;
-using Lykke.Service.BcnExploler.Core;
-using Lykke.Service.BcnExploler.Core.Domain.Block;
-using Lykke.Service.BcnExploler.Core.Services;
-using Lykke.Service.BcnExploler.Services.Domain;
-using Lykke.Service.BcnExploler.Services.Domain.Settings;
+using Core.Transaction;
+using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Block;
+using Lykke.Service.BcnExploler.Core.Health;
+using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Services.Asset;
+using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.Service.BcnExploler.Services.Ninja;
+using Lykke.Service.BcnExploler.Services.Ninja.Block;
+using Lykke.Service.BcnExploler.Services.Ninja.Transaction;
+using Lykke.Service.BcnExploler.Services.Settings;
 using Microsoft.WindowsAzure.Storage.Auth;
+using NBitcoin;
 
 namespace Lykke.Service.BcnExploler.Services
 {
@@ -30,6 +36,28 @@ namespace Lykke.Service.BcnExploler.Services
             builder.RegisterType<BlockService>()
                 .As<IBlockService>()
                 .InstancePerDependency();
+
+            builder.RegisterType<TransactionService>()
+                .As<ITransactionService>()
+                .InstancePerDependency();
+
+
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return
+                        new CachedDataDictionary<string, IAssetDefinition>(
+                            async () => AssetIndexer.IndexAssetsDefinitions(
+                                await context.Resolve<IAssetDefinitionRepository>().GetAllAsync(),
+                                await context.Resolve<IAssetImageRepository>().GetAllAsync())
+                            , validDataInSeconds: 1 * 10 * 60);
+                }
+                    ).AsSelf().SingleInstance();
+
+            builder.RegisterType<AssetService>()
+                .As<IAssetService>()
+                .SingleInstance();
         }
     }
 }

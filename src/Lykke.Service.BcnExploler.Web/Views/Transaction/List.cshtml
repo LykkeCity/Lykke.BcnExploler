@@ -1,0 +1,10 @@
+﻿@model IEnumerable<TransactionViewModel>
+
+@{
+    Layout = null;
+}
+
+@foreach (var tran in Model)
+{
+    @Html.Partial("TransactionDetails", tran)
+}

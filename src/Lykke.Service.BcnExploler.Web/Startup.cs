@@ -7,6 +7,7 @@ using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core;
+using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Web.Modules;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;

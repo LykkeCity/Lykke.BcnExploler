@@ -1,0 +1,104 @@
+﻿
+@using Lykke.Service.BcnExploler.Web.Models.Transaction
+@model TransactionViewModel
+
+@{
+    ViewBag.Title = "Transaction - " + Model.TransactionId;
+}
+
+@section scripts
+{
+    <script src="~/js/app/transaction/singletransaction.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/transactionlist.js"  asp-append-version="true"></script>
+}
+<section class="section section--padding">
+    <div class="container container--extend">
+
+        <div class="page__header">
+            <h2 class="page__title">Transaction</h2>
+            <div class="address_code address_code--lead">
+                <span>@Model.TransactionId</span>
+                <button class="btn btn--icon copy_code" type="button" title="Copy code">
+                    <i class="icon icon--copy"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <table class="table table--be_info">
+                    <tbody>
+                    @if (Model.Block != null)
+                    {
+                        <tr>
+                            <td><b>Date:</b></td>
+                            <td>@($"{Model.Block.Time:F}")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><b>Fee paid:</b></td>
+                        <td>@Model.Bitcoin.Fees.ToString("0.00######") BTC</td>
+                    </tr>
+                    <tr>
+                        <td><b>Assets transacted:</b></td>
+                        <td>
+                            @if (Model.AssetsCount == 0)
+                            {
+                                <text>None</text>
+                            }
+                            else
+                            {
+                                @Model.AssetsCount
+                            }
+
+                        </td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+
+                <div class="col-xs-12 col-md-6">
+                    <table class="table table--be_info">
+                        <tbody>
+                        @if (Model.IsConfirmed)
+                        {
+                            <tr>
+                                <td><b>Block:</b></td>
+                                <td>
+                                    <a href="@Url.Action("Index", "Block", new {id = Model.Block?.BlockId})">
+                                        @Html.Truncate(Model.Block?.BlockId)
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Height:</b></td>
+                                <td>@(Model.Block?.Height)</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><b>Confirmations:</b></td>
+                            <td>
+                                @if (Model.IsConfirmed)
+                                {
+                                    <text>
+                                        @(Model.Block?.Confirmations) confirmations
+                                    </text>
+                                }
+                                else
+                                {
+                                    <text>Unconfirmed transaction</text>
+                                }
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            
+        </div>
+    </div>
+</section>
+<section class="section section--transactions">
+    @Html.Partial("~/Views/Shared/TransactionDetails/TransactionDetails.cshtml", Model)
+</section>

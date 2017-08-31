@@ -1,0 +1,148 @@
+﻿@using Common
+@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Transaction
+@model TransactionViewModel
+@{
+    Layout = null;
+    var toggleChangeContainer = "js-toggle-changes-container-" + Guid.NewGuid().ToString("N");
+    var toggleChangeItemClass = "js-toggle-change-item";
+}
+
+@if (Model != null)
+{
+    
+    <div class="panel transaction_panel js-transaction-details @toggleChangeContainer" >
+        <div class="container">
+            <div class="panel__header">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 pull-right text-right">
+                        <div class="confirmation_label">
+                            @if (Model.IsConfirmed)
+                            {
+                                <span class="label label--green @(Model.Block?.Confirmations >= 5 ? "label--green" : "label--gray")">@(Model.Block?.Confirmations) Confirmations</span>
+                            }
+                            else
+                            {
+                                <span class="label label--red label--plate">Unconfirmed</span>
+                            }
+                        </div>
+                        @if (Model.ShowChangeBtn)
+                        {
+                            <a href="#" class="btn_show_changes pull-right text--gray js-toggle-change-btn" data-toggle-container=".@toggleChangeContainer">
+                                <span class="js-toggle-change-label">Show</span>
+                                <span class="hidden js-toggle-change-label">Hide</span>
+                                change
+                            </a>
+                        }
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="address_code">
+                            <a href="@Url.Action("Index", "Transaction", new {id = Model.TransactionId})">@Model.TransactionId</a>
+                            <button class="btn btn--icon copy_code" type="button" title="Copy code">
+                                <i class="icon icon--copy"></i>
+                            </button>
+                        </div>
+                        @if (Model.Block != null)
+                        {
+                            <span class="action_text">@Model.Block.Time.ToStringBcnExplolerFormat()</span>
+                            <span class="middot">·</span>
+                        }
+                        <span class="action_text">@Model.InputsCount @Utils.GenderAmount(Model.InputsCount, "input", "inputs", "inputs")</span>
+                        <span class="middot">·</span>
+                        <span class="action_text">@Model.OutputsCount @Utils.GenderAmount(Model.OutputsCount, "output", "outputs", "outputs")</span>
+                    </div>
+                </div>
+            </div>
+            <div class="panel__body">
+
+                <div class="transaction_details">
+                    <div class="transaction_details__header">
+                        <table class="issuer">
+                            <tbody>
+                            <tr>
+                                <td class="issuer__img"><img src="/img/assets/bitcoin.png" width="48" alt=""></td>
+                                <td class="issuer__content">
+                                    <div class="issuer__name pull-left">Bitcoin</div>
+                                    <div class="wallet_value pull-right">
+                                        <span class="@(Model.Bitcoin.ShowWithoutChange ? toggleChangeItemClass : "")">
+                                            @Model.Bitcoin.Total.ToStringBtcFormat() BTC
+                                        </span>
+                                        @if (Model.Bitcoin.ShowWithoutChange)
+                                        {
+                                            <span class="@toggleChangeItemClass hidden">
+                                                @Model.Bitcoin.TotalWithoutChange.ToStringBtcFormat() BTC
+                                            </span>
+                                        }
+                                    </div>
+ 
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="@(Model.Bitcoin.ShowWithoutChange ? toggleChangeItemClass : "")">
+                        
+                        @await Html.PartialAsync("~/Views/Shared/TransactionDetails/BtcInOuts.cshtml", BtcInOutsViewModel.CreateWithChange(Model.Bitcoin, showConsumedReleased: true))
+                    </div>
+                    @if (Model.Bitcoin.ShowWithoutChange)
+                    {
+                        <div class="@toggleChangeItemClass hidden">
+                            @await Html.PartialAsync("~/Views/Shared/TransactionDetails/BtcInOuts.cshtml", BtcInOutsViewModel.CreateWithoutChange(Model.Bitcoin, showConsumedReleased: true))
+                        </div>
+                    }
+                </div>
+
+                @foreach (var coloredAsset in Model.ColoredAssets)
+                {
+                    var assetUrl = coloredAsset.IsKnown ? Url.Action("Index", "Asset", new {id= coloredAsset.AssetId}) : null;
+                    <div class="transaction_details">
+                        <div class="transaction_details__header">
+                            <table class="issuer">
+                                <tbody>
+                                <tr>
+                                    <td class="issuer__img">
+                                        <a href="@assetUrl">
+                                            <img src="@(!string.IsNullOrEmpty(coloredAsset.IconImageUrl) ? coloredAsset.IconImageUrl: "/img/be/asset_default.jpg")" width="48" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="issuer__content">
+
+                                        <div class="issuer__name pull-left">
+                                            <a href="@assetUrl">@coloredAsset.Name</a>
+                                        </div>
+                                        <div class="wallet_value pull-right">
+                                            <span class = "@(coloredAsset.ShowWithoutChange? toggleChangeItemClass : "")">
+                                                @coloredAsset.Total.ToStringBtcFormat() @coloredAsset.ShortName
+                                            </span>
+                                            @if (coloredAsset.ShowWithoutChange)
+                                            {
+                                                <span class="@toggleChangeItemClass hidden">
+                                                    @coloredAsset.TotalWithoutChange.ToStringBtcFormat() @coloredAsset.ShortName
+                                                </span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                        <div class="@(coloredAsset.ShowWithoutChange ? toggleChangeItemClass : "")">
+                            @await Html.PartialAsync("~/Views/Shared/TransactionDetails/ColoredInOuts.cshtml", ColoredAssetInOutsViewModel.CreateWithChange(coloredAsset))
+                        </div>
+                        @if (coloredAsset.ShowWithoutChange)
+                        {
+                            <div class="@toggleChangeItemClass hidden">
+                                @await Html.PartialAsync("~/Views/Shared/TransactionDetails/ColoredInOuts.cshtml", ColoredAssetInOutsViewModel.CreateWithoutChange(coloredAsset))
+                            </div>
+                        }
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+}

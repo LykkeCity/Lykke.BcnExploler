@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Lykke.Service.BcnExploler.Services.Ninja;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using NBitcoin;
 
-namespace Lykke.Service.BcnExploler.Services
+namespace Lykke.Service.BcnExploler.Services.Ninja
 {
     public class IndexerClient
     {
@@ -36,7 +35,7 @@ namespace Lykke.Service.BcnExploler.Services
             set;
         }
 
-        public async Task<Block> GetBlock(uint256 blockId)
+        public async Task<NBitcoin.Block> GetBlock(uint256 blockId)
         {
             var ms = new MemoryStream();
             var container = Configuration.GetBlocksContainer();
@@ -45,7 +44,7 @@ namespace Lykke.Service.BcnExploler.Services
 
                 await container.GetPageBlobReference(blockId.ToString()).DownloadToStreamAsync(ms);
                 ms.Position = 0;
-                Block b = new Block();
+                NBitcoin.Block b = new NBitcoin.Block();
                 b.ReadWrite(ms, false);
                 return b;
             }

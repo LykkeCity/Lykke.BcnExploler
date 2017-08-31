@@ -1,0 +1,81 @@
+﻿@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Transaction
+@model Lykke.Service.BcnExploler.Web.Models.Transaction.ColoredAssetInOutsViewModel
+    
+    
+<div class="transaction_details__body">
+    <div class="transaction_item">
+        <div class="transaction_item__left">
+            <div class="transaction_list">
+                @if (Model.ColoredAsset.IsIssued)
+                    {
+                    <div class="transaction_list__item">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="links_group"><i class="icon icon--info"></i> Issued Assets</div>
+                            </div>
+                            <div class="col-xs-4">@Model.ColoredAsset.IssedQuantity.ToStringBtcFormat() @Model.ColoredAsset.ShortName</div>
+                        </div>
+                    </div>
+                    }
+                @foreach (var input in Model.AggregatedIns)
+                    {
+                        var aggregatedContainerId = Guid.NewGuid().ToString("N");
+
+                        @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(input.TitleItem, aggregatedContainerId))
+
+                    <text>
+                    @if (input.ShowAggregatedTransactions)
+                    {
+                        <div class="transaction_list__advanced" style="display: none;" id="@aggregatedContainerId">
+                            @foreach (var aggregated in input.AggregatedTransactions)
+                            {
+                                @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(aggregated))
+                            }
+                        </div>
+                    }
+                    </text>
+                    }
+            </div>
+        </div>
+
+        <div class="transaction_item__center">
+            <div class="transaction_arrow"><i class="icon icon--arrow_right_circle"></i></div>
+        </div>
+
+        <div class="transaction_item__right">
+            <div class="transaction_list">
+                @if (Model.ColoredAsset.IsDestroyed)
+                    {
+                    <div class="transaction_list__item">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="links_group"><i class="icon icon--info"></i> Destroyed Assets</div>
+                            </div>
+                            <div class="col-xs-4">@Model.ColoredAsset.DestroyedQuantity.ToStringBtcFormat() @Model.ColoredAsset.ShortName</div>
+                        </div>
+                    </div>
+                    }
+                @foreach (var output in  Model.AggregatedOuts)
+                    {
+                        var aggregatedContainerId = Guid.NewGuid().ToString("N");
+
+                        @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(output.TitleItem, aggregatedContainerId))
+
+                    <text>
+                    @if (output.ShowAggregatedTransactions)
+                            {
+                        <div class="transaction_list__advanced" style="display: none;" id="@aggregatedContainerId">
+                            @foreach (var aggregated in output.AggregatedTransactions)
+                            {
+
+                                @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(aggregated))
+                            }
+                        </div>
+                            }
+                    </text>
+                    }
+            </div>
+        </div>
+    </div>
+</div>
