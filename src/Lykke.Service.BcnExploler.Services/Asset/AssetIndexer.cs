@@ -67,20 +67,20 @@ namespace Lykke.Service.BcnExploler.Services.Asset
             return result;
         }
 
-        //public static Dictionary<string, IAssetCoinholdersIndex> IndexAssetCoinholders(IEnumerable<IAssetCoinholdersIndex> assets)
-        //{
-        //    var result = new Dictionary<string, IAssetCoinholdersIndex>(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, IAssetCoinholdersIndex> IndexAssetCoinholders(IEnumerable<IAssetCoinholdersIndex> assets)
+        {
+            var result = new Dictionary<string, IAssetCoinholdersIndex>(StringComparer.OrdinalIgnoreCase);
 
-        //    foreach (var asset in assets)
-        //    {
-        //        foreach (var assetId in (asset.AssetIds ?? Enumerable.Empty<string>()).Where(p => !string.IsNullOrEmpty(p)))
-        //        {
-        //            result[assetId] = asset;
-        //        }
-        //    }
+            foreach (var asset in assets)
+            {
+                foreach (var assetId in (asset.AssetIds ?? Enumerable.Empty<string>()).Where(p => !string.IsNullOrEmpty(p)))
+                {
+                    result[assetId] = asset;
+                }
+            }
 
-        //    return result;
-        //}
+            return result;
+        }
 
         public static Dictionary<string, IAssetScore> IndexAssetScores(IEnumerable<IAssetScore> assets)
         {

@@ -55,7 +55,27 @@ namespace Lykke.Service.BcnExploler.Services
                                 await context.Resolve<IAssetImageRepository>().GetAllAsync())
                             , validDataInSeconds: 1 * 10 * 60);
                 }
-                    ).AsSelf().SingleInstance();
+            ).AsSelf().SingleInstance();
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return
+                        new CachedDataDictionary<string, IAssetCoinholdersIndex>(
+                            async () => AssetIndexer.IndexAssetCoinholders(await context.Resolve<IAssetCoinholdersIndexRepository>().GetAllAsync())
+                            , validDataInSeconds: 1 * 10 * 60);
+                }
+            ).AsSelf().SingleInstance();
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return
+                        new CachedDataDictionary<string, IAssetScore>(
+                            async () => AssetIndexer.IndexAssetScores(await context.Resolve<IAssetScoreRepository>().GetAllAsync())
+                            , validDataInSeconds: 1 * 10 * 60);
+                }
+            ).AsSelf().SingleInstance();
 
 
             builder.Register(p =>

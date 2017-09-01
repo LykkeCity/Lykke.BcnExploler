@@ -33,6 +33,18 @@ namespace Lykke.Service.BcnExploler.AzureRepositories
                         "AssetImages",
                         log))).As<IAssetImageRepository>();
 
+            builder.Register(p =>
+                new AssetScoreRepository(AzureTableStorage<AssetScoreEntity>
+                    .Create(() => generalSettings.BcnExplolerService.Db.AssetsConnString,
+                        "AssetScores",
+                        log))).As<IAssetScoreRepository>();
+
+            builder.Register(p =>
+                new AssetCoinholdersIndexRepository(AzureTableStorage<AssetCoinholdersIndexEntity>
+                    .Create(() => generalSettings.BcnExplolerService.Db.AssetsConnString,
+                        "AssetCoinholdersIndexes",
+                        log))).As<IAssetCoinholdersIndexRepository>();
+
         }
     }
 }
