@@ -1,38 +1,11 @@
-﻿@using System.Collections.Concurrent
-@using Lykke.Service.BcnExploler.Web.Models.Transaction
-@using Microsoft.AspNetCore.Html
-@model IEnumerable<TransactionViewModel>
+﻿@using Lykke.Service.BcnExploler.Web.Models.Transaction
+@model IEnumerable<Lykke.Service.BcnExploler.Web.Models.Transaction.TransactionViewModel>
 
 @{
     Layout = null;
-
-    var renderTxTasks = new List<Task>();
-
-    var renderResults = new ConcurrentDictionary<string, IHtmlContent>();
-
-    foreach (var tran in Model)
-    {
-
-        var tsk = Html.PartialAsync("~/Views/Shared/TransactionDetails/TransactionDetails.cshtml", tran).ContinueWith(p =>
-        {
-            renderResults[tran.TransactionId] = p.Result;
-        });
-
-        renderTxTasks.Add(tsk);
-    }
-
-    var idList = Model.Select(p => p.TransactionId).ToList();
-
-    await Task.WhenAll(renderTxTasks);
-
-    var orderedTransactionIds = renderResults.Select(p => p.Key).OrderBy(p => idList.IndexOf(p)).ToList();
 }
-@foreach (var txId in orderedTransactionIds)
-    {
-        @renderResults[txId]
-    }
 
-@*@foreach (var tran in Model)
+@foreach (var tran in Model)
 {
     @Html.Partial("~/Views/Shared/TransactionDetails/TransactionDetails.cshtml", tran)
-}*@
+}
