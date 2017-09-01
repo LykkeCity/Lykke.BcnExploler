@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Reflection;
+using System.Threading;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
+using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Web.Jobs;
 using Lykke.Service.BcnExploler.Web.Modules;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
@@ -23,6 +27,8 @@ namespace Lykke.Service.BcnExploler
         public IHostingEnvironment Environment { get; }
         public IContainer ApplicationContainer { get; set; }
         public IConfigurationRoot Configuration { get; }
+        public IServiceProvider ServiceProvider { get; set; }
+        private TriggerHost TriggerHost { get; set; }
 
         public Startup(IHostingEnvironment env)
         {
@@ -60,8 +66,9 @@ namespace Lykke.Service.BcnExploler
             builder.RegisterModule(new ServiceModule(appSettings, log));
             builder.Populate(services);
             ApplicationContainer = builder.Build();
-
-            return new AutofacServiceProvider(ApplicationContainer);
+            ServiceProvider = new AutofacServiceProvider(ApplicationContainer);
+            
+            return ServiceProvider;
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
@@ -76,12 +83,26 @@ namespace Lykke.Service.BcnExploler
             app.UseSwaggerUi();
             app.UseStaticFiles();
 
+            this.TriggerHost = new TriggerHost(ServiceProvider);
+            this.TriggerHost.ProvideAssembly(typeof(MainChainFunctions).GetTypeInfo().Assembly);
+
+            appLifetime.ApplicationStarted.Register(StartApplication);
             appLifetime.ApplicationStopping.Register(StopApplication);
             appLifetime.ApplicationStopped.Register(CleanUp);
         }
 
+        private void StartApplication()
+        {
+            new Thread(() =>
+            {
+                this.TriggerHost.Start().Wait();
+            }).Start();
+        }
+
+
         private void StopApplication()
         {
+            this.TriggerHost.Cancel();
             // TODO: Implement your shutdown logic here. 
             // Service still can recieve and process requests here, so take care about it.
         }
@@ -113,11 +134,11 @@ namespace Lykke.Service.BcnExploler
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
-                const string appName = "Lykke.Service.BcnExploler";
+                const string appName = "Lykke.Service.BcnExploler.Web";
 
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
                     appName,
-                    AzureTableStorage<LogEntity>.Create(() => dbLogConnectionString, "BcnExplolerLog", consoleLogger),
+                    AzureTableStorage<LogEntity>.Create(() => dbLogConnectionString, "BcnExplolerWebLog", consoleLogger),
                     consoleLogger);
 
                 var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(appName, slackService, consoleLogger);

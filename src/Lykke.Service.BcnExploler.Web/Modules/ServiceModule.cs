@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
+using Lykke.JobTriggers.Extenstions;
 using Lykke.Service.BcnExploler.AzureRepositories;
 using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.Health;
@@ -41,6 +42,11 @@ namespace Lykke.Service.BcnExploler.Web.Modules
             
             builder.BindAzureRepositories(_settings, _log);
             builder.BindCommonServices(_settings, _log);
+            builder.AddTriggers(pool =>
+            {
+                // default connection must be initialized
+                pool.AddDefaultConnection(_settings.BcnExplolerService.Db.AssetsConnString);
+            });
 
             builder.Populate(_services);
         }

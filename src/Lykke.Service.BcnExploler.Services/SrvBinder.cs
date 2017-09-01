@@ -1,17 +1,21 @@
 ﻿using Autofac;
+using AzureStorage.Blob;
 using Common;
 using Common.Cache;
 using Common.Log;
 using Core.Transaction;
+using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Core.Health;
+using Lykke.Service.BcnExploler.Core.MainChain;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Core.Transaction;
 using Lykke.Service.BcnExploler.Services.Asset;
 using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.Service.BcnExploler.Services.Ninja;
 using Lykke.Service.BcnExploler.Services.Ninja.Block;
+using Lykke.Service.BcnExploler.Services.Ninja.MainChain;
 using Lykke.Service.BcnExploler.Services.Ninja.Transaction;
 using Lykke.Service.BcnExploler.Services.Settings;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -43,7 +47,9 @@ namespace Lykke.Service.BcnExploler.Services
                 .As<ITransactionService>()
                 .InstancePerDependency();
 
-
+            builder.RegisterType<MainChainService>()
+                .As<IMainChainService>()
+                .InstancePerDependency();
 
             builder.Register(p =>
                 {
@@ -56,6 +62,19 @@ namespace Lykke.Service.BcnExploler.Services
                             , validDataInSeconds: 1 * 10 * 60);
                 }
             ).AsSelf().SingleInstance();
+
+            builder.RegisterType<MainChainService>()
+                .As<IMainChainService>()
+                .InstancePerDependency();
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return
+                        new CachedMainChainService(new MemoryCacheManager(), new AzureBlobStorage(generalSettings.BcnExplolerService.Db.AssetsConnString), context.Resolve<IMainChainService>() );
+                }
+            ).As<ICachedMainChainService>()
+            .SingleInstance();
 
             builder.Register(p =>
                 {
