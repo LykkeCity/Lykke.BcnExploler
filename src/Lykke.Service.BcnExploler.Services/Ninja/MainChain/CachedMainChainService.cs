@@ -6,6 +6,8 @@ using AzureStorage;
 using Common.Cache;
 using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.MainChain;
+using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Services.Settings;
 using NBitcoin;
 
 namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
@@ -15,18 +17,19 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
         private readonly IBlobStorage _blobStorage;
         private readonly ICacheManager _cacheManager;
         private readonly IMainChainService _mainChainService;
+        private readonly AppSettings _appSettings;
 
         public CachedMainChainService(ICacheManager cacheManager, 
             IBlobStorage blobStorage, 
-            IMainChainService mainChainService)
+            IMainChainService mainChainService, AppSettings appSettings)
         {
             _cacheManager = cacheManager;
             _blobStorage = blobStorage;
             _mainChainService = mainChainService;
+            _appSettings = appSettings;
         }
 
         private const string BlobContainerName = "mainchain";
-        private const string BlobKeyName = "data";
         private const string CacheKey = "MainChainSource";
 
         public async Task UpdateTemporaryCacheAsync()
@@ -50,7 +53,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
             var memorySteam = new MemoryStream();
             chain.WriteTo(memorySteam);
 
-            await _blobStorage.SaveBlobAsync(BlobContainerName, BlobKeyName, memorySteam);
+            await _blobStorage.SaveBlobAsync(BlobContainerName, _appSettings.BcnExplolerService.UsedNetwork().ToString(), memorySteam);
         }
 
         public async Task SetToTemporaryCache(ConcurrentChain chain)
@@ -74,7 +77,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
         {
             try
             {
-               return new ConcurrentChain((await _blobStorage.GetAsync(BlobContainerName, BlobKeyName)).ReadToEnd());
+               return new ConcurrentChain((await _blobStorage.GetAsync(BlobContainerName, _appSettings.BcnExplolerService.UsedNetwork().ToString())).ReadToEnd());
 
             }
             catch

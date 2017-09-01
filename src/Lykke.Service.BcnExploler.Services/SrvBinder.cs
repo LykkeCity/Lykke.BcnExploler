@@ -67,11 +67,16 @@ namespace Lykke.Service.BcnExploler.Services
                 .As<IMainChainService>()
                 .InstancePerDependency();
 
+            var cachedMainChainConnString = generalSettings.BcnExplolerService.Db.AssetsConnString;
+
+#if DEBUG
+            cachedMainChainConnString = "UseDevelopmentStorage=true";
+#endif
             builder.Register(p =>
                 {
                     var context = p.Resolve<IComponentContext>();
                     return
-                        new CachedMainChainService(new MemoryCacheManager(), new AzureBlobStorage(generalSettings.BcnExplolerService.Db.AssetsConnString), context.Resolve<IMainChainService>() );
+                        new CachedMainChainService(new MemoryCacheManager(), new AzureBlobStorage(cachedMainChainConnString), context.Resolve<IMainChainService>(), context.Resolve<AppSettings>() );
                 }
             ).As<ICachedMainChainService>()
             .SingleInstance();
