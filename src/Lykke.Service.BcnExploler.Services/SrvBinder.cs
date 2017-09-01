@@ -1,11 +1,13 @@
 ﻿using Autofac;
 using Common;
+using Common.Cache;
 using Common.Log;
 using Core.Transaction;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Core.Transaction;
 using Lykke.Service.BcnExploler.Services.Asset;
 using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.Service.BcnExploler.Services.Ninja;
@@ -54,6 +56,22 @@ namespace Lykke.Service.BcnExploler.Services
                             , validDataInSeconds: 1 * 10 * 60);
                 }
                     ).AsSelf().SingleInstance();
+
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return new CachedBlockService(new MemoryCacheManager(), context.Resolve<IBlockService>());
+                }
+            ).As<ICachedBlockService>().SingleInstance();
+
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return new CachedTransactionService(new MemoryCacheManager(), context.Resolve<ITransactionService>());
+                }
+            ).As<ICachedTransactionService>().SingleInstance();
 
             builder.RegisterType<AssetService>()
                 .As<IAssetService>()

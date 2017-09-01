@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Core.Transaction;
 
-namespace Core.Transaction
+namespace Lykke.Service.BcnExploler.Core.Transaction
 {
     public interface ICachedTransactionService
     {

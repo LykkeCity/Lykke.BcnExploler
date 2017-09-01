@@ -1,0 +1,120 @@
+﻿@using Lykke.Service.BcnExploler.Services.Helpers
+@model Lykke.Service.BcnExploler.Web.Models.Block.BlockViewModel
+
+@{
+    ViewBag.Title = "Block - " + Model.Hash;
+}
+
+@section scripts
+{
+    <script src="~/js/app/transaction/singletransaction.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/transactionlist.js" asp-append-version="true"></script>
+}
+
+<section class="section section--padding">
+    <div class="container ">
+        <div class="page__header">
+            <h2 class="page__title">Block @Model.Height</h2>
+            <div class="address_code address_code--lead">
+                <span>@Model.Hash</span>
+                <button class="btn btn--icon copy_code" type="button" title="Copy code">
+                    <i class="icon icon--copy"></i>
+                </button>
+            </div>
+            <p class="text-muted">
+                @if (Model.ShowPreviousBlock)
+                {
+                    <text>
+                        Previous block: <a href="@Url.Action("Index", "Block", new {id = Model.PreviousBlock})">@Model.PreviousBlockHeight</a>
+                    </text>
+                }
+                @if (Model.ShowNextBlock)
+                {
+                    <text>
+                        <span class="middot">·</span>
+                        Next block: <a href="@Url.Action("Index", "Block", new {id= Model.NextBlockHeight})">@Model.NextBlockHeight</a>
+                    </text>
+                }
+
+
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <table class="table table--be_info">
+                    <tbody>
+                    <tr>
+                        <td><b>Hash:</b></td>
+                        <td>
+                            @Html.Truncate(Model.Hash)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Date:</b></td>
+                        <td>
+                            @Model.Time.ToStringBcnExplolerFormat()
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Transactions:</b></td>
+                        <td>@Model.TotalTransactions</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <table class="table table--be_info">
+                    <tbody>
+                    <tr>
+                        <td><b>Difficulty:</b></td>
+                        <td>@Model.Difficulty</td>
+                    </tr>
+                    <tr>
+                        <td><b>Merkle Root:</b></td>
+                        <td>
+                            @Html.Truncate(Model.MerkleRoot)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Height:</b></td>
+                        <td>@Model.Height</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section section--heading section--heading_with_tabs">
+    <div class="container">
+        <div class="mobile-scroll">
+            <div class="tabs_stack pull-right js-tx-toggle-container">
+                <div class="tab_item js-tab_item tab_item--active"><a class="tab_item__link js-tx-toggle" href="#js-all-tx">All · @Model.AllTransactionIdList.TotalItems</a></div>
+                <div class="tab_item js-tab_item"><a class="tab_item__link js-tx-toggle" href="#js-colored-tx">Colored · @Model.ColoredTransactionIdList.TotalItems</a></div>
+                <div class="tab_item js-tab_item">
+                    <a class="tab_item__link js-tx-toggle" href="#js-uncolored-tx">Uncolored · @Model.UncoloredTransactionIdList.TotalItems</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--transactions">
+    <div id="js-tx-select-result-container">
+
+        <div id="js-all-tx" class="js-select-result">
+            @await Html.PartialAsync("~/Views/Transaction/TransactionIdList.cshtml", Model.AllTransactionIdList)
+        </div>
+
+        <div id="js-colored-tx" class="hidden js-select-result">
+            @await Html.PartialAsync("~/Views/Transaction/TransactionIdList.cshtml", Model.ColoredTransactionIdList)
+        </div>
+
+        <div id="js-uncolored-tx" class="hidden js-select-result">
+            @await Html.PartialAsync("~/Views/Transaction/TransactionIdList.cshtml", Model.UncoloredTransactionIdList)
+        </div>
+    </div>
+</section>

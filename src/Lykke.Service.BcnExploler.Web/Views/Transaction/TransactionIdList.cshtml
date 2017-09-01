@@ -1,4 +1,5 @@
-﻿@*@using Common
+﻿@using BCNExplorer.Web.Models
+@using Common
 @model TransactionIdList
 @{
     Layout = null;
@@ -27,13 +28,13 @@
     </div>
     <div class="clearfix"></div>
     <ul class="transactions-list">
-        @foreach (var page in Model.Pages)
+        @foreach (var txPage in Model.Pages)
         {
             <li class="hidden transactions-container js-transactions-container"
-                data-page="@page"
-                data-transaction-ids="@Model.GetPage(page).ToArray().ToJson()" data-load-url="@Url.Action("List", "Transaction")">
+                data-page="@txPage"
+                data-transaction-ids="@Model.GetPage(txPage).ToArray().ToJson()" data-load-url="@Url.Action("List", "Transaction")">
 
-                @if (Model.CurrentPage != page)
+                @if (Model.CurrentPage != txPage)
                 {
                     <div class="show_more">
                         <a class="btn js-load-trans">Show More</a>
@@ -53,5 +54,5 @@
         </div>
     }
 
-</div>*@
+</div>
 
