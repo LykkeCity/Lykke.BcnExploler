@@ -77,7 +77,8 @@ namespace Lykke.Service.BcnExploler
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUi();
