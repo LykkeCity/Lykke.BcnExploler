@@ -1,0 +1,90 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Issuer
+@model Lykke.Service.BcnExploler.Web.Models.Issuer.IssuerViewModel
+@{
+    ViewBag.Title = "Issuer " + Model.Issuer;
+}
+<div class="page--issuer">
+    <section class="section section--padding">
+        <div class="container container--extend">
+            <h2>
+                @Model.Issuer
+                @if (Model.IsVerified)
+                {
+                    <span class="label label--green"><i class="icon icon--check"></i> verified issuer</span>
+                }
+                else
+                {
+                    <span class="label label--yellow"><i class="icon_question"></i> not verified</span>
+                }
+            </h2>
+            @if (!string.IsNullOrEmpty(Model.IssuerWebsite))
+            {
+                <p class="text-muted">
+                    <a href="@Model.IssuerWebsite" target="_blank">Issuer website</a>
+                </p>
+            }
+        </div>
+    </section>
+
+
+</div>
+<section class="section section--heading">
+    <div class="container">
+        <h3>Assets <span>@Model.AssetDirectory.Assets.Count()</span></h3>
+    </div>
+</section>
+<div class="section">
+    <div class="section">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table--simple table_asstes">
+                    <tbody>
+                        <tr>
+                            <th class="_asset">Asset and address</th>
+                            <th class="ticker">Ticker</th>
+                            <th class="coinholders">Coinholders</th>
+                            <th class="_coins">Coins issued</th>
+                        </tr>
+
+                        @foreach (var asset in Model.AssetDirectory.Assets)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="issuer__img">
+                                        
+                                        <a href="@Url.Action("Index", "Asset", new {id = asset.AssetIds.FirstOrDefault()})">
+
+                                            <img src="@(!string.IsNullOrEmpty(asset.IconUrl) ? asset.IconUrl : "/img/be/asset_default.jpg")" width="48" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="issuer__content">
+                                        <div class="issuer__name">
+                                            <a href="@Url.Action("Index", "Asset", new {id = asset.AssetIds.FirstOrDefault()})">
+                                                @asset.Name
+                                            </a>
+                                        </div>
+                                        <div class="text-muted">
+                                            <a href="@Url.Action("Index", "Asset", new {id = asset.AssetIds.FirstOrDefault()})">
+                                                @asset.AssetIds.FirstOrDefault()
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@asset.NameShort</td>
+                                <td>@asset.CoinholdersCount</td>
+                                <td>@asset.TotalColoredDescription @asset.NameShort</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

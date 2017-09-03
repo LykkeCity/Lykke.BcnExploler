@@ -1,0 +1,178 @@
+﻿@using Common
+@using Lykke.Service.BcnExploler.Web.Models.Asset
+@model AssetViewModel
+@{
+    ViewData["Title"] = "Asset - " + string.Join(", ", Model.AssetIds);
+}
+
+@section scripts
+{
+    <script src="~/js/vendor/moment.js" asp-append-version="true"></script>
+
+    <script src="~/js/vendor/bootstrap-datetimepicker.min.js" asp-append-version="true"></script>
+    <script src="~/js/vendor/throttle-debounce.min.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/singletransaction.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/transactionlist.js" asp-append-version="true"></script>
+    <script src="~/js/app/asset/index.js" asp-append-version="true"></script>
+}
+
+
+<section class="section section--padding">
+    <div class="container ">
+
+        <div class="page__header">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h2 class="page__title">
+                        @Model.Name
+                        @if (Model.IsVerified)
+                        {
+                            <i class="check check--green"></i>
+                        }
+                        else
+                        {
+                            <i class="check check--yellow"></i>
+                        }
+                    </h2>
+                    <div class="address_code address_code--lead">
+                        <span>@Model.AssetIds.FirstOrDefault()</span>
+                        <button class="btn btn--icon copy_code" type="button" title="Copy code">
+                            <i class="icon icon--copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    @if (Model.ShowAssetImage)
+                    {
+                        <div class="address_qrcode">
+                            <img src="@Model.ImageUrl" alt="@Model.Name" width="140">
+                        </div>
+                    }
+                </div>
+                <div class="col-xs-12">
+                    <p class="text-muted">
+                        <a href="@Model.DefinitionUrl" target="_blank">Asset definition</a>
+                        @if (Model.LinkToWebsite)
+                        {
+                            <span class="middot">&middot;</span>
+                            <a href="@Model.ContactUrl" target="_blank">Asset webpage</a>
+                        }
+                        @*<span class="middot">&middot;</span><a href="">Coinprism metadata</a>*@
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <table class="table table--be_info">
+                    <tr>
+                        <td><b>Ticker:</b></td>
+                        <td>@Model.NameShort</td>
+                    </tr>
+                    <tr>
+                        <td><b>Type:</b></td>
+                        <td>@Model.Type</td>
+                    </tr>
+                    <tr>
+                        <td><b>Issuer:</b></td>
+                        <td>
+                            @if (Model.IsVerified)
+                            {
+                                <a href="@Url.Action("IssuerDetails", "Issuer", new {id= (Model.Issuer ?? "").ToBase64() })">@Model.Issuer</a>
+                            }
+                            else
+                            {
+
+                                @Model.Issuer
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Divisibility:</b></td>
+                        <td>
+                            @if (Model.Divisibility != 0)
+                            {
+                                <text>
+                                    Divisible to @Model.Divisibility @Utils.GenderAmount(Model.Divisibility, "place", "places", "places")
+                                </text>
+                            }
+                            else
+                            {
+                                <text>
+                                    Indivisible
+                                </text>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Definition URL:</b></td>
+                        <td><a href="@Model.DefinitionUrl" target="_blank">@Model.DefinitionUrl</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <table class="table table--be_info">
+                    <tr>
+                        <td>
+                            <b>Details:</b>
+                            <p>
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    @Model.Description
+                                }
+                                else
+                                {
+                                    <text>
+                                        No description is available.
+                                    </text>
+                                }
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--tabs">
+    <div class="container">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation"><a href="#transactions" class="js-tx-toggle-tab" aria-controls="transactions" role="tab" data-toggle="tab">
+                Transactions 
+                @*<sup>56</sup>*@
+            </a></li>
+            <li role="presentation"><a href="#owners" class="js-tx-toggle-tab" aria-controls="owners" role="tab" data-toggle="tab">
+                Coinholders 
+                @*<sup>18</sup>*@
+            </a></li>
+        </ul>
+    </div>
+</section>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane js-panel" id="transactions">
+        <div class="js-panel-content" data-load-url="@Url.Action("Transactions", new {id = Model.AssetIds.FirstOrDefault()})"></div>
+        <div class="js-panel-loader">
+            <div class="spinner_container">
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane js-panel" id="owners">
+        <div class="js-panel-content" data-load-url="@Url.Action("Owners", new {id = Model.AssetIds.FirstOrDefault()})"></div>
+        <div class="js-panel-loader">
+            <div class="spinner_container">
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

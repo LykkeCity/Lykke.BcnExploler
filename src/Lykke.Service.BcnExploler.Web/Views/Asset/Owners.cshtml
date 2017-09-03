@@ -1,0 +1,110 @@
+﻿@using Common
+@model AssetCoinholdersViewModel
+@{
+    ViewData["Title"] = "Asset Owners - " + string.Join(", ", Model.Asset.AssetIds);
+    Layout = null;
+}
+@Html.Hidden("js-submit-go-to-block-height", new {url = Url.Action("OwnersHistory", "Asset", new {id= Model.Asset.AssetIds.FirstOrDefault()})}.ToJson())
+
+@Html.Hidden("js-submit-go-to-block-time", new { url = Url.Action("OwnersHistoryByDate", "Asset", new { id = Model.Asset.AssetIds.FirstOrDefault() }) }.ToJson())
+<section class="section section--heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4">
+                <h3>
+                    Coinholders <span>@Model.CoinholdersCount</span>
+                    <a class="btn btn--icon btn_asset_download" href="@Url.Action("OwnersToCsv", "Asset", new {id = Model.Asset.AssetIds.FirstOrDefault(), at = Model.Pagination.AtBlock})">
+                        CSV
+                        <i class="icon icon--download"></i>
+                    </a>
+                </h3>
+            </div>
+            <div class="col-xs-12 col-sm-8">
+                <div class="block_nav">
+                    <div class="block_nav__field change_block">
+                        @if (Model.Pagination.ShowPrev)
+                        {
+                            <div class="block_nav__left">
+                                <a class="btn btn--icon js-change-go-to-block" title="@Model.Pagination.PrevBlock" data-block="@Model.Pagination.PrevBlock"><i class="icon icon--prev_transaction"></i></a>
+                            </div>
+                        }
+
+                        <label class="control-label control-label--inner" for="js-go-to-block">Block:</label>
+                        <input type="text" class="form-control js-submit-on-change js-set-readonly-on-submit" id="js-go-to-block" name="at" value="@Model.Pagination.AtBlock">
+
+                        @if (Model.Pagination.ShowNext)
+                        {
+                            <div class="block_nav__right">
+                                <a class="btn btn--icon js-change-go-to-block" title="@Model.Pagination.NextBlock" data-block="@Model.Pagination.NextBlock"><i class="icon icon--next_transaction"></i></a>
+                            </div>
+                        }
+                    </div>
+                    <div class="block_nav__field">
+                        <div class="input-group date datetimepicker">
+                            <input type="text" class="form-control js-set-readonly-on-submit" id="datetimepicker" value="@(Model.AtBlockDateTime?.ToString("dd.MM.yyyy"))" />
+                            <label class="input-group-addon open-datetimepicker" for="datetimepicker">
+                                <span class="icon icon--cal"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="block_nav__field">
+                        <div class="input-group timepicker">
+                            <input type="text" class="form-control js-set-readonly-on-submit" id="timepicker" value="@(Model.AtBlockDateTime?.ToString("HH:mm"))" />
+                            <label class="input-group-addon open-datetimepicker" for="timepicker">
+                                <span class="icon icon--clock"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section js-coinholders-data">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table--simple table_coinholders">
+                <tr>
+                    <th class="_address">Address</th>
+                    <th class="_amount text-right">Amount</th>
+                    <th class="_ownership">Ownership</th>
+                    <th class="_value">&nbsp;</th>
+                </tr>
+                @foreach (var addressSum in Model.AddressSummaries)
+                {
+                    <tr>
+                        <td class="_address">
+                            <a href="@Url.Action("Index", "Address", new {id = addressSum.Address})">
+                                @UiHelpers.Truncate(addressSum.Address)
+                            </a>
+                        </td>
+                        <td class="_amount text-right">
+                            @addressSum.Balance.ToStringBtcFormat() @Model.Asset.NameShort
+                            @if (addressSum.ChangeAtBlock != 0)
+                            {
+
+                                <span class="_change @(addressSum.ChangeAtBlock>0?"text--green":"text--red")">@addressSum.ChangeAtBlock.ToStringBtcFormat()</span>
+                            }
+                        </td>
+                        <td class="_ownership">
+                            @addressSum.BalancePercentageDescription %
+                        </td>
+                        <td class="_value">
+                            <div class="ownership_value" style="width: @addressSum.BalancePercenage.ToString("F0")%"></div>
+                        </td>
+                    </tr>
+                }
+
+                <tr class="_total">
+                    <th>Total</th>
+                    <td class="_amount text-right">@Model.Total.ToStringBtcFormat() @Model.Asset.NameShort</td>
+                    <th colspan="2" class="_amount">&nbsp;</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
