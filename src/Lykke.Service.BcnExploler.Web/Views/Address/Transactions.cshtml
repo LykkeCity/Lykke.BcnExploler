@@ -1,0 +1,62 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Address
+@model AddressTransactionsViewModel
+@{
+    Layout = null;
+}
+
+<section class="section section--heading section--heading_with_tabs">
+    <div class="container">
+        <div class="mobile-scroll">
+            <div class="tabs_stack pull-right js-tx-toggle-container">
+                <div class="tab_item js-tab_item tab_item--active">
+                    <a class="tab_item__link js-tx-toggle" href="#js-all-tx">
+                        All
+                        <span class="hidden js-tx-count-container">
+                            ·
+                            <span class="js-tx-count"></span>
+                        </span>
+                    </a>
+                </div>
+                <div class="tab_item js-tab_item">
+                    <a class="tab_item__link js-tx-toggle" href="#js-send-tx">
+                        Send 
+                        @if (Model.FullLoaded)
+                        {
+                            <span>
+                                · @Model.SendTransactionIdList.TotalItems
+                            </span>
+                        }
+                    </a>
+                </div>
+                <div class="tab_item js-tab_item">
+                    <a class="tab_item__link js-tx-toggle" href="#js-received-tx">
+                        Received 
+                        @if (Model.FullLoaded)
+                        {
+                            <span>
+                                · @Model.ReceivedTransactionIdList.TotalItems
+                            </span>
+                        }
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--transactions">
+    <div id="js-tx-select-result-container">
+
+        <div id="js-all-tx" class="js-select-result">
+            @Html.Partial("~/Views/Transaction/TransactionIdList.cshtml", Model.AllTransactionIdList)
+        </div>
+
+        <div id="js-send-tx" class="hidden js-select-result">
+            @Html.Partial("~/Views/Transaction/TransactionIdList.cshtml", Model.SendTransactionIdList)
+        </div>
+
+        <div id="js-received-tx" class="hidden js-select-result">
+            @Html.Partial("~/Views/Transaction/TransactionIdList.cshtml", Model.ReceivedTransactionIdList)
+        </div>
+    </div>
+</section>

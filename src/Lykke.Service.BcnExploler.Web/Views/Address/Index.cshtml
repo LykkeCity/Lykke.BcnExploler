@@ -1,0 +1,73 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Address
+@model AddressMainInfoViewModel
+@{
+    ViewData["Title"] = "Address - " + Model.AddressId;
+}
+@section scripts{
+    <script src="~/js/vendor/moment.js" asp-append-version="true"></script>
+    <script src="~/js/vendor/bootstrap-datetimepicker.min.js" asp-append-version="true"></script>
+    <script src="~/js/vendor/throttle-debounce.min.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/singletransaction.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/transactionlist.js" asp-append-version="true"></script>
+    <script src="~/js/app/address/index.js" asp-append-version="true"></script>
+}
+
+@Html.Hidden("uncolored-address", Model.UncoloredAddress)
+@Html.Hidden("colored-address", Model.ColoredAddress)
+@Html.Hidden("current-address", Model.AddressId)
+
+<section class="section section--padding">
+    <div class="container">
+        <div class="page__header noborder">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h2 class="page__title">Bitcoin @(Model.IsColoredAddress ? "Colored":"") Address</h2>
+                    <div class="address_code address_code--lead">
+                        <span>@Model.AddressId</span>
+                        <button class="btn btn--icon copy_code" type="button" title="Copy code">
+                            <i class="icon icon--copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    <div class="address_qrcode">
+                        @Html.QRCode(Model.AddressId, size: 140)
+                    </div>
+                </div>
+
+                @if (Model.IsColoredAddress)
+                {
+                    <div class="col-xs-12">
+                        <p class="text-muted">Bitcoin Address: <a href="@Url.Action("Index", "Address", new {id = Model.UncoloredAddress})">@Model.UncoloredAddress</a></p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<div id="js-balance-load-contaner" data-load-url="@Url.Action("Balance", new {id = Model.AddressId})">
+    <section class="section section--heading">
+        <div class="container">
+            <h3>Balance</h3>
+        </div>   
+    </section>
+</div>
+
+
+@Html.Loader(htmlId: "js-balance-loader")
+
+<div id="js-address-transactions" data-load-url="@Url.Action("Transactions", "Address", new {id = Model.AddressId})">
+    <section class="section section--heading">
+        <div class="container">
+            <h3>Transactions</h3>
+        </div>
+    </section>
+
+    @Html.Loader(htmlClass: "js-loader")
+</div>
+
+
+

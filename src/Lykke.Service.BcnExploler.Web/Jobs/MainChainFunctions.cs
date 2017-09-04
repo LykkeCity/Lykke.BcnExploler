@@ -20,31 +20,14 @@ namespace Lykke.Service.BcnExploler.Web.Jobs
         [TimerTrigger("00:30:00")]
         public Task UpdatePersistentCache()
         {
-            try
-            {
-
-                return _cachedMainChainService.UpdatePersistentCacheAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return _cachedMainChainService.UpdatePersistentCacheAsync();
         }
 
 
         [TimerTrigger("00:02:00")]
         public Task UpdateTemporaryCache()
         {
-            try
-            {
-                return _cachedMainChainService.UpdateTemporaryCacheAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return _cachedMainChainService.UpdateTemporaryCacheAsync();
         }
     }
 }

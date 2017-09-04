@@ -1,0 +1,139 @@
+﻿@using Common
+@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Address
+@model Lykke.Service.BcnExploler.Web.Models.Address.AddressBalanceViewModel
+    @{
+        Layout = null;
+    }
+
+
+@Html.Hidden("js-go-to-block-height-url", Url.Action("BalanceAtBlock", "Address", new {id = Model.AddressId}))
+@Html.Hidden("js-go-to-block-time-url", Url.Action("BalanceAtTime", "Address", new { id = Model.AddressId }))
+
+@if (Model.TotalTransactionsCountCalculated)
+{
+    
+    @Html.Hidden("js-total-transactions", Model.TotalConfirmedTransactions)
+}
+
+<section class="section section--heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4">
+                <h3>Balance</h3>
+            </div>
+            <div class="col-xs-12 col-sm-8">
+                <div class="block_nav">
+                    <div class="block_nav__field change_block">
+                        @if (Model.ShowPrev)
+                        {
+                            <div class="block_nav__left">
+                                <a class="btn btn--icon js-change-go-to-block" title="@Model.PrevBlock" data-block="@Model.PrevBlock"><i class="icon icon--prev_transaction"></i></a>
+                            </div>
+                        }
+
+                        <label class="control-label control-label--inner" for="js-go-to-block">Block:</label>
+                        <input type="text" class="form-control js-submit-on-change js-set-readonly-on-submit" id="js-go-to-block" name="at" value="@Model.AtBlockHeight">
+
+                        @if (Model.ShowNext)
+                        {
+                            <div class="block_nav__right">
+                                <a class="btn btn--icon js-change-go-to-block" title="@Model.NextBlock" data-block="@Model.NextBlock"><i class="icon icon--next_transaction"></i></a>
+                            </div>
+                        }
+                    </div>
+                    <div class="block_nav__field">
+                        <div class="input-group date datetimepicker">
+                            <input type="text" class="form-control js-set-readonly-on-submit" id="datetimepicker" value="@(Model.AtBlockDateTime.ToString("dd.MM.yyyy"))" />
+                            <label class="input-group-addon open-datetimepicker" for="datetimepicker">
+                                <span class="icon icon--cal"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="block_nav__field">
+                        <div class="input-group timepicker">
+                            <input type="text" class="form-control js-set-readonly-on-submit" id="timepicker" value="@(Model.AtBlockDateTime.ToString("HH:mm"))" />
+                            <label class="input-group-addon open-datetimepicker" for="timepicker">
+                                <span class="icon icon--clock"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section section--balance" id="js-balance-data">
+    <div class="container">
+            <ul class="issuer_list row">
+                <li class="issuer_list__item col-xs-12 col-sm-6">
+                    <table class="issuer">
+                        <tbody>
+                        <tr>
+                            <td class="issuer__img"><img src="/img/assets/bitcoin.png" width="48" alt=""></td>
+                            <td class="issuer__content">
+                                <div class="issuer__name">Bitcoin</div>
+                                @if (Model.ShowUnconfirmedBalance)
+                                {
+                                    <div class="text-muted">Unconfirmed balance</div>
+                                }
+                            </td>
+                            <td class="issuer__content text-right">
+                                <div class="wallet_value">@BitcoinUtils.SatoshiToBtc(Model.Balance).ToStringBtcFormat() BTC</div>
+                                @if (Model.ShowUnconfirmedBalance)
+                                {
+                                    <div class="text-muted">@BitcoinUtils.SatoshiToBtc(Model.UnconfirmedBalance).ToStringBtcFormat() BTC</div>
+                                }
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </li>
+                @foreach (var asset in Model.Assets.Where(p => p.ShowAsset))
+                {
+                    var assetDivisibity = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.Divisibility, 0);
+                    var assetShortName = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.NameShort, "");
+                    var assetName = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.Name, asset.AssetId);
+                    var assetIcon = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.IconUrl, null);
+
+                    var assetUrl = Model.AssetDic.Dic.ContainsKey(asset.AssetId) ? Url.Action("Index", "Asset", new { id = asset.AssetId }) : null;
+
+                    <li class="issuer_list__item col-xs-12 col-sm-6">
+                        <table class="issuer">
+                            <tbody>
+                                <tr>
+                                    <td class="issuer__img">
+                                        <a href="@assetUrl">
+
+                                            <img src="@(!string.IsNullOrEmpty(assetIcon) ? assetIcon: "/img/be/asset_default.jpg")" width="48" alt="@assetName">
+                                        </a>
+                                    </td>
+                                    <td class="issuer__content">
+                                        <div class="issuer__name">
+                                            <a href="@assetUrl">
+                                                @assetName
+                                            </a>
+                                        </div>
+                                        @if (asset.ShowUnconfirmedBalance)
+                                        {
+                                            <div class="text-muted">Unconfirmed balance</div>
+                                        }
+                                    </td>
+                                    <td class="issuer__content text-right">
+                                        <div class="wallet_value">@BitcoinUtils.CalculateColoredAssetQuantity(asset.Quantity, assetDivisibity).ToStringBtcFormat() @assetShortName</div>
+                                        @if (asset.ShowUnconfirmedBalance)
+                                        {
+                                            <div class="text-muted">@BitcoinUtils.CalculateColoredAssetQuantity(asset.UnconfirmedQuantity, assetDivisibity).ToStringBtcFormat() @assetShortName</div>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                }
+
+            </ul>
+        </div>
+</section>

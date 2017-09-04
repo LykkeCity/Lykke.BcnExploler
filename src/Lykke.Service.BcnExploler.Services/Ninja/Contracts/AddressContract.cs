@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Lykke.Service.BcnExploler.Services.Ninja.Contracts
 {
@@ -71,7 +72,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Contracts
             [JsonProperty("amount")]
             public long Balance { get; set; }
             [JsonProperty("assets")]
-            public AddressAssetContract[] Assets { get; set; }
+            public List<AddressAssetContract> Assets { get; set; }
 
             public class AddressAssetContract
             {

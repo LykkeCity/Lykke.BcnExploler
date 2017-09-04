@@ -4,22 +4,23 @@ using Common;
 using Common.Cache;
 using Common.Log;
 using Core.Transaction;
-using Lykke.Service.BcnExploler.Core;
+using Lykke.Service.BcnExploler.Core.Address;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Core.MainChain;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Core.Transaction;
+using Lykke.Service.BcnExploler.Services.Address;
 using Lykke.Service.BcnExploler.Services.Asset;
 using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.Service.BcnExploler.Services.Ninja;
+using Lykke.Service.BcnExploler.Services.Ninja.Address;
 using Lykke.Service.BcnExploler.Services.Ninja.Block;
 using Lykke.Service.BcnExploler.Services.Ninja.MainChain;
 using Lykke.Service.BcnExploler.Services.Ninja.Transaction;
 using Lykke.Service.BcnExploler.Services.Settings;
 using Microsoft.WindowsAzure.Storage.Auth;
-using NBitcoin;
 
 namespace Lykke.Service.BcnExploler.Services
 {
@@ -41,6 +42,10 @@ namespace Lykke.Service.BcnExploler.Services
 
             builder.RegisterType<BlockService>()
                 .As<IBlockService>()
+                .InstancePerDependency();
+
+            builder.RegisterType<AddressService>()
+                .As<IAddressService>()
                 .InstancePerDependency();
 
             builder.RegisterType<TransactionService>()
@@ -116,6 +121,13 @@ namespace Lykke.Service.BcnExploler.Services
                     return new CachedTransactionService(new MemoryCacheManager(), context.Resolve<ITransactionService>());
                 }
             ).As<ICachedTransactionService>().SingleInstance();
+
+            builder.Register(p =>
+                {
+                    var context = p.Resolve<IComponentContext>();
+                    return new CachedAddressService(new MemoryCacheManager(), context.Resolve<IAddressService>());
+                }
+            ).As<ICachedAddressService>().SingleInstance();
 
             builder.RegisterType<AssetService>()
                 .As<IAssetService>()
