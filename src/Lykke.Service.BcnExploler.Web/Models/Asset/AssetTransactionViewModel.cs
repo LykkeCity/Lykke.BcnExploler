@@ -1,21 +1,17 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Web;
-//using Core.AssetBlockChanges.Mongo;
+﻿using Lykke.Service.BcnExploler.Core.AssetBalanceChanges;
 
-//namespace BCNExplorer.Web.Models
-//{
-//    public class AssetTransactionViewModel
-//    {
-//        public string TransactionHash { get; set; }
+namespace Lykke.Service.BcnExploler.Web.Models.Asset
+{
+    public class AssetTransactionViewModel
+    {
+        public string TransactionHash { get; set; }
 
-//        public static AssetTransactionViewModel Create(IBalanceTransaction source)
-//        {
-//            return new AssetTransactionViewModel
-//            {
-//                TransactionHash = source.Hash
-//            };
-//        }
-//    }
-//}
+        public static AssetTransactionViewModel Create(IBalanceTransaction source)
+        {
+            return new AssetTransactionViewModel
+            {
+                TransactionHash = source.Hash
+            };
+        }
+    }
+}

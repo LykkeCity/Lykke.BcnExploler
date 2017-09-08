@@ -1,4 +1,6 @@
 ﻿@using Common
+@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Asset
 @model AssetCoinholdersViewModel
 @{
     ViewData["Title"] = "Asset Owners - " + string.Join(", ", Model.Asset.AssetIds);
@@ -78,7 +80,7 @@
                     <tr>
                         <td class="_address">
                             <a href="@Url.Action("Index", "Address", new {id = addressSum.Address})">
-                                @UiHelpers.Truncate(addressSum.Address)
+                                @Html.Truncate(addressSum.Address)
                             </a>
                         </td>
                         <td class="_amount text-right">

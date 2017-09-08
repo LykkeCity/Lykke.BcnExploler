@@ -6,6 +6,7 @@ using Common.Log;
 using Core.Transaction;
 using Lykke.Service.BcnExploler.Core.Address;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.AssetBalanceChanges;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Core.MainChain;
@@ -13,6 +14,7 @@ using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Core.Transaction;
 using Lykke.Service.BcnExploler.Services.Address;
 using Lykke.Service.BcnExploler.Services.Asset;
+using Lykke.Service.BcnExploler.Services.AssetBalanceChanges;
 using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.Service.BcnExploler.Services.Ninja;
 using Lykke.Service.BcnExploler.Services.Ninja.Address;
@@ -39,6 +41,10 @@ namespace Lykke.Service.BcnExploler.Services
                 Network = generalSettings.BcnExplolerService.UsedNetwork()
             };
             builder.Register(p => new IndexerClient(indexerConfiguration)).AsSelf().InstancePerDependency();
+
+            builder.RegisterType<AssetBalanceChangesRepository>()
+                .As<IAssetBalanceChangesRepository>()
+                .InstancePerDependency();
 
             builder.RegisterType<BlockService>()
                 .As<IBlockService>()

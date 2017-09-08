@@ -1,7 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BCNExplorer.Web.Models;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.AssetBalanceChanges;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Core.MainChain;
+using Lykke.Service.BcnExploler.Services.Helpers;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,16 +17,19 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
     {
         private readonly IAssetService _assetService;
         private readonly IBlockService _blockService;
+        private readonly IAssetBalanceChangesRepository _balanceChangesRepository;
 
         private readonly ICachedMainChainService _mainChainService;
 
         public AssetController(IAssetService assetService,
             IBlockService blockService,
-            ICachedMainChainService mainChainService)
+            ICachedMainChainService mainChainService, 
+            IAssetBalanceChangesRepository assetBalanceChangesRepository)
         {
             _assetService = assetService;
             _blockService = blockService;
             _mainChainService = mainChainService;
+            _balanceChangesRepository = assetBalanceChangesRepository;
         }
 
         [Route("asset/{id}")]
@@ -42,107 +51,111 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         }
 
         #region owners
-        
-        //public Task<ActionResult> Owners(string id)
-        //{
-        //    return _OwnersInner(id);
-        //}
-        
-        //public Task<ActionResult> OwnersHistory(string id, int? at)
-        //{
-        //    return _OwnersInner(id, at);
-        //}
 
-        //public async Task<ActionResult> OwnersHistoryByDate(DateTime at, string id)
-        //{
-        //    var mainChain = await _mainChainService.GetMainChainAsync();
+        [Route("asset/owners/{id}")]
+        public Task<ActionResult> Owners(string id)
+        {
+            return _OwnersInner(id);
+        }
 
-        //    var block = mainChain.GetClosestToTimeBlock(at);
+        [Route("asset/ownershistory/{id}")]
+        public Task<ActionResult> OwnersHistory(string id, [FromQuery]int? at)
+        {
+            return _OwnersInner(id, at);
+        }
 
-        //    return RedirectToAction("OwnersHistory", new { id = id, at = block?.Height ?? 0 });
-        //}
+        [Route("asset/ownershistorybydata/{id}")]
+        public async Task<ActionResult> OwnersHistoryByDate([FromQuery]DateTime at, string id)
+        {
+            var mainChain = await _mainChainService.GetMainChainAsync();
 
-        //private async Task<ActionResult> _OwnersInner(string id, int? at = null)
-        //{
-        //    var result = await GetOwnersAsync(id, at);
+            var block = mainChain.GetClosestToTimeBlock(at);
 
-        //    if (result != null)
-        //    {
-        //        return View("Owners", result);
-        //    }
+            return RedirectToAction("OwnersHistory", new { id = id, at = block?.Height ?? 0 });
+        }
 
-        //    return View("NotFound");
-        //}
+        private async Task<ActionResult> _OwnersInner(string id, int? at = null)
+        {
+            var result = await GetOwnersAsync(id, at);
 
-        //private async Task<AssetCoinholdersViewModel> GetOwnersAsync(string id, int? at)
-        //{
-        //    var asset = await _assetService.GetAssetAsync(id);
+            if (result != null)
+            {
+                return View("Owners", result);
+            }
 
-        //    if (asset != null)
-        //    {
-        //        var queryOpts = at != null ? QueryOptions.Create().To(at.Value) : null;
-        //        var summaryTask = _balanceChangesRepository.GetSummaryAsync(queryOpts, asset.AssetIds.ToArray());
-        //        var addressChangesTask = _balanceChangesRepository.GetBlocksWithChanges(asset.AssetIds);
-        //        var lastBlockTask = _blockService.GetLastBlockHeaderAsync();
-        //        Task<IDictionary<string, double>> addressChangesAtBlockTask;
-        //        Task<IBlockHeader> atBlockInfoTask;
-        //        if (at != null)
-        //        {
-        //            atBlockInfoTask = _blockService.GetBlockHeaderAsync(at.ToString());
-        //            addressChangesAtBlockTask = _balanceChangesRepository.GetAddressQuantityChangesAtBlock(at.Value, asset.AssetIds.ToArray());
-        //        }
-        //        else
-        //        {
-        //            atBlockInfoTask = Task.FromResult((IBlockHeader)null);
-        //            addressChangesAtBlockTask = Task.FromResult((IDictionary<string, double>)new Dictionary<string, double>());
-        //        }
+            return View("NotFound");
+        }
 
-        //        await Task.WhenAll(addressChangesAtBlockTask, summaryTask, addressChangesTask, lastBlockTask, atBlockInfoTask);
+        private async Task<AssetCoinholdersViewModel> GetOwnersAsync(string id, int? at)
+        {
+            var asset = await _assetService.GetAssetAsync(id);
 
-        //        var result = AssetCoinholdersViewModel.Create(
-        //            AssetViewModel.Create(asset),
-        //            summaryTask.Result,
-        //            at,
-        //            addressChangesAtBlockTask.Result,
-        //            addressChangesTask.Result,
-        //            lastBlockTask.Result,
-        //            atBlockInfoTask.Result
-        //            );
+            if (asset != null)
+            {
+                var summaryTask = _balanceChangesRepository.GetSummaryAsync(at, asset.AssetIds.ToArray());
+                var addressChangesTask = _balanceChangesRepository.GetBlocksWithChanges(asset.AssetIds);
+                var lastBlockTask = _blockService.GetLastBlockHeaderAsync();
+                Task<IDictionary<string, double>> addressChangesAtBlockTask;
+                Task<IBlockHeader> atBlockInfoTask;
+                if (at != null)
+                {
+                    atBlockInfoTask = _blockService.GetBlockHeaderAsync(at.ToString());
+                    addressChangesAtBlockTask = _balanceChangesRepository.GetAddressQuantityChangesAtBlock(at.Value, asset.AssetIds.ToArray());
+                }
+                else
+                {
+                    atBlockInfoTask = Task.FromResult((IBlockHeader)null);
+                    addressChangesAtBlockTask = Task.FromResult((IDictionary<string, double>)new Dictionary<string, double>());
+                }
 
-        //        return result;
-        //    }
+                await Task.WhenAll(addressChangesAtBlockTask, summaryTask, addressChangesTask, lastBlockTask, atBlockInfoTask);
 
-        //    return null;
-        //}
-        
-        //public async Task<ActionResult> Transactions(string id)
-        //{
-        //    var asset = await _assetService.GetAssetAsync(id);
+                var result = AssetCoinholdersViewModel.Create(
+                    AssetViewModel.Create(asset),
+                    summaryTask.Result,
+                    at,
+                    addressChangesAtBlockTask.Result,
+                    addressChangesTask.Result,
+                    lastBlockTask.Result,
+                    atBlockInfoTask.Result
+                    );
 
-        //    if (asset != null)
-        //    {
-        //        var txs = await _balanceChangesRepository.GetTransactionsAsync(asset.AssetIds);
+                return result;
+            }
 
-        //        var txList = new TransactionIdList(txs.Select(p => p.Hash));
+            return null;
+        }
 
-        //        return View("~/Views/Transaction/TransactionIdList.cshtml", txList);
-        //    }
+        [Route("asset/transactions/{id}")]
+        public async Task<ActionResult> Transactions(string id)
+        {
+            var asset = await _assetService.GetAssetAsync(id);
+
+            if (asset != null)
+            {
+                var txs = await _balanceChangesRepository.GetTransactionsAsync(asset.AssetIds);
+
+                var txList = new TransactionIdList(txs.Select(p => p.Hash));
+
+                return View("~/Views/Transaction/TransactionIdList.cshtml", txList);
+            }
 
 
-        //    return View("NotFound");
-        //}
-        
-        //public async Task<ActionResult> OwnersToCsv(string id, int at)
-        //{
-        //    var result = await GetOwnersAsync(id, at);
+            return View("NotFound");
+        }
 
-        //    if (result != null)
-        //    {
-        //        return File(await result.ToCsvAsync(), "text/csv", $"Coinholders-{result.Asset.NameShort}-{at}.csv");
-        //    }
+        [Route("asset/ownerstocsv/{id}")]
+        public async Task<ActionResult> OwnersToCsv(string id, [FromQuery]int at)
+        {
+            var result = await GetOwnersAsync(id, at);
 
-        //    return View("NotFound");
-        //}
+            if (result != null)
+            {
+                return File(await result.ToCsvAsync(), "text/csv", $"Coinholders-{result.Asset.NameShort}-{at}.csv");
+            }
+
+            return View("NotFound");
+        }
 
         #endregion
     }

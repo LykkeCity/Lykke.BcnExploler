@@ -9,7 +9,7 @@
     public class BcnExplolerSettings
     {
         public DbSettings Db { get; set; }
-
+        public string AssetStatsServiceUrl { get; set; }
         public string NinjaUrl { get; set; }
         public string Network { get; set; }
 
