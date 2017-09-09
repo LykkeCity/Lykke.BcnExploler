@@ -10,6 +10,7 @@ using Lykke.Service.BcnExploler.Core.AssetBalanceChanges;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Core.MainChain;
+using Lykke.Service.BcnExploler.Core.Search;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Core.Transaction;
 using Lykke.Service.BcnExploler.Services.Address;
@@ -21,6 +22,7 @@ using Lykke.Service.BcnExploler.Services.Ninja.Address;
 using Lykke.Service.BcnExploler.Services.Ninja.Block;
 using Lykke.Service.BcnExploler.Services.Ninja.MainChain;
 using Lykke.Service.BcnExploler.Services.Ninja.Transaction;
+using Lykke.Service.BcnExploler.Services.Search;
 using Lykke.Service.BcnExploler.Services.Settings;
 using Microsoft.WindowsAzure.Storage.Auth;
 
@@ -60,6 +62,10 @@ namespace Lykke.Service.BcnExploler.Services
 
             builder.RegisterType<MainChainService>()
                 .As<IMainChainService>()
+                .InstancePerDependency();
+
+            builder.RegisterType<SearchService>()
+                .As<ISearchService>()
                 .InstancePerDependency();
 
             builder.Register(p =>
