@@ -11,6 +11,7 @@ using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Web.Filters;
 using Lykke.Service.BcnExploler.Web.Jobs;
 using Lykke.Service.BcnExploler.Web.Modules;
 using Lykke.SettingsReader;
@@ -46,7 +47,10 @@ namespace Lykke.Service.BcnExploler
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
+            services.AddMvc(o =>
+                {
+                    o.Filters.Add(new HandleAllExceptionsFilterFactory());
+                })
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
