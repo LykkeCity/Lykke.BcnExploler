@@ -16,6 +16,17 @@
     @Html.Hidden("js-total-transactions", Model.TotalConfirmedTransactions)
 }
 
+@if (Model.TotalReceivedTransactionsCountCalculated)
+{
+
+    @Html.Hidden("js-total-received-transactions", Model.TotalReceivedTransactions)
+}
+
+@if (Model.TotalSpendedTransactionsCountCalculated)
+{
+
+    @Html.Hidden("js-total-send-transactions", Model.TotalSpendedTransactions)
+}
 <section class="section section--heading">
     <div class="container">
         <div class="row">

@@ -2,23 +2,54 @@
     //set tx count in dom
     (function () {
         var txCount = undefined;
+        var receivedTxCount = undefined;
+        var spendedTxCount = undefined;
+
         var retrieveTxCount = function () {
-            var $elem = $('#js-total-transactions');
-            if ($elem.length !== 0) {
-                txCount = $elem.val();
-            }
+            txCount = $('#js-total-transactions').val();
+            receivedTxCount = $('#js-total-received-transactions').val();
+            spendedTxCount = $('#js-total-send-transactions').val();
         };
 
-        var putTxCountInDom = function () {
+        var setAllTxs = function() {
             if (txCount != undefined) {
-                var $tabs = $('.js-tx-toggle-container');
-                var $allTxs = $('#js-all-tx'); //txs in "All" tab
-                var $context = $tabs.add($allTxs);
+                var $tabs = $('.js-all-tx-toggler');
+                var $txContainer = $('#js-all-tx'); 
+                var $context = $tabs.add($txContainer);
 
                 $('.js-tx-count', $context).html(txCount);
                 $('.js-tx-count-container', $context).removeClass('hidden');
+            } 
+        }
+
+        var setSpendedTxs = function () {
+            if (spendedTxCount != undefined) {
+                var $tabs = $('.js-send-tx-toggler');
+                var $txContainer = $('#js-send-tx'); 
+                var $context = $tabs.add($txContainer);
+
+                $('.js-tx-count', $context).html(spendedTxCount);
+                $('.js-tx-count-container', $context).removeClass('hidden');
             }
         }
+
+        var setReceivedTxs = function () {
+            if (receivedTxCount != undefined) {
+                var $tabs = $('.js-received-tx-toggler');
+                var $txContainer = $('#js-received-tx');
+                var $context = $tabs.add($txContainer);
+
+                $('.js-tx-count', $context).html(receivedTxCount);
+                $('.js-tx-count-container', $context).removeClass('hidden');
+            }
+        }
+
+        var putTxCountInDom = function () {
+            setAllTxs();
+            setSpendedTxs();
+            setReceivedTxs();
+        }
+
 
         $('body').one('tx-history-loaded', function () {
             putTxCountInDom();

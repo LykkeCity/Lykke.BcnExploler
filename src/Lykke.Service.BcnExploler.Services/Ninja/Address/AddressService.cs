@@ -29,9 +29,14 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
     #region   Balance
     public class AddressBalance : IAddressBalance
     {
+        private const int TransactionsCountNotCalculated = -1;
         public string AddressId { get; set; }
         public int TotalTransactions { get; set; }
-        public bool TotalTransactionsCountCalculated => TotalTransactions != -1;
+        public bool TotalTransactionsCountCalculated => TotalTransactions != TransactionsCountNotCalculated;
+        public int TotalSpendedTransactions { get; set; }
+        public bool TotalSpendedTransactionsCountCalculated => TotalSpendedTransactions != TransactionsCountNotCalculated;
+        public int TotalReceivedTransactions { get; set; }
+        public bool TotalReceivedTransactionsCountCalculated => TotalReceivedTransactions != TransactionsCountNotCalculated;
         public double BtcBalance { get; set; }
         public double UnconfirmedBalanceDelta { get; set; }
         public IEnumerable<IColoredBalance> ColoredBalances { get; set; }
@@ -48,6 +53,8 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
                 AddressId = address,
                 BtcBalance = coloredSummary.Confirmed.Balance,
                 TotalTransactions = coloredSummary.Confirmed.TotalTransactions,
+                TotalReceivedTransactions = coloredSummary.Confirmed.ReceivedTransactions ?? TransactionsCountNotCalculated,
+                TotalSpendedTransactions = coloredSummary.Confirmed.SpendedTransactions ?? TransactionsCountNotCalculated,
                 UnconfirmedBalanceDelta = coloredSummary.Unconfirmed?.Balance ?? 0
             };
             var unconfirmedAssets = coloredSummary.Unconfirmed?.Assets ?? Enumerable.Empty<AddressSummaryContract.AddressSummaryInnerContract.AddressAssetContract>().ToList();

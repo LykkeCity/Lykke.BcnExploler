@@ -17,6 +17,12 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public bool ShowUnconfirmedBalance => UnconfirmedBalanceDelta != 0;
         public double TotalConfirmedTransactions { get; set; }
         public bool TotalTransactionsCountCalculated { get; set; }
+        public int TotalSpendedTransactions { get; set; }
+        public bool TotalSpendedTransactionsCountCalculated { get; set; }
+
+        public int TotalReceivedTransactions { get; set; }
+        public bool TotalReceivedTransactionsCountCalculated { get; set; }
+
         public IEnumerable<Asset> Assets { get; set; }
         public AssetDictionary AssetDic { get; set; }
 
@@ -50,7 +56,11 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
                 LastBlockDateTime = lastBlock.Time,
                 AtBlockHeight = (atBlock ?? lastBlock).Height,
                 AtBlockDateTime = (atBlock ?? lastBlock).Time,
-                TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated
+                TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated,
+                TotalSpendedTransactions = balance.TotalSpendedTransactions,
+                TotalReceivedTransactions = balance.TotalReceivedTransactions,
+                TotalReceivedTransactionsCountCalculated = balance.TotalReceivedTransactionsCountCalculated,
+                TotalSpendedTransactionsCountCalculated = balance.TotalSpendedTransactionsCountCalculated
             };
         }
         

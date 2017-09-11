@@ -19,7 +19,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         {
             return new AddressTransactionsViewModel
             {
-                AllTransactionIdList = new TransactionIdList(source.All?.Select(p => p.TransactionId), PageSize, false),
+                AllTransactionIdList = new TransactionIdList(source.All?.Select(p => p.TransactionId), PageSize, source.FullLoaded),
                 SendTransactionIdList = new TransactionIdList(source.Send?.Select(p => p.TransactionId), PageSize, source.FullLoaded),
                 ReceivedTransactionIdList = new TransactionIdList(source.Received?.Select(p => p.TransactionId), PageSize, source.FullLoaded),
                 FullLoaded = source.FullLoaded

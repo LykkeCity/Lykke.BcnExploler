@@ -9,16 +9,25 @@
         <div class="mobile-scroll">
             <div class="tabs_stack pull-right js-tx-toggle-container">
                 <div class="tab_item js-tab_item tab_item--active">
-                    <a class="tab_item__link js-tx-toggle" href="#js-all-tx">
+                    <a class="tab_item__link js-tx-toggle js-all-tx-toggler" href="#js-all-tx">
                         All
-                        <span class="hidden js-tx-count-container">
-                            ·
-                            <span class="js-tx-count"></span>
-                        </span>
+                        
+                        @if (Model.FullLoaded)
+                        {
+                            @Model.AllTransactionIdList.TotalItems
+                        }
+                        else
+                        {
+                            <span class="hidden js-tx-count-container">
+                                ·
+                                <span class="js-tx-count"></span>
+                            </span>                           
+                        }
+
                     </a>
                 </div>
                 <div class="tab_item js-tab_item">
-                    <a class="tab_item__link js-tx-toggle" href="#js-send-tx">
+                    <a class="tab_item__link js-tx-toggle js-send-tx-toggler" href="#js-send-tx">
                         Send 
                         @if (Model.FullLoaded)
                         {
@@ -26,15 +35,29 @@
                                 · @Model.SendTransactionIdList.TotalItems
                             </span>
                         }
+                        else
+                        {
+                            <span class="hidden js-tx-count-container">
+                                ·
+                                <span class="js-tx-count"></span>
+                            </span>
+                        }
                     </a>
                 </div>
                 <div class="tab_item js-tab_item">
-                    <a class="tab_item__link js-tx-toggle" href="#js-received-tx">
+                    <a class="tab_item__link js-tx-toggle js-received-tx-toggler" href="#js-received-tx">
                         Received 
                         @if (Model.FullLoaded)
                         {
                             <span>
                                 · @Model.ReceivedTransactionIdList.TotalItems
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="hidden js-tx-count-container">
+                                ·
+                                <span class="js-tx-count"></span>
                             </span>
                         }
                     </a>

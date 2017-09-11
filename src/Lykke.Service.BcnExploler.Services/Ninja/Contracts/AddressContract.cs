@@ -69,6 +69,13 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Contracts
         {
             [JsonProperty("transactionCount")]
             public int TotalTransactions { get; set; }
+
+            [JsonProperty("spendedTransactionCount")]
+            public int? SpendedTransactions { get; set; }
+
+            [JsonProperty("receivedTransactionCount")]
+            public int? ReceivedTransactions { get; set; }
+
             [JsonProperty("amount")]
             public long Balance { get; set; }
             [JsonProperty("assets")]

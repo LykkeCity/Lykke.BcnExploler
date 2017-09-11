@@ -8,6 +8,12 @@ namespace Lykke.Service.BcnExploler.Core.Address
         string AddressId { get; }
         int TotalTransactions { get; }
         bool TotalTransactionsCountCalculated { get; }
+
+        int TotalSpendedTransactions { get; }
+        bool TotalSpendedTransactionsCountCalculated { get; }
+
+        int TotalReceivedTransactions { get; }
+        bool TotalReceivedTransactionsCountCalculated { get; }
         double BtcBalance { get; }
         double UnconfirmedBalanceDelta { get; }
         IEnumerable<IColoredBalance> ColoredBalances { get; }
