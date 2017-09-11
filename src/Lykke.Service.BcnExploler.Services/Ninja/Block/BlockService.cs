@@ -69,13 +69,19 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Block
 
         public async Task<IBlockHeader> GetBlockHeaderAsync(string id)
         {
-            var resp = await _settings.BcnExplolerService.NinjaUrl
-                .AppendPathSegment($"blocks/{id}")
-                .SetQueryParam("headeronly", true)
-                .GetJsonAsync<BlockHeaderContract>();
+            try
+            {
+                var resp = await _settings.BcnExplolerService.NinjaUrl
+                    .AppendPathSegment($"blocks/{id}")
+                    .SetQueryParam("headeronly", true)
+                    .GetJsonAsync<BlockHeaderContract>();
 
-
-            return BlockHeader.Create(resp);
+                return BlockHeader.Create(resp);
+            }
+            catch (FlurlHttpException)
+            {
+                return null;
+            }
         }
 
         public Task<IBlockHeader> GetLastBlockHeaderAsync()
@@ -94,7 +100,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Block
                 return GetBlockAsync(height);
             }
 
-            return null;
+            return Task.FromResult((IBlock)null);
         }
 
         public async Task<IBlock> GetBlockAsync(uint256 hash)

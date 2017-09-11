@@ -193,12 +193,19 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Transaction
 
         public async Task<ITransaction> GetAsync(string id)
         {
-            var resp = await _settings.BcnExplolerService.NinjaUrl
-                .AppendPathSegment($"transactions/{id}")
-                .SetQueryParam("colored", true)
-                .GetJsonAsync<TransactionContract>();
-            
-            return Transaction.Create(resp, _settings.BcnExplolerService.UsedNetwork());
+            try
+            {
+                var resp = await _settings.BcnExplolerService.NinjaUrl
+                    .AppendPathSegment($"transactions/{id}")
+                    .SetQueryParam("colored", true)
+                    .GetJsonAsync<TransactionContract>();
+
+                return Transaction.Create(resp, _settings.BcnExplolerService.UsedNetwork());
+            }
+            catch (FlurlHttpException)
+            {
+                return null;
+            }
         }
     }
 }
