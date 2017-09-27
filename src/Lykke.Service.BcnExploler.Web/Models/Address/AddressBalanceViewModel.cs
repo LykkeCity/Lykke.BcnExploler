@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lykke.Service.BcnExploler.Core.Address;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Block;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
 

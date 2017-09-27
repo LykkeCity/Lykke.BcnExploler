@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Asset.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 
 namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
 {

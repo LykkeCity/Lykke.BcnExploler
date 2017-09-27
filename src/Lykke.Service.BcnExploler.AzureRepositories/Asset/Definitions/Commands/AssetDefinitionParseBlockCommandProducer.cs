@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AzureStorage.Queue;
 using Common;
-using Lykke.Service.BcnExploler.AzureRepositories.Constants;
-using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Asset.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 
-namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Commands
+namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions.Commands
 {
     public class AssetDefinitionParseBlockCommandProducer: IAssetDefinitionParseBlockCommandProducer
     {

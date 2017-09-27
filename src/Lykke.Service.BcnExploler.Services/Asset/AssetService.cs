@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
+using Lykke.Service.BcnExploler.Core.Asset.Indexes;
 
 namespace Lykke.Service.BcnExploler.Services.Asset
 {

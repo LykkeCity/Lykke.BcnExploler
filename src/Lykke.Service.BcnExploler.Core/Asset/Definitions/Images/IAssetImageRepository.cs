@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lykke.Service.BcnExploler.Core.Asset
+namespace Lykke.Service.BcnExploler.Core.Asset.Definitions.Images
 {
     public interface IAssetImage
     {

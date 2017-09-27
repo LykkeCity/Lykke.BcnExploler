@@ -30,9 +30,7 @@ namespace Lykke.Service.BcnExploler.Web.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_settings.CurrentValue.BcnExploler)
-                .SingleInstance();
-
+            builder.RegisterInstance(_settings.CurrentValue);
             builder.RegisterInstance(_log)
                 .As<ILog>()
                 .SingleInstance();

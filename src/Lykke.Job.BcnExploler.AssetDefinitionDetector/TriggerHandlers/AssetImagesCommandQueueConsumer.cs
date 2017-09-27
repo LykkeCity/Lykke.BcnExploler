@@ -3,8 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using Lykke.JobTriggers.Triggers.Attributes;
+using Lykke.Service.BcnExploler.AzureRepositories.Constants;
 using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Asset.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Images;
 
 namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
 {
@@ -21,6 +24,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
             _assetImageRepository = assetImageRepository;
         }
 
+        [QueueTrigger(QueueNames.AssetDefinitionScanner.UpsertImages)]
         public async Task UpdateAssetImage(AssetImageContext context)
         {
             try

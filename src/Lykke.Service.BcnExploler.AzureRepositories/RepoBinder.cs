@@ -1,14 +1,19 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using AzureStorage.Queue;
 using AzureStorage.Tables;
 using Common.Log;
-using Core.Asset;
 using Lykke.Service.BcnExploler.AzureRepositories.Asset;
-using Lykke.Service.BcnExploler.AzureRepositories.Asset.Commands;
+using Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions;
+using Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions.Commands;
+using Lykke.Service.BcnExploler.AzureRepositories.Asset.Indexes;
+using Lykke.Service.BcnExploler.AzureRepositories.Asset.Indexes.Commands;
 using Lykke.Service.BcnExploler.AzureRepositories.Constants;
 using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Asset.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Images;
+using Lykke.Service.BcnExploler.Core.Asset.Indexes;
+using Lykke.Service.BcnExploler.Core.Asset.Indexes.Commands;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.SettingsReader;
 
@@ -72,8 +77,12 @@ namespace Lykke.Service.BcnExploler.AzureRepositories
             builder.RegisterInstance(new AssetDataCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetDefinitionScanner.RetrieveAsset)))
                 .As<IAssetDataCommandProducer>();
 
-            builder.RegisterInstance(new AssetImageCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetDefinitionScanner.UpsertAssetImages)))
+            builder.RegisterInstance(new AssetImageCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetDefinitionScanner.UpsertImages)))
                 .As<IAssetImageCommandProducer>();
+
+
+            builder.RegisterInstance(new AssetCoinholdersIndexesCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetIndexer.UpdateIndex)))
+                .As<IAssetCoinholdersIndexesCommandProducer>();
         }
     }
 }

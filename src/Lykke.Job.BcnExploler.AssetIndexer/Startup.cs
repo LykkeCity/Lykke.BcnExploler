@@ -6,8 +6,8 @@ using AzureStorage.Tables;
 using Common.Log;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
-using Lykke.Job.BcnExploler.AssetDefinitionDetector.Models;
-using Lykke.Job.BcnExploler.AssetDefinitionDetector.Modules;
+using Lykke.Job.BcnExploler.AssetIndexer.Models;
+using Lykke.Job.BcnExploler.AssetIndexer.Modules;
 using Lykke.JobTriggers.Extenstions;
 using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
+namespace Lykke.Job.BcnExploler.AssetIndexer
 {
     public class Startup
     {
@@ -54,7 +54,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
 
                 services.AddSwaggerGen(options =>
                 {
-                    options.DefaultLykkeConfiguration("v1", "BcnExploler.AssetDefinitionDetector API");
+                    options.DefaultLykkeConfiguration("v1", "BcnExploler.AssetIndexer API");
                 });
 
                 var builder = new ContainerBuilder();
@@ -92,7 +92,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
                     app.UseDeveloperExceptionPage();
                 }
 
-                app.UseLykkeMiddleware("BcnExploler_AssetDefinitionDetector", ex => new ErrorResponse {ErrorMessage = "Technical problem"});
+                app.UseLykkeMiddleware("BcnExploler_AssetIndexer", ex => new ErrorResponse {ErrorMessage = "Technical problem"});
 
                 app.UseMvc();
                 app.UseSwagger();
@@ -206,11 +206,11 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
-                const string appName = "Lykke.Job.BcnExploler.AssetDefinitionDetector";
+                const string appName = "Lykke.Job.BcnExploler.AssetIndexer";
 
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
                     appName,
-                    AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "BcnExplolerAssetDefinitionDetectorLog", consoleLogger),
+                    AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "BcnExplolerAssetIndexerLog", consoleLogger),
                     consoleLogger);
 
                 var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(appName, slackService, consoleLogger);

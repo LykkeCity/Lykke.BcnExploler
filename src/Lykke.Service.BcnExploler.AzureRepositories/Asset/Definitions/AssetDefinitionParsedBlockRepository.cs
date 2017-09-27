@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AzureStorage;
-using Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace Lykke.Service.BcnExploler.AzureRepositories.Asset
+namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions
 {
     public class AssetDefinitionParsedBlockEntity : TableEntity, IAssetDefinitionParsedBlock
     {

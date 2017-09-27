@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Flurl.Http;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Contracts;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 
 namespace Lykke.Service.BcnExploler.Services.Asset
 {

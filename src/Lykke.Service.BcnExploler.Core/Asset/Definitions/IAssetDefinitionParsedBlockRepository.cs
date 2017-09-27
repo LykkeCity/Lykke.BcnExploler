@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Core.Asset
+namespace Lykke.Service.BcnExploler.Core.Asset.Definitions
 {
     public interface IAssetDefinitionParsedBlock
     {

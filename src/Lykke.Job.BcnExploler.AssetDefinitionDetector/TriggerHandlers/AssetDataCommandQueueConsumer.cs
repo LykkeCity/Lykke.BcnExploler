@@ -3,8 +3,11 @@ using System.Threading.Tasks;
 using AzureStorage.Queue;
 using Common;
 using Common.Log;
+using Lykke.JobTriggers.Triggers.Attributes;
+using Lykke.Service.BcnExploler.AzureRepositories.Constants;
 using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Asset.Commands;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 
 namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
 {
@@ -27,6 +30,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         }
 
 
+        [QueueTrigger(QueueNames.AssetDefinitionScanner.RetrieveAsset)]
         public async Task UpdateAssetData(UpdateAssetDataContext context)
         {
             try

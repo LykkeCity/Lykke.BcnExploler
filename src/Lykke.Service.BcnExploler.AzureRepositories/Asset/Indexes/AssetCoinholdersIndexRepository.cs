@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AzureStorage;
 using Common;
-using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Indexes;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 
-namespace Lykke.Service.BcnExploler.AzureRepositories.Asset
+namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Indexes
 {
     public class AssetCoinholdersIndexEntity:TableEntity, IAssetCoinholdersIndex
     {

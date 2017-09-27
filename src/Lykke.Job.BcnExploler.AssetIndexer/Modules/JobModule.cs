@@ -1,4 +1,3 @@
-using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
@@ -11,7 +10,7 @@ using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.Modules
+namespace Lykke.Job.BcnExploler.AssetIndexer.Modules
 {
     public class JobModule : Module
     {

@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using AzureStorage;
 using Common;
-using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions.Images;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace Lykke.Service.BcnExploler.AzureRepositories.Asset
+namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions
 {
     public class AssetImageEntity:TableEntity, IAssetImage
     {

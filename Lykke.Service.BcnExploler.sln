@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Jobs", "4. Jobs", "{1155
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.BcnExploler.AssetDefinitionDetector", "src\Lykke.Job.BcnExploler.AssetDefinitionDetector\Lykke.Job.BcnExploler.AssetDefinitionDetector.csproj", "{FF6D457C-F504-4B76-A2AE-762A9B4748C9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.BcnExploler.AssetIndexer", "src\Lykke.Job.BcnExploler.AssetIndexer\Lykke.Job.BcnExploler.AssetIndexer.csproj", "{5FA15711-F698-4A67-A904-3013D96482AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA15711-F698-4A67-A904-3013D96482AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA15711-F698-4A67-A904-3013D96482AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA15711-F698-4A67-A904-3013D96482AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA15711-F698-4A67-A904-3013D96482AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{2D5F52EC-2A27-4045-81ED-72355E2A6325} = {CC2067D7-1971-47BB-B491-5649EA3C18B2}
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
 		{FF6D457C-F504-4B76-A2AE-762A9B4748C9} = {1155F37B-2588-4E88-ACEC-0637B1C12BEF}
+		{5FA15711-F698-4A67-A904-3013D96482AB} = {1155F37B-2588-4E88-ACEC-0637B1C12BEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8D0A5E9-3E96-4B67-8300-0021868C4EF8}

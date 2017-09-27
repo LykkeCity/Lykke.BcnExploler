@@ -2,6 +2,8 @@
 using System.Linq;
 using Common;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
+using Lykke.Service.BcnExploler.Core.Asset.Indexes;
 using Lykke.Service.BcnExploler.Services.Helpers;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Asset

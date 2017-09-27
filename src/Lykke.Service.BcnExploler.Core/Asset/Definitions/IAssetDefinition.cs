@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lykke.Service.BcnExploler.Core.Asset
+namespace Lykke.Service.BcnExploler.Core.Asset.Definitions
 {
     public interface IAssetDefinition
     {

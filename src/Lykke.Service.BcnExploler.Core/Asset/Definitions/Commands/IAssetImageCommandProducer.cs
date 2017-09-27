@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lykke.Service.BcnExploler.Core.Asset.Commands
+namespace Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands
 {
     public class AssetImageContext
     {
