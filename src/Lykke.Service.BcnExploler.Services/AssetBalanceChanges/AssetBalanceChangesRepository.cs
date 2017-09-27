@@ -96,7 +96,7 @@ namespace Lykke.Service.BcnExploler.Services.AssetBalanceChanges
 
         public async Task<IBalanceSummary> GetSummaryAsync(int? at, params string[] assetIds)
         {
-            var url = _appSettings.BcnExplolerService.AssetStatsServiceUrl.AppendPathSegment("assetstats/addresses");
+            var url = _appSettings.BcnExploler.AssetStatsServiceUrl.AppendPathSegment("assetstats/addresses");
 
             foreach (var assetId in assetIds)
             {
@@ -122,7 +122,7 @@ namespace Lykke.Service.BcnExploler.Services.AssetBalanceChanges
         public async Task<IEnumerable<IBalanceTransaction>> GetTransactionsAsync(IEnumerable<string> assetIds, 
             int? fromBlock = null)
         {
-            var url = _appSettings.BcnExplolerService.AssetStatsServiceUrl.AppendPathSegment("assetstats/transactions");
+            var url = _appSettings.BcnExploler.AssetStatsServiceUrl.AppendPathSegment("assetstats/transactions");
 
             foreach (var assetId in assetIds)
             {
@@ -146,7 +146,7 @@ namespace Lykke.Service.BcnExploler.Services.AssetBalanceChanges
 
         public async Task<IBalanceTransaction> GetLatestTxAsync(IEnumerable<string> assetIds)
         {
-            var url = _appSettings.BcnExplolerService.AssetStatsServiceUrl.AppendPathSegment("assetstats/transactions/last");
+            var url = _appSettings.BcnExploler.AssetStatsServiceUrl.AppendPathSegment("assetstats/transactions/last");
 
             foreach (var assetId in assetIds)
             {
@@ -166,7 +166,7 @@ namespace Lykke.Service.BcnExploler.Services.AssetBalanceChanges
         public async Task<IDictionary<string, double>> GetAddressQuantityChangesAtBlock(int blockHeight, IEnumerable<string> assetIds)
         {
             
-            var url = _appSettings.BcnExplolerService.AssetStatsServiceUrl.AppendPathSegment("assetstats/addresschanges")
+            var url = _appSettings.BcnExploler.AssetStatsServiceUrl.AppendPathSegment("assetstats/addresschanges")
                 .SetQueryParam("at", blockHeight);
 
             foreach (var assetId in assetIds)
@@ -193,7 +193,7 @@ namespace Lykke.Service.BcnExploler.Services.AssetBalanceChanges
 
         public async Task<IEnumerable<IBalanceBlock>> GetBlocksWithChanges(IEnumerable<string> assetIds)
         {
-            var url = _appSettings.BcnExplolerService.AssetStatsServiceUrl.AppendPathSegment("assetstats/blockChanges");
+            var url = _appSettings.BcnExploler.AssetStatsServiceUrl.AppendPathSegment("assetstats/blockChanges");
 
             foreach (var assetId in assetIds)
             {

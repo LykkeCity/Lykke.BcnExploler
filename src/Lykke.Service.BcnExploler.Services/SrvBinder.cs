@@ -24,23 +24,25 @@ using Lykke.Service.BcnExploler.Services.Ninja.MainChain;
 using Lykke.Service.BcnExploler.Services.Ninja.Transaction;
 using Lykke.Service.BcnExploler.Services.Search;
 using Lykke.Service.BcnExploler.Services.Settings;
+using Lykke.SettingsReader;
 using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace Lykke.Service.BcnExploler.Services
 {
     public static class SrvBinder
     {
-        public static void BindCommonServices(this ContainerBuilder builder, AppSettings generalSettings, ILog log)
+        public static void BindCommonServices(this ContainerBuilder builder, IReloadingManager<AppSettings> generalSettingsManager, ILog log)
         {
+            var generalSettings = generalSettingsManager.CurrentValue;
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
 
             var indexerConfiguration = new IndexerConfiguration
             {
-                StorageCredentials = new StorageCredentials(generalSettings.BcnExplolerService.NinjaIndexerCredentials.AzureName, 
-                generalSettings.BcnExplolerService.NinjaIndexerCredentials.AzureKey),
-                Network = generalSettings.BcnExplolerService.UsedNetwork()
+                StorageCredentials = new StorageCredentials(generalSettings.BcnExploler.NinjaIndexerCredentials.AzureName, 
+                generalSettings.BcnExploler.NinjaIndexerCredentials.AzureKey),
+                Network = generalSettings.BcnExploler.UsedNetwork()
             };
             builder.Register(p => new IndexerClient(indexerConfiguration)).AsSelf().InstancePerDependency();
 
@@ -84,7 +86,7 @@ namespace Lykke.Service.BcnExploler.Services
                 .As<IMainChainService>()
                 .InstancePerDependency();
 
-            var cachedMainChainConnString = generalSettings.BcnExplolerService.Db.AssetsConnString;
+            var cachedMainChainConnString = generalSettings.BcnExploler.Db.AssetsConnString;
 
 #if DEBUG
             cachedMainChainConnString = "UseDevelopmentStorage=true";

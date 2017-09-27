@@ -5,7 +5,7 @@ using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Web.Models.Issuer;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BCNExplorer.Web.Controllers
+namespace Lykke.Service.BcnExploler.Web.Controllers
 {
     public class IssuerController: Controller
     {

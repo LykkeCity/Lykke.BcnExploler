@@ -1,21 +1,22 @@
 ﻿using System;
 using System.IO;
-using Lykke.Service.BcnExploler.Web;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Lykke.Service.BcnExploler
+namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            Console.WriteLine($"BcnExploler version {Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion}");
+            Console.WriteLine($"BcnExploler.AssetDefinitionDetector version {Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion}");
 #if DEBUG
             Console.WriteLine("Is DEBUG");
 #else
             Console.WriteLine("Is RELEASE");
-#endif           
-            var host = new WebHostBuilder()
+#endif
+            Console.WriteLine($"ENV_INFO: {Environment.GetEnvironmentVariable("ENV_INFO")}");
+
+            var webHost = new WebHostBuilder()
                 .UseKestrel()
                 .UseUrls("http://*:5000")
                 .UseContentRoot(Directory.GetCurrentDirectory())
@@ -23,7 +24,7 @@ namespace Lykke.Service.BcnExploler
                 .UseApplicationInsights()
                 .Build();
 
-            host.Run();
+            webHost.Run();
 
             Console.WriteLine("Terminated");
         }

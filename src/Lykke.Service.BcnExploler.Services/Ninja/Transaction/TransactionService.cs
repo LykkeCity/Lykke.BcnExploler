@@ -195,12 +195,12 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Transaction
         {
             try
             {
-                var resp = await _settings.BcnExplolerService.NinjaUrl
+                var resp = await _settings.BcnExploler.NinjaUrl
                     .AppendPathSegment($"transactions/{id}")
                     .SetQueryParam("colored", true)
                     .GetJsonAsync<TransactionContract>();
 
-                return Transaction.Create(resp, _settings.BcnExplolerService.UsedNetwork());
+                return Transaction.Create(resp, _settings.BcnExploler.UsedNetwork());
             }
             catch (FlurlHttpException)
             {

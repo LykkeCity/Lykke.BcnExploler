@@ -170,9 +170,9 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
 
         public async Task<IAddressMainInfo> GetMainInfoAsync(string id)
         {
-            if (BitcoinAddressHelper.IsBitcoinColoredAddress(id, _appSettings.BcnExplolerService.UsedNetwork()))
+            if (BitcoinAddressHelper.IsBitcoinColoredAddress(id, _appSettings.BcnExploler.UsedNetwork()))
             {
-                var result = new BitcoinColoredAddress(id, _appSettings.BcnExplolerService.UsedNetwork());
+                var result = new BitcoinColoredAddress(id, _appSettings.BcnExploler.UsedNetwork());
 
                 return new AddressMainInfo
                 {
@@ -183,9 +183,9 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
                 };
             }
 
-            if (BitcoinAddressHelper.IsBitcoinPubKeyAddress(id, _appSettings.BcnExplolerService.UsedNetwork()))
+            if (BitcoinAddressHelper.IsBitcoinPubKeyAddress(id, _appSettings.BcnExploler.UsedNetwork()))
             {
-                var result = new BitcoinPubKeyAddress(id, _appSettings.BcnExplolerService.UsedNetwork());
+                var result = new BitcoinPubKeyAddress(id, _appSettings.BcnExploler.UsedNetwork());
 
                 return new AddressMainInfo
                 {
@@ -196,9 +196,9 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
                 };
             }
 
-            if (BitcoinAddressHelper.IsBitcoinScriptAddress(id, _appSettings.BcnExplolerService.UsedNetwork()))
+            if (BitcoinAddressHelper.IsBitcoinScriptAddress(id, _appSettings.BcnExploler.UsedNetwork()))
             {
-                var result = new BitcoinScriptAddress(id, _appSettings.BcnExplolerService.UsedNetwork());
+                var result = new BitcoinScriptAddress(id, _appSettings.BcnExploler.UsedNetwork());
 
                 return new AddressMainInfo
                 {
@@ -214,14 +214,14 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
 
         public async Task<IAddressTransactions> GetTransactions(string id)
         {
-            var resp = await _appSettings.BcnExplolerService.NinjaUrl.AppendPathSegment($"/balances/{id}").GetJsonAsync<AddressTransactionListContract>();
+            var resp = await _appSettings.BcnExploler.NinjaUrl.AppendPathSegment($"/balances/{id}").GetJsonAsync<AddressTransactionListContract>();
 
             return AddressTransactions.Create(id, resp);
         }
 
         public async Task<IAddressBalance> GetBalanceAsync(string address, int? at = null)
         {
-            var url = _appSettings.BcnExplolerService.NinjaUrl.AppendPathSegment($"/balances/{address}/summary")
+            var url = _appSettings.BcnExploler.NinjaUrl.AppendPathSegment($"/balances/{address}/summary")
                 .SetQueryParam("colored", true);
 
             if (at != null)

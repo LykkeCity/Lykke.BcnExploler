@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Instrastructure", "1. Instrastructure", "{CC2067D7-1971-47BB-B491-5649EA3C18B2}"
 EndProject
@@ -19,15 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Client", "3. Client", "{C9A2CFDE-EA32-4946-B679-7CE6EFA816B8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.BcnExploler.Client", "client\Lykke.Service.BcnExploler.Client\Lykke.Service.BcnExploler.Client.csproj", "{3C300C31-97D3-41E8-A627-C53491BDA28B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.BcnExploler.Tests", "tests\Lykke.Service.BcnExploler.Tests\Lykke.Service.BcnExploler.Tests.csproj", "{A61FFDEE-5725-4650-A788-6E55EE5EFD5B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Tests", "4. Tests", "{8F9036B1-5106-4C69-B2D2-B78EE52687A0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Tests", "3. Tests", "{8F9036B1-5106-4C69-B2D2-B78EE52687A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.BcnExploler.Web", "src\Lykke.Service.BcnExploler.Web\Lykke.Service.BcnExploler.Web.csproj", "{8F48C9C8-28F3-4B48-91F1-35E9D42ABD88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.BcnExploler.Web", "src\Lykke.Service.BcnExploler.Web\Lykke.Service.BcnExploler.Web.csproj", "{8F48C9C8-28F3-4B48-91F1-35E9D42ABD88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Jobs", "4. Jobs", "{1155F37B-2588-4E88-ACEC-0637B1C12BEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Job.BcnExploler.AssetDefinitionDetector", "src\Lykke.Job.BcnExploler.AssetDefinitionDetector\Lykke.Job.BcnExploler.AssetDefinitionDetector.csproj", "{FF6D457C-F504-4B76-A2AE-762A9B4748C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,6 @@ Global
 		{2D5F52EC-2A27-4045-81ED-72355E2A6325}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D5F52EC-2A27-4045-81ED-72355E2A6325}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D5F52EC-2A27-4045-81ED-72355E2A6325}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C300C31-97D3-41E8-A627-C53491BDA28B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C300C31-97D3-41E8-A627-C53491BDA28B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C300C31-97D3-41E8-A627-C53491BDA28B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C300C31-97D3-41E8-A627-C53491BDA28B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,6 +55,10 @@ Global
 		{8F48C9C8-28F3-4B48-91F1-35E9D42ABD88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F48C9C8-28F3-4B48-91F1-35E9D42ABD88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F48C9C8-28F3-4B48-91F1-35E9D42ABD88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF6D457C-F504-4B76-A2AE-762A9B4748C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,8 +67,8 @@ Global
 		{F5B2F6B8-A8CC-4612-8F1D-C063EB8C8955} = {CC2067D7-1971-47BB-B491-5649EA3C18B2}
 		{4BE49E02-AAAD-460B-8D00-57F412A3D181} = {BF745453-B940-470E-81BC-43FB67703D4E}
 		{2D5F52EC-2A27-4045-81ED-72355E2A6325} = {CC2067D7-1971-47BB-B491-5649EA3C18B2}
-		{3C300C31-97D3-41E8-A627-C53491BDA28B} = {C9A2CFDE-EA32-4946-B679-7CE6EFA816B8}
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
+		{FF6D457C-F504-4B76-A2AE-762A9B4748C9} = {1155F37B-2588-4E88-ACEC-0637B1C12BEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8D0A5E9-3E96-4B67-8300-0021868C4EF8}

@@ -27,7 +27,7 @@ namespace Lykke.Service.BcnExploler.Services.Search
 
         public async Task<SearchResultType?> GetTypeAsync(string id)
         {
-            if (BitcoinAddressHelper.IsAddress(id, _baseSettings.BcnExplolerService.UsedNetwork()))
+            if (BitcoinAddressHelper.IsAddress(id, _baseSettings.BcnExploler.UsedNetwork()))
             {
                 return SearchResultType.Address;
             }
@@ -47,7 +47,7 @@ namespace Lykke.Service.BcnExploler.Services.Search
         {
             try
             {
-                var responce = await _baseSettings.BcnExplolerService.NinjaUrl.AppendPathSegment($"whatisit/{id}").GetStringAsync();
+                var responce = await _baseSettings.BcnExploler.NinjaUrl.AppendPathSegment($"whatisit/{id}").GetStringAsync();
 
                 if (IsBlock(responce))
                 {

@@ -2,7 +2,7 @@
 {
     public class AppSettings
     {
-        public BcnExplolerSettings BcnExplolerService { get; set; }
+        public BcnExplolerSettings BcnExploler { get; set; }
         public SlackNotificationsSettings SlackNotifications { get; set; }
     }
 

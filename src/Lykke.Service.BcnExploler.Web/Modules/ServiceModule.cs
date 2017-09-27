@@ -8,18 +8,19 @@ using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Services;
 using Lykke.Service.BcnExploler.Services.Health;
+using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.BcnExploler.Web.Modules
 {
     public class ServiceModule : Module
     {
-        private readonly AppSettings _settings;
+        private readonly IReloadingManager<AppSettings> _settings;
         private readonly ILog _log;
         // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
         private readonly IServiceCollection _services;
 
-        public ServiceModule(AppSettings settings, ILog log)
+        public ServiceModule(IReloadingManager<AppSettings> settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -29,7 +30,7 @@ namespace Lykke.Service.BcnExploler.Web.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_settings)
+            builder.RegisterInstance(_settings.CurrentValue.BcnExploler)
                 .SingleInstance();
 
             builder.RegisterInstance(_log)
@@ -45,7 +46,7 @@ namespace Lykke.Service.BcnExploler.Web.Modules
             builder.AddTriggers(pool =>
             {
                 // default connection must be initialized
-                pool.AddDefaultConnection(_settings.BcnExplolerService.Db.AssetsConnString);
+                pool.AddDefaultConnection(_settings.CurrentValue.BcnExploler.Db.AssetsConnString);
             });
 
             builder.Populate(_services);

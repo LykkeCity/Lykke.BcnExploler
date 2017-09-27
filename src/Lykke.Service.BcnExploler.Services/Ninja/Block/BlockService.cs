@@ -71,7 +71,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Block
         {
             try
             {
-                var resp = await _settings.BcnExplolerService.NinjaUrl
+                var resp = await _settings.BcnExploler.NinjaUrl
                     .AppendPathSegment($"blocks/{id}")
                     .SetQueryParam("headeronly", true)
                     .GetJsonAsync<BlockHeaderContract>();

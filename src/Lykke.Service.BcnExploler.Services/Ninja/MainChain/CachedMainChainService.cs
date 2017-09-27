@@ -53,7 +53,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
             var memorySteam = new MemoryStream();
             chain.WriteTo(memorySteam);
 
-            await _blobStorage.SaveBlobAsync(BlobContainerName, _appSettings.BcnExplolerService.UsedNetwork().ToString(), memorySteam);
+            await _blobStorage.SaveBlobAsync(BlobContainerName, _appSettings.BcnExploler.UsedNetwork().ToString(), memorySteam);
         }
 
         public async Task SetToTemporaryCache(ConcurrentChain chain)
@@ -77,7 +77,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
         {
             try
             {
-               return new ConcurrentChain((await _blobStorage.GetAsync(BlobContainerName, _appSettings.BcnExplolerService.UsedNetwork().ToString())).ReadToEnd());
+               return new ConcurrentChain((await _blobStorage.GetAsync(BlobContainerName, _appSettings.BcnExploler.UsedNetwork().ToString())).ReadToEnd());
 
             }
             catch

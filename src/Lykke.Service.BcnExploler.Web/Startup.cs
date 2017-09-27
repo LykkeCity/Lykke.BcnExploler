@@ -5,11 +5,9 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using Common.Log;
-using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
-using Lykke.Service.BcnExploler.Core;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Web.Filters;
 using Lykke.Service.BcnExploler.Web.Jobs;
@@ -21,7 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lykke.Service.BcnExploler
+namespace Lykke.Service.BcnExploler.Web
 {
     public class Startup
     {
@@ -62,9 +60,7 @@ namespace Lykke.Service.BcnExploler
             });
 
             var builder = new ContainerBuilder();
-            var appSettings = Environment.IsDevelopment()
-                ? Configuration.Get<AppSettings>()
-                : HttpSettingsLoader.Load<AppSettings>(Configuration.GetValue<string>("SettingsUrl"));
+            var appSettings = Configuration.LoadSettings<AppSettings>();
             var log = CreateLogWithSlack(services, appSettings);
 
             builder.RegisterModule(new ServiceModule(appSettings, log));
@@ -120,7 +116,7 @@ namespace Lykke.Service.BcnExploler
             ApplicationContainer.Dispose();
         }
 
-        private static ILog CreateLogWithSlack(IServiceCollection services, AppSettings settings)
+        private static ILog CreateLogWithSlack(IServiceCollection services, IReloadingManager<AppSettings> settings)
         {
             var consoleLogger = new LogToConsole();
             var aggregateLogger = new AggregateLogger();
@@ -130,20 +126,21 @@ namespace Lykke.Service.BcnExploler
             // Creating slack notification service, which logs own azure queue processing messages to aggregate log
             var slackService = services.UseSlackNotificationsSenderViaAzureQueue(new AzureQueueIntegration.AzureQueueSettings
             {
-                ConnectionString = settings.SlackNotifications.AzureQueue.ConnectionString,
-                QueueName = settings.SlackNotifications.AzureQueue.QueueName
+                ConnectionString = settings.CurrentValue.SlackNotifications.AzureQueue.ConnectionString,
+                QueueName = settings.CurrentValue.SlackNotifications.AzureQueue.QueueName
             }, aggregateLogger);
 
-            var dbLogConnectionString = settings.BcnExplolerService.Db.LogsConnString;
+            var dbLogConnectionStringManager = settings.Nested(x => x.BcnExploler.Db.LogsConnString);
+            var dbLogConnectionString = dbLogConnectionStringManager.CurrentValue;
 
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
-                const string appName = "Lykke.Service.BcnExploler.Web";
+                const string appName = "Lykke.Job.BcnExploler.Web";
 
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
                     appName,
-                    AzureTableStorage<LogEntity>.Create(() => dbLogConnectionString, "BcnExplolerWebLog", consoleLogger),
+                    AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "BcnExploleWebLog", consoleLogger),
                     consoleLogger);
 
                 var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(appName, slackService, consoleLogger);
