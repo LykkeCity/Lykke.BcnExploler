@@ -9,7 +9,7 @@ namespace Lykke.Service.BcnExploler.Core.Asset
     {
         Task<IAssetDefinition> GetAssetAsync(string assetId);
         Task<IAssetDefinition> GetAssetDefinitionByDefUrlAsync(string url);
-        Task<IDictionary<string, IAssetDefinition>> GetAssetDefinitionDictionaryAsync();
+        Task<IReadOnlyDictionary<string, IAssetDefinition>> GetAssetDefinitionDictionaryAsync();
         Task<IEnumerable<IAssetDefinition>> GetAssetDefinitionsAsync();
         Task<IEnumerable<IAssetDefinition>> GetAssetDefinitionsAsync(string issuer);
         Task<IDictionary<string, IAssetCoinholdersIndex>> GetAssetCoinholdersIndexAsync();

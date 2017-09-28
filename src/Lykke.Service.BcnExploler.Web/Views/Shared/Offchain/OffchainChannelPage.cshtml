@@ -1,0 +1,12 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model IEnumerable<Lykke.Service.BcnExploler.Web.Models.Offchain.OffchainFilledChannelViewModel>
+@{
+    Layout = null;
+}
+
+
+@foreach (var item in Model)
+{
+
+    @Html.Partial("Offchain/OffchainChannel", item)
+}

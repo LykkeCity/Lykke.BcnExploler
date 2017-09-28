@@ -1,5 +1,5 @@
-﻿$(function() {
-    $('body').on('click','.open_hidden_content',  function (ev) {
+﻿$(function () {
+    $('body').on('click', '.open_hidden_content', function (ev) {
         ev.preventDefault();
         var $this = $(this), id = $this.attr('href');
 
@@ -7,7 +7,7 @@
         $(id).slideToggle('fast');
     });
 
-    $('body').on('click', '.js-toggle-change-btn', function() {
+    $('body').on('click', '.js-toggle-change-btn', function () {
         var $self = $(this);
 
         $self.find('.js-toggle-change-label').toggleClass('hidden');
@@ -17,30 +17,24 @@
     });
 
     (function () {
-        var popoverSelector = '[data-toggle="popover"]';
+        var popoverSelector = '.js-tranasction-popover';
         var initAssetQuantityPopover = function () {
             var $elem = $(popoverSelector);
 
             var is_touch_device = ("ontouchstart" in window) || window.DocumentTouch && document instanceof DocumentTouch;
 
             $elem.popover('destroy');
-            $elem.popover({
-                trigger: is_touch_device ? 'click' : 'hover',
-                container: this.parentNode,
-                placement: 'auto'
+            $.each($elem, function (index, elem) {
+                $(elem).popover({
+                    trigger: is_touch_device ? 'click' : 'hover',
+                    container: this.parentNode,
+                    placement: 'auto'
+                });
             });
         }
 
         initAssetQuantityPopover();
 
         $('body').on('transactions-loaded', initAssetQuantityPopover);
-
-        $('body').on('click touchstart', function (e) {
-            $(popoverSelector).each(function () {
-                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('[data-toggle="popover"]').has(e.target).length === 0) {
-                    $(this).popover('hide');
-                }
-            });
-        });
-    })();    
+    })();
 });

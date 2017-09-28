@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -34,9 +35,9 @@ namespace Lykke.Service.BcnExploler.Services.Asset
             return (await _assetDefinitionCachedDictionary.Values()).FirstOrDefault(p => p.AssetDefinitionUrl == url);
         }
 
-        public async Task<IDictionary<string, IAssetDefinition>> GetAssetDefinitionDictionaryAsync()
+        public async Task<IReadOnlyDictionary<string, IAssetDefinition>> GetAssetDefinitionDictionaryAsync()
         {
-            return await _assetDefinitionCachedDictionary.GetDictionaryAsync();
+            return new ReadOnlyDictionary<string, IAssetDefinition>(await _assetDefinitionCachedDictionary.GetDictionaryAsync());
         }
 
         public async Task<IEnumerable<IAssetDefinition>> GetAssetDefinitionsAsync(string issuer)

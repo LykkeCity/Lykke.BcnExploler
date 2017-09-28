@@ -47,6 +47,10 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
                     var asset = await _assetService.GetAssetAsync(id);
                     return RedirectToAction("Index", "Asset", new { id = asset.AssetIds.First() });
                 }
+                case SearchResultType.OffchainTransaction:
+                {
+                    return RedirectToAction("Index", "OffchainTransaction", new { id = id });
+                }
                 default:
                 {
                     var lastBlock = await _blockService.GetLastBlockHeaderAsync();

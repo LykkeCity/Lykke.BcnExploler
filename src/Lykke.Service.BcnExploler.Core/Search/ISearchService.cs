@@ -7,7 +7,8 @@ namespace Lykke.Service.BcnExploler.Core.Search
         Block,
         Transaction,
         Address,
-        Asset
+        Asset,
+        OffchainTransaction,
     }
 
     public interface ISearchService

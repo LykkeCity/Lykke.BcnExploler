@@ -1,0 +1,32 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model Lykke.Service.BcnExploler.Web.Models.Offchain.OffchainTransactionDetailsViewModel
+@{
+    
+    ViewData["Title"] = "Offchain transaction";
+}
+
+@section scripts
+{
+    <script src="~/js/app/transaction/singletransaction.js" asp-append-version="true"></script>
+    <script src="~/js/app/transaction/transactionlist.js"  asp-append-version="true"></script>
+}
+
+<section class="section section--padding">
+    @Html.Partial("DetailsTable", Model)
+</section>
+
+<section class="section section--transactions">
+    @Html.Partial("Offchain/OffchainTransactionDetails", Model.Transaction)
+</section>
+
+<section class="section section--heading">
+    <div class="container">
+        <h3>Off-chain history</h3>
+    </div>
+</section>
+
+<section class="section section--transactions">
+    
+    @Html.Partial("Offchain/OffchainChannel", Model.FilledChannel)
+
+</section>

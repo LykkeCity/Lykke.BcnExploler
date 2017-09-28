@@ -1,0 +1,35 @@
+﻿@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model Lykke.Service.BcnExploler.Web.Models.Offchain.OffchainInOutViewModel 
+@{
+    Layout = null;
+}
+
+<div class="transaction_list__item">
+    <div class="row">
+        <div class="col-xs-8">
+            <a href="@Url.Action("Index", "Address", new {id = Model.Address})">
+                <span class="truncate" title="@Model.Address">@Model.Address</span>
+            </a>
+            @*<button class="btn btn--icon btn_asset_download" type="button">
+                    <i class="icon icon--download"></i>
+                </button>*@
+        </div>
+        <div class="col-xs-4">
+            <span>@Model.Quantity.ToStringBtcFormat() @(Model.Asset.IsColored ? Model.Asset.NameShort: "")</span>
+            @{
+                var diffClass = "text--gray";
+                if (Model.QuantityDiff > 0)
+                {
+                    diffClass = "text--green";
+                }
+                else if(Model.QuantityDiff<0)
+                {
+                    diffClass = "text--red";
+                }
+            }
+            <span class="@diffClass">(@Model.QuantityDiff.ToStringBtcFormat())</span>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,25 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model Lykke.Service.BcnExploler.Web.Models.Offchain.OffchainFilledChannelViewModel 
+@{
+    Layout = null;
+}
+
+<div class="js-offchain-channel">
+    @if (Model.CloseTransaction != null)
+    {
+    
+        @Html.Partial("TransactionDetails/TransactionDetails", Model.CloseTransaction)
+    }
+
+    @foreach (var tx in Model.OffChainTransactions)
+    {
+        @Html.Partial("Offchain/OffchainTransactionDetails", tx)
+    }
+
+    @if(Model.OpenTransaction != null)
+    {
+        @Html.Partial("TransactionDetails/TransactionDetails", Model.OpenTransaction)
+    } 
+</div>
+
+

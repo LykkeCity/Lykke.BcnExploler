@@ -11,6 +11,7 @@ using Lykke.Service.BcnExploler.Core.Asset.Definitions.Images;
 using Lykke.Service.BcnExploler.Core.Asset.Indexes;
 using Lykke.Service.BcnExploler.Core.AssetBalanceChanges;
 using Lykke.Service.BcnExploler.Core.Block;
+using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Core.MainChain;
 using Lykke.Service.BcnExploler.Core.Search;
@@ -19,6 +20,7 @@ using Lykke.Service.BcnExploler.Core.Transaction;
 using Lykke.Service.BcnExploler.Services.Address;
 using Lykke.Service.BcnExploler.Services.Asset;
 using Lykke.Service.BcnExploler.Services.AssetBalanceChanges;
+using Lykke.Service.BcnExploler.Services.Channel;
 using Lykke.Service.BcnExploler.Services.Health;
 using Lykke.Service.BcnExploler.Services.Ninja;
 using Lykke.Service.BcnExploler.Services.Ninja.Address;
@@ -85,6 +87,10 @@ namespace Lykke.Service.BcnExploler.Services
                 }
             ).AsSelf().SingleInstance();
 
+            builder.RegisterInstance(generalSettingsManager.CurrentValue.BcnExploler.UsedNetwork())
+                .AsSelf()
+                .SingleInstance();
+
             builder.RegisterType<MainChainService>()
                 .As<IMainChainService>()
                 .InstancePerDependency();
@@ -148,6 +154,14 @@ namespace Lykke.Service.BcnExploler.Services
 
             builder.RegisterType<AssetService>()
                 .As<IAssetService>()
+                .SingleInstance();
+
+            builder.RegisterType<OffchainNotificationsApiProvider>()
+                .As<IOffchainNotificationsApiProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<ChannelService>()
+                .As<IChannelService>()
                 .SingleInstance();
         }
     }

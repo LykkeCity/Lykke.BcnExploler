@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lykke.Service.BcnExploler.Core.Address;
-using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Block;
+using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
+using Lykke.Service.BcnExploler.Web.Models.Offchain;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Address
 {
@@ -24,7 +25,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public int TotalReceivedTransactions { get; set; }
         public bool TotalReceivedTransactionsCountCalculated { get; set; }
 
-        public IEnumerable<Asset> Assets { get; set; }
+        public IEnumerable<ColoredBalance> Assets { get; set; }
         public AssetDictionary AssetDic { get; set; }
 
         public DateTime LastBlockDateTime { get; set; }
@@ -38,42 +39,87 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public int PrevBlock => AtBlockHeight - 1;
         public int NextBlock => AtBlockHeight + 1;
 
-        public static AddressBalanceViewModel Create(IAddressBalance balance, IDictionary<string, IAssetDefinition> assetDictionary, IBlockHeader lastBlock, IBlockHeader atBlock)
+        public OffchainChannelsByAsset OffchainChannelsByAsset { get; set; }
+        public static AddressBalanceViewModel Create(IAddressBalance balance, 
+            IReadOnlyDictionary<string, IAssetDefinition> assetDictionary, 
+            IBlockHeader lastBlock, 
+            IBlockHeader atBlock,
+            IEnumerable<IChannel> channels)
         {
+            var onchainColoredBalances =
+                (balance.ColoredBalances ?? Enumerable.Empty<IColoredBalance>()).Select(p =>
+                    ColoredBalance.Create(p, assetDictionary)).ToList();
+
+            var existedOnchainAssetsBalances = onchainColoredBalances.Select(p => p.AssetId).ToDictionary(p => p);
+
+            //show balances for offchain assets with 0 onchain balance
+            var missedOffchainColoredBalances = channels.Where(p => p.IsColored && !existedOnchainAssetsBalances.ContainsKey(p.AssetId))
+                .Select(p => p.AssetId)
+                .Distinct()
+                .Select(assetId => ColoredBalance.CreateEmpty(assetId, assetDictionary));
+
             return new AddressBalanceViewModel
             {
                 AddressId = balance.AddressId,
                 TotalConfirmedTransactions = balance.TotalTransactions,
                 Balance = balance.BtcBalance,
-                Assets = (balance.ColoredBalances??Enumerable.Empty<IColoredBalance>()).Select(p => new Asset
-                {
-                    AssetId = p.AssetId,
-                    Quantity = p.Quantity,
-                    UnconfirmedQuantityDelta = p.UnconfirmedQuantityDelta
-                }),
+                Assets = onchainColoredBalances.Union(missedOffchainColoredBalances).ToList(),
                 UnconfirmedBalanceDelta = balance.UnconfirmedBalanceDelta,
                 AssetDic = AssetDictionary.Create(assetDictionary),
                 LastBlockHeight = lastBlock.Height,
                 LastBlockDateTime = lastBlock.Time,
                 AtBlockHeight = (atBlock ?? lastBlock).Height,
                 AtBlockDateTime = (atBlock ?? lastBlock).Time,
-                TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated,
-                TotalSpendedTransactions = balance.TotalSpendedTransactions,
-                TotalReceivedTransactions = balance.TotalReceivedTransactions,
-                TotalReceivedTransactionsCountCalculated = balance.TotalReceivedTransactionsCountCalculated,
-                TotalSpendedTransactionsCountCalculated = balance.TotalSpendedTransactionsCountCalculated
+                OffchainChannelsByAsset = OffchainChannelsByAsset.Create(channels, assetDictionary),
+                TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated
             };
         }
         
-        public class Asset
+        public class ColoredBalance
         {
             public string AssetId { get; set; }
+
+            public AssetViewModel Asset { get; set; }
             public double Quantity { get; set; }
             public double UnconfirmedQuantityDelta { get; set; }
             public bool ShowUnconfirmedBalance => UnconfirmedQuantityDelta != 0;
             public double UnconfirmedQuantity => Quantity + UnconfirmedQuantityDelta;
 
-            public bool ShowAsset => Quantity != 0 || UnconfirmedQuantity != 0;
+            public bool HasOnChainBalance => Quantity != 0 || UnconfirmedQuantity != 0;
+
+            public static ColoredBalance Create(IColoredBalance coloredBalance, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
+            {
+                var asset = assetDictionary.GetValueOrDefault(coloredBalance.AssetId, null);
+
+                var assetViewModel = asset != null
+                    ? AssetViewModel.Create(asset)
+                    : AssetViewModel.CreateNotFoundAsset(coloredBalance.AssetId);
+
+                return new ColoredBalance
+                {
+                    AssetId = coloredBalance.AssetId,
+                    Quantity = coloredBalance.Quantity,
+                    UnconfirmedQuantityDelta = coloredBalance.UnconfirmedQuantityDelta,
+                    Asset = assetViewModel,
+                };
+            }
+
+            public static ColoredBalance CreateEmpty(string assetId, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
+            {
+                var asset = assetDictionary.GetValueOrDefault(assetId, null);
+
+                var assetViewModel = asset != null
+                    ? AssetViewModel.Create(asset)
+                    : AssetViewModel.CreateNotFoundAsset(assetId);
+
+                return new ColoredBalance
+                {
+                    AssetId = assetId,
+                    Quantity = 0,
+                    UnconfirmedQuantityDelta = 0,
+                    Asset = assetViewModel,
+                };
+            }
         }
     }
 

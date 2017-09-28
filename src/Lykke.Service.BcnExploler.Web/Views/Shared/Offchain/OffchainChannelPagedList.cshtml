@@ -1,0 +1,38 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model OffchainChannelPagedList 
+@{
+    Layout = null;
+}
+
+<div class="section section--heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>
+                    Channels 
+                    <span class="js-offchain-loaded-channel-count">0</span>
+                    <span>
+                        of @Model.ChannelCount
+                    </span>
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<ul>
+    @foreach (var pageMeta in Model.Pages)
+    {
+        <li class="js-offchain-page hidden" data-page="@pageMeta.PageNumber"
+            data-load-url="@Model.BuildUrl(Url, pageMeta.PageNumber)">
+
+
+            <div class="show_more">
+                <a class="btn js-load-offchain-page">Show More</a>
+            </div>
+        </li>
+    }
+</ul>
+
+
+@Html.Loader(htmlId: "js-offchain-page-loader", htmlClass: "hidden")

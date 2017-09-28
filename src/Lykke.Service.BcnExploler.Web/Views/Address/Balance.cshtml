@@ -1,6 +1,7 @@
 ﻿@using Common
 @using Lykke.Service.BcnExploler.Services.Helpers
 @using Lykke.Service.BcnExploler.Web.Models.Address
+@using Lykke.Service.BcnExploler.Web.Models.Offchain
 @model Lykke.Service.BcnExploler.Web.Models.Address.AddressBalanceViewModel
     @{
         Layout = null;
@@ -92,7 +93,19 @@
                                 }
                             </td>
                             <td class="issuer__content text-right">
-                                <div class="wallet_value">@BitcoinUtils.SatoshiToBtc(Model.Balance).ToStringBtcFormat() BTC</div>
+                                <div class="wallet_value">
+                                    @{
+                                        var btcQuantityDescription = $"{BitcoinUtils.SatoshiToBtc(Model.Balance).ToStringBtcFormat()} BTC";
+                                    }
+                                    @if (Model.OffchainChannelsByAsset.ExistsBtc())
+                                    {
+                                        @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainChannelsByAsset.GetBtc(), btcQuantityDescription))
+                                    }
+                                    else
+                                    {
+                                        <span>@btcQuantityDescription</span>
+                                    }
+                                </div>
                                 @if (Model.ShowUnconfirmedBalance)
                                 {
                                     <div class="text-muted">@BitcoinUtils.SatoshiToBtc(Model.UnconfirmedBalance).ToStringBtcFormat() BTC</div>
@@ -102,14 +115,14 @@
                         </tbody>
                     </table>
                 </li>
-                @foreach (var asset in Model.Assets.Where(p => p.ShowAsset))
+                @foreach (var assetBalance in Model.Assets.Where(p => p.HasOnChainBalance || Model.OffchainChannelsByAsset.Exists(p.Asset)))
                 {
-                    var assetDivisibity = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.Divisibility, 0);
-                    var assetShortName = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.NameShort, "");
-                    var assetName = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.Name, asset.AssetId);
-                    var assetIcon = Model.AssetDic.GetAssetProp(asset.AssetId, p => p.IconUrl, null);
+                    var assetDivisibity = Model.AssetDic.GetAssetProp(assetBalance.AssetId, p => p.Divisibility, 0);
+                    var assetShortName = Model.AssetDic.GetAssetProp(assetBalance.AssetId, p => p.NameShort, "");
+                    var assetName = Model.AssetDic.GetAssetProp(assetBalance.AssetId, p => p.Name, assetBalance.AssetId);
+                    var assetIcon = Model.AssetDic.GetAssetProp(assetBalance.AssetId, p => p.IconUrl, null);
 
-                    var assetUrl = Model.AssetDic.Dic.ContainsKey(asset.AssetId) ? Url.Action("Index", "Asset", new { id = asset.AssetId }) : null;
+                    var assetUrl = Model.AssetDic.Dic.ContainsKey(assetBalance.AssetId) ? Url.Action("Index", "Asset", new { id = assetBalance.AssetId }) : null;
 
                     <li class="issuer_list__item col-xs-12 col-sm-6">
                         <table class="issuer">
@@ -127,16 +140,28 @@
                                                 @assetName
                                             </a>
                                         </div>
-                                        @if (asset.ShowUnconfirmedBalance)
+                                        @if (assetBalance.ShowUnconfirmedBalance)
                                         {
                                             <div class="text-muted">Unconfirmed balance</div>
                                         }
                                     </td>
                                     <td class="issuer__content text-right">
-                                        <div class="wallet_value">@BitcoinUtils.CalculateColoredAssetQuantity(asset.Quantity, assetDivisibity).ToStringBtcFormat() @assetShortName</div>
-                                        @if (asset.ShowUnconfirmedBalance)
+                                        <div class="wallet_value">
+                                            @{
+                                                var assetQuantityDescription = $"{BitcoinUtils.CalculateColoredAssetQuantity(assetBalance.Quantity, assetDivisibity).ToStringBtcFormat()} {assetShortName}";
+                                            }
+                                            @if (Model.OffchainChannelsByAsset.Exists(assetBalance.Asset))
+                                            {
+                                                @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainChannelsByAsset.Get(assetBalance.Asset), assetQuantityDescription))
+                                            }
+                                            else
+                                            {
+                                                <text>@assetQuantityDescription</text>
+                                            }
+                                        </div>
+                                        @if (assetBalance.ShowUnconfirmedBalance)
                                         {
-                                            <div class="text-muted">@BitcoinUtils.CalculateColoredAssetQuantity(asset.UnconfirmedQuantity, assetDivisibity).ToStringBtcFormat() @assetShortName</div>
+                                            <div class="text-muted">@BitcoinUtils.CalculateColoredAssetQuantity(assetBalance.UnconfirmedQuantity, assetDivisibity).ToStringBtcFormat() @assetShortName</div>
                                         }
                                     </td>
                                 </tr>

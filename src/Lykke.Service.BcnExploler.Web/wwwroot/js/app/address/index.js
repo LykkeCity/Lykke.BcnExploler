@@ -67,8 +67,10 @@
         var loadUrl = $addressPanel.data('load-url');
 
         $addressPanel.load(loadUrl, function () {
+            $('.js-active-tab .js-transactions-container.hidden:first').trigger('load-transactions');
+            $('.js-active-tab').trigger('address-transaction-list-loaded');
+
             $addressPanel.trigger('tx-history-loaded');
-            $('.js-transactions-container.hidden:first').trigger('load-transactions');
         });
     })();
 
@@ -225,4 +227,25 @@
                 .addClass('current-address-transaction');
         });
     })();
+
+    //offchain balance popover
+    (function () {
+        var popoverSelector = '.js-offchain-balance-popover';
+
+        var initOffchainPopover = function () {
+            $(popoverSelector).popover({
+                trigger: 'click',
+                container: this.parentNode,
+                html: true,
+                content: function () {
+                    return $(this).next('.popover-content').html();
+                }
+            });
+        };
+
+        $('body').on('balance-loaded', function () {
+            initOffchainPopover();
+        });
+    })();
+
 })

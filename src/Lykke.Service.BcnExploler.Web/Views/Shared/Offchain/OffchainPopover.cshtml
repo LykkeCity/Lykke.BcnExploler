@@ -1,0 +1,102 @@
+﻿@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model OffchainPopoverViewModel
+
+<div class="popover_control multisig_popover">
+    <a class="js-offchain-balance-popover" tabindex="0" role="button" data-toggle="popover" data-placement="bottom" data-original-title="" title="">
+        @Model.Title
+    </a>
+    <div class="popover-content">
+
+
+        @foreach (var channel in Model.Channels)
+        {
+            var confirmedTx = channel.ConfirmedOffchainTransaction;
+
+            <h3>Multisig key holders</h3>
+
+            <table class="issuer">
+                <tbody>
+                <tr>
+                    <td class="issuer__content">
+
+                        <div class="issuer__name">
+                            @confirmedTx.Address1Quantity.ToStringBtcFormat() @confirmedTx.Asset.NameShort
+                            <span class="_change @DiffClass(confirmedTx.Address1QuantityDiff)">
+                                @confirmedTx.Address1QuantityDiff.ToStringBtcFormat()
+                            </span>
+                        </div>
+                        <div class="links_group text-muted">
+                            <a href="@Url.Action("Index", "Address", new {id = confirmedTx.Address1})">
+                                <span class="truncate" title="@confirmedTx.Address1">@confirmedTx.Address1</span>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="issuer__content text-right">
+                        <div class="graph graph--multisig">
+                            @foreach (var tx in channel.OffChainTransactions)
+                            {
+                                <div class="graph_candle">
+                                    <span style="height: @tx.Address1QuanrtityPercents%"></span>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="issuer">
+                <tbody>
+                <tr>
+                    <td class="issuer__content">
+
+                        <div class="issuer__name">
+                            @confirmedTx.Address2Quantity.ToStringBtcFormat() @confirmedTx.Asset.NameShort
+                            <span class="_change @DiffClass(confirmedTx.Address2QuantityDiff)">
+                                @confirmedTx.Address2QuantityDiff.ToStringBtcFormat()
+                            </span>
+                        </div>
+                        <div class="links_group text-muted">
+                            <a href="@Url.Action("Index", "Address", new {id = confirmedTx.Address2})">
+                                <span class="truncate" title="@confirmedTx.Address2">@confirmedTx.Address2</span>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="issuer__content text-right">
+                        <div class="graph graph--multisig">
+                            @foreach (var tx in channel.OffChainTransactions)
+                            {
+                                <div class="graph_candle">
+                                    <span style="height: @tx.Address2QuanrtityPercents%"></span>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
+
+@functions
+{
+
+    public string DiffClass(decimal quantityDiff)
+    {
+        var diffClass = "text--gray";
+        if (quantityDiff > 0)
+        {
+            diffClass = "text--green";
+        }
+        else if(quantityDiff<0)
+        {
+            diffClass = "text--red";
+        }
+
+        return diffClass;}
+
+
+}

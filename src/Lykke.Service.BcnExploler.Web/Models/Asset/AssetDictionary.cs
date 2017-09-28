@@ -31,7 +31,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Asset
             return defaultValue;
         }
 
-        public static AssetDictionary Create(IDictionary<string, IAssetDefinition> source)
+        public static AssetDictionary Create(IReadOnlyDictionary<string, IAssetDefinition> source)
         {
             return new AssetDictionary
             {

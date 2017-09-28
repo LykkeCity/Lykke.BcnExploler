@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Core.Search;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Services.Helpers;
@@ -17,12 +18,15 @@ namespace Lykke.Service.BcnExploler.Services.Search
     {
         private readonly IAssetService _assetProvider;
         private readonly AppSettings _baseSettings;
+        private readonly IChannelService _channelService;
 
         public SearchService(IAssetService assetProvider,
-            AppSettings baseSettings)
+            AppSettings baseSettings, 
+            IChannelService channelService)
         {
             _assetProvider = assetProvider;
             _baseSettings = baseSettings;
+            _channelService = channelService;
         }
 
         public async Task<SearchResultType?> GetTypeAsync(string id)
@@ -38,6 +42,11 @@ namespace Lykke.Service.BcnExploler.Services.Search
             {
                 var asset = await _assetProvider.GetAssetAsync(id);
                 result = asset != null ? (SearchResultType?)SearchResultType.Asset : null;
+            }
+
+            if (await _channelService.OffchainTransactionExistsAsync(id))
+            {
+                return SearchResultType.OffchainTransaction;
             }
 
             return result;

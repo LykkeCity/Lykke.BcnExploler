@@ -386,7 +386,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Transaction
 
         #endregion
 
-        public static TransactionViewModel Create(ITransaction ninjaTransaction, IDictionary<string, IAssetDefinition> assetDictionary)
+        public static TransactionViewModel Create(ITransaction ninjaTransaction, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
             if (ninjaTransaction == null)
             {
