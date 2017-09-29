@@ -19,6 +19,7 @@ using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Core.Transaction;
 using Lykke.Service.BcnExploler.Services.Address;
 using Lykke.Service.BcnExploler.Services.Asset;
+using Lykke.Service.BcnExploler.Services.Asset.Image;
 using Lykke.Service.BcnExploler.Services.AssetBalanceChanges;
 using Lykke.Service.BcnExploler.Services.Channel;
 using Lykke.Service.BcnExploler.Services.Health;
@@ -87,6 +88,12 @@ namespace Lykke.Service.BcnExploler.Services
                 }
             ).AsSelf().SingleInstance();
 
+
+            builder.RegisterInstance(new AssetImageCacher(
+                AzureBlobStorage.Create(
+                    generalSettingsManager.ConnectionString(p => p.BcnExploler.Db.AssetsConnString)), log))
+                    .As<IAssetImageCacher>();
+
             builder.RegisterInstance(generalSettingsManager.CurrentValue.BcnExploler.UsedNetwork())
                 .AsSelf()
                 .SingleInstance();
@@ -129,6 +136,7 @@ namespace Lykke.Service.BcnExploler.Services
                 }
             ).AsSelf().SingleInstance();
 
+            builder.RegisterType<AssetDefinitionReader>().As<IAssetDefinitionReader>();
 
             builder.Register(p =>
                 {

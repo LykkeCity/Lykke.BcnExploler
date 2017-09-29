@@ -19,17 +19,17 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
     {
         private readonly ILog _log;
         private readonly IAssetDefinitionParsedBlockRepository _assetDefinitionParsedBlockRepository;
-        private readonly IAssetDataCommandProducer _assetDataCommandProducer;
+        private readonly IAssetDefinitionCommandProducer _assetDefinitionCommandProducer;
         private readonly IndexerClient _indexerClient;
 
         public ParseBlockCommandQueueConsumer(ILog log, 
             IAssetDefinitionParsedBlockRepository assetDefinitionParsedBlockRepository, 
-            IAssetDataCommandProducer assetDataCommandProducer, 
+            IAssetDefinitionCommandProducer assetDefinitionCommandProducer, 
             IndexerClient indexerClient)
         {
             _log = log;
             _assetDefinitionParsedBlockRepository = assetDefinitionParsedBlockRepository;
-            _assetDataCommandProducer = assetDataCommandProducer;
+            _assetDefinitionCommandProducer = assetDefinitionCommandProducer;
             _indexerClient = indexerClient;
         }
 
@@ -46,7 +46,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
 
                     if (assetDefUrl != null)
                     {
-                        await _assetDataCommandProducer.CreateUpdateAssetDataCommand(assetDefUrl.AbsoluteUri);
+                        await _assetDefinitionCommandProducer.CreateRetrieveAssetDefinitionCommand(assetDefUrl.AbsoluteUri);
                     }
                 }
                 

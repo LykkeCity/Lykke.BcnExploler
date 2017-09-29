@@ -7,8 +7,8 @@ namespace Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands
         public string AssetDefinitionUrl { get; set; }
     }
 
-    public interface IAssetDataCommandProducer
+    public interface IAssetDefinitionCommandProducer
     {
-        Task CreateUpdateAssetDataCommand(params string[] urls);
+        Task CreateRetrieveAssetDefinitionCommand(params string[] urls);
     }
 }

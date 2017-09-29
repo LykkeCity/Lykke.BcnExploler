@@ -12,15 +12,15 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
     {
         private readonly IAssetDefinitionRepository _assetDefinitionRepository;
         private readonly ILog _log;
-        private readonly IAssetDataCommandProducer _assetDataCommandProducer;
+        private readonly IAssetDefinitionCommandProducer _assetDefinitionCommandProducer;
 
         public UpdateAssetDataFunctions(IAssetDefinitionRepository assetDefinitionRepository, 
             ILog log, 
-            IAssetDataCommandProducer assetDataCommandProducer)
+            IAssetDefinitionCommandProducer assetDefinitionCommandProducer)
         {
             _assetDefinitionRepository = assetDefinitionRepository;
             _log = log;
-            _assetDataCommandProducer = assetDataCommandProducer;
+            _assetDefinitionCommandProducer = assetDefinitionCommandProducer;
         }
 
         [TimerTrigger("23:00:00")]
@@ -32,7 +32,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
 
                 var updUrls = assetsToUpdate.Select(p => p.AssetDefinitionUrl).ToArray();
 
-                await _assetDataCommandProducer.CreateUpdateAssetDataCommand(updUrls);
+                await _assetDefinitionCommandProducer.CreateRetrieveAssetDefinitionCommand(updUrls);
             }
             catch (Exception e)
             {

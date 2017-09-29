@@ -14,28 +14,28 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
     public class AssetDataCommandQueueConsumer
     {
         private readonly ILog _log;
-        private readonly IAssetReader _assetReader;
+        private readonly IAssetDefinitionReader _assetDefinitionReader;
         private readonly IAssetDefinitionRepository _assetDefinitionRepository;
         private readonly IAssetImageCommandProducer _assetImageCommandProducer;
 
         public AssetDataCommandQueueConsumer(ILog log, 
-            IAssetReader assetReader, 
+            IAssetDefinitionReader assetDefinitionReader, 
             IAssetDefinitionRepository assetDefinitionRepository,
             IAssetImageCommandProducer assetImageCommandProducer)
         {
             _log = log;
-            _assetReader = assetReader;
+            _assetDefinitionReader = assetDefinitionReader;
             _assetDefinitionRepository = assetDefinitionRepository;
             _assetImageCommandProducer = assetImageCommandProducer;
         }
 
 
         [QueueTrigger(QueueNames.AssetDefinitionScanner.RetrieveAsset)]
-        public async Task UpdateAssetData(UpdateAssetDataContext context)
+        public async Task RetrieveAssetDefinition(UpdateAssetDataContext context)
         {
             try
             {
-                var assetData = await _assetReader.ReadAssetDataAsync(context.AssetDefinitionUrl);
+                var assetData = await _assetDefinitionReader.ReadAssetDataAsync(context.AssetDefinitionUrl);
                 if (assetData != null)
                 {
                     await _assetDefinitionRepository.InsertOrReplaceAsync(assetData);
@@ -49,7 +49,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync("UpdateAssetDataCommandQueueConsumer", "UpdateAssetData", context.ToJson(), e);
+                await _log.WriteErrorAsync("UpdateAssetDataCommandQueueConsumer", "RetrieveAssetDefinition", context.ToJson(), e);
 
                 if (!await _assetDefinitionRepository.IsAssetExistsAsync(context.AssetDefinitionUrl))
                 {

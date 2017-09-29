@@ -74,8 +74,8 @@ namespace Lykke.Service.BcnExploler.AzureRepositories
                 .As<IAssetDefinitionParseBlockCommandProducer>();
 
 
-            builder.RegisterInstance(new AssetDataCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetDefinitionScanner.RetrieveAsset)))
-                .As<IAssetDataCommandProducer>();
+            builder.RegisterInstance(new AssetDefinitionCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetDefinitionScanner.RetrieveAsset)))
+                .As<IAssetDefinitionCommandProducer>();
 
             builder.RegisterInstance(new AssetImageCommandProducer(AzureQueueExt.Create(generalSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), QueueNames.AssetDefinitionScanner.UpsertImages)))
                 .As<IAssetImageCommandProducer>();

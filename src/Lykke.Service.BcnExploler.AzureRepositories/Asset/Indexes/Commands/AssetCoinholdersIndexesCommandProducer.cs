@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AzureStorage.Queue;
+using Common;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Asset.Indexes.Commands;
 
@@ -30,13 +31,13 @@ namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Indexes.Commands
         {
             foreach (var assetID in assetIds)
             {
-                await _queue.PutMessageAsync(new QueueRequestModel<AssetCoinholdersUpdateIndexCommand>
+                await _queue.PutRawMessageAsync(new QueueRequestModel<AssetCoinholdersUpdateIndexCommand>
                 {
                     Data = new AssetCoinholdersUpdateIndexCommand
                     {
                         AssetId = assetID
                     }
-                });
+                }.ToJson());
             }
         }
     }

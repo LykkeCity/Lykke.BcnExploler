@@ -60,7 +60,7 @@ namespace Lykke.Service.BcnExploler.Services.Asset
             };
         }
     }
-    public class AssetDefinitionReader:IAssetReader
+    public class AssetDefinitionReader:IAssetDefinitionReader
     {
         public async Task<IAssetDefinition> ReadAssetDataAsync(string absUrl)
         {

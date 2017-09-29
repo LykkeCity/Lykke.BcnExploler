@@ -1,27 +1,30 @@
 ﻿using System.Threading.Tasks;
 using AzureStorage.Queue;
+using Common;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 
 namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions.Commands
 {
-    public class AssetDataCommandProducer: IAssetDataCommandProducer
+    public class AssetDefinitionCommandProducer: IAssetDefinitionCommandProducer
     {
         private readonly IQueueExt _queue;
 
-        public AssetDataCommandProducer(IQueueExt queue)
+        public AssetDefinitionCommandProducer(IQueueExt queue)
         {
             _queue = queue;
         }
 
 
-        public async Task CreateUpdateAssetDataCommand(params string[] urls)
+        public async Task CreateRetrieveAssetDefinitionCommand(params string[] urls)
         {
             foreach (var url in urls)
             {
-                await _queue.PutMessageAsync(new UpdateAssetDataContext
+                var context = new UpdateAssetDataContext
                 {
                     AssetDefinitionUrl = url
-                });
+                };
+
+                await _queue.PutRawMessageAsync(context.ToJson());
             }
         }
     }

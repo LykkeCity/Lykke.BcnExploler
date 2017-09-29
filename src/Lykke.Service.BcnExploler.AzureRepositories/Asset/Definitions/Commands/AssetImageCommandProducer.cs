@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AzureStorage.Queue;
+using Common;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 
 namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions.Commands
@@ -16,15 +17,12 @@ namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions.Commands
 
         public async Task CreateUpsertAssetImageCommand(IEnumerable<string> assetIds, string iconUrl, string imageUrl)
         {
-            await _queue.PutMessageAsync(new QueueRequestModel<AssetImageContext>
+            await _queue.PutRawMessageAsync(new AssetImageContext
             {
-                Data = new AssetImageContext
-                {
-                    AssetIds = assetIds,
-                    IconUrl = iconUrl,
-                    ImageUrl = imageUrl
-                }
-            });
+                AssetIds = assetIds,
+                IconUrl = iconUrl,
+                ImageUrl = imageUrl
+            }.ToJson());
         }
     }
 }

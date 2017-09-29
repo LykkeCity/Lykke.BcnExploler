@@ -6,7 +6,7 @@ using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 namespace Lykke.Service.BcnExploler.Core.Asset
 {
 
-    public interface IAssetReader
+    public interface IAssetDefinitionReader
     {
         Task<IAssetDefinition> ReadAssetDataAsync(string absUrl);
     }
