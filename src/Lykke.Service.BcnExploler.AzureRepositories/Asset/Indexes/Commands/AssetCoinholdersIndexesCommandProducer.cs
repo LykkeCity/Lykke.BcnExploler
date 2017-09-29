@@ -31,12 +31,9 @@ namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Indexes.Commands
         {
             foreach (var assetID in assetIds)
             {
-                await _queue.PutRawMessageAsync(new QueueRequestModel<AssetCoinholdersUpdateIndexCommand>
+                await _queue.PutRawMessageAsync(new AssetCoinholdersUpdateIndexCommand
                 {
-                    Data = new AssetCoinholdersUpdateIndexCommand
-                    {
-                        AssetId = assetID
-                    }
+                    AssetId = assetID
                 }.ToJson());
             }
         }
