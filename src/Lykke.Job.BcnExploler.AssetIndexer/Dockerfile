@@ -1,4 +1,4 @@
 FROM microsoft/aspnetcore:2.0
 WORKDIR /app
 COPY . .
-ENTRYPOINT ["dotnet", "Lykke.Job.BcnExploler.AssetDefinitionDetector.dll"]
+ENTRYPOINT ["dotnet", "Lykke.Job.BcnExploler.AssetIndexer.dll"]
