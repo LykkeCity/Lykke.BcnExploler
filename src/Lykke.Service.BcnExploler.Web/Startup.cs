@@ -54,10 +54,10 @@ namespace Lykke.Service.BcnExploler.Web
                     options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
                 });
 
-            services.AddSwaggerGen(options =>
-            {
-                options.DefaultLykkeConfiguration("v1", "BcnExploler API");
-            });
+            //services.AddSwaggerGen(options =>
+            //{
+            //    options.DefaultLykkeConfiguration("v1", "BcnExploler API");
+            //});
 
             var builder = new ContainerBuilder();
             var appSettings = Configuration.LoadSettings<AppSettings>();
@@ -80,8 +80,8 @@ namespace Lykke.Service.BcnExploler.Web
 
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUi();
+            //app.UseSwagger();
+            //app.UseSwaggerUi();
             app.UseStaticFiles();
 
             this.TriggerHost = new TriggerHost(ServiceProvider);
