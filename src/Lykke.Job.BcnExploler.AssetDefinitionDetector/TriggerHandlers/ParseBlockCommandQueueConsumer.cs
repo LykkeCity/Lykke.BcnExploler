@@ -38,6 +38,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         {
             try
             {
+                await _log.WriteInfoAsync(nameof(ParseBlockCommandQueueConsumer), nameof(ParseBlock), context.ToJson(), "Started");
                 var block = await _indexerClient.GetBlock(uint256.Parse(context.BlockHash));
 
                 foreach (var transaction in block.Transactions.Where(p => p.HasValidColoredMarker()))
@@ -46,16 +47,23 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
 
                     if (assetDefUrl != null)
                     {
+                        await _log.WriteInfoAsync(nameof(ParseBlockCommandQueueConsumer),
+                            nameof(ParseBlock), 
+                            context.ToJson(),
+                            $"Add asset def url command {assetDefUrl.AbsoluteUri}");
+
                         await _assetDefinitionCommandProducer.CreateRetrieveAssetDefinitionCommand(assetDefUrl.AbsoluteUri);
                     }
                 }
                 
 
                 await _assetDefinitionParsedBlockRepository.AddBlockAsync(AssetDefinitionParsedBlock.Create(context.BlockHash));
+
+                await _log.WriteInfoAsync(nameof(ParseBlockCommandQueueConsumer), nameof(ParseBlock), context.ToJson(), "Done");
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync("ParseBlockCommandQueueConsumer", "ParseBlock", context.ToJson(), e);
+                await _log.WriteErrorAsync(nameof(ParseBlockCommandQueueConsumer), nameof(ParseBlock), context.ToJson(), e);
             }
         }
         

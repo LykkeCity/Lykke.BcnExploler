@@ -45,6 +45,9 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TriggerHandlers
         {
             try
             {
+                await _log.WriteInfoAsync(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
+                    context.ToJson(), "Started");
+
                 var asset = await _assetService.GetAssetAsync(context.AssetId);
                 if (asset != null)
                 {
@@ -67,10 +70,13 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TriggerHandlers
                                 blocksWithChanges.Result, 
                                 allTxs.Result.Count(), lastMonthTxs.Result.Count(), lastTxDate.Unwrap().Result));
                 }
+
+                await _log.WriteInfoAsync(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
+                    context.ToJson(), "Done");
             }
             catch (Exception e)
             {
-                await  _log.WriteErrorAsync("AssetCoinholderIndexesCommandsQueueConsumer", "UpdateCoinholersIndex",
+                await  _log.WriteErrorAsync(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
                    context.ToJson(), e);
             }
         }

@@ -29,6 +29,8 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         {
             try
             {
+                await _log.WriteInfoAsync(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), "Started");
+
                 var iconResult = await _assetImageCacher.SaveAssetIconAsync(context.IconUrl, context.AssetIds.First());
                 var imageResult = await _assetImageCacher.SaveAssetImageAsync(context.ImageUrl, context.AssetIds.First());
 
@@ -36,11 +38,13 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
                     AssetImage.Create(context.AssetIds, 
                     iconResult,
                     imageResult));
-            
+
+                await _log.WriteInfoAsync(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), "Done");
+
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync("UpdateAssetImagesCommandQueueConsumer", "UpdateAssetImage", context.ToJson(), e);
+                await _log.WriteErrorAsync(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), e);
             }
         }
     }

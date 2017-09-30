@@ -32,17 +32,21 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
         {
             try
             {
+                await _log.WriteInfoAsync(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, "Started");
                 var indexes = (await _indexRepository.GetAllAsync()).ToList();
+
                 foreach (var index in indexes)
                 {
                     var score = AssetScoreHelper.CalculateAssetScore(await _assetService.GetAssetAsync(index.AssetIds.FirstOrDefault()), index, indexes);
                     
                     await _assetScoreRepository.InsertOrReplaceAsync(AssetScore.Create(index.AssetIds, score));
                 }
+
+                await _log.WriteInfoAsync(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, "Done");
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync("AssetScoreFunctions", "UpdateAssetScores", null, e);
+                await _log.WriteErrorAsync(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, e);
                 throw;
             }
         }

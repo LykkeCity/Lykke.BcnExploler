@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
@@ -34,21 +35,31 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
 
             try
             {
+                await _log.WriteInfoAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Started");
+
                 blockPtr = await _blockService.GetLastBlockHeaderAsync();
+                
                 while (blockPtr != null && 
                     !await _assetDefinitionParsedBlockRepository
                         .IsBlockExistsAsync(AssetDefinitionParsedBlock.Create(blockPtr.Hash)))
                 {
-                    await _parseBlockCommandProducer.CreateParseBlockCommand(blockPtr.Hash);
+                    await _log.WriteInfoAsync(nameof(ParseBlocksFunctions),
+                        nameof(ParseLast),
+                        new {blockPtr.Hash, blockPtr.Height}.ToJson(),
+                        $"Add parse block command {blockPtr.Height}");
 
+                    await _parseBlockCommandProducer.CreateParseBlockCommand(blockPtr.Hash);
+                    
                     blockPtr = await _blockService.GetBlockHeaderAsync((blockPtr.Height - 1).ToString());
                 }
-                
+
+                await _log.WriteInfoAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Done");
+
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync("ParseBlocksFunctions", 
-                    "ParseLast", 
+                await _log.WriteErrorAsync(nameof(ParseBlocksFunctions), 
+                    nameof(ParseLast), 
                     new { blockHash = blockPtr?.Hash }.ToJson(),
                     e);
 

@@ -28,15 +28,19 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
         {
             try
             {
+                await _log.WriteInfoAsync(nameof(UpdateAssetDataFunctions), nameof(UpdateAssets), null, "Started");
+
                 var assetsToUpdate = await _assetDefinitionRepository.GetAllAsync();
 
                 var updUrls = assetsToUpdate.Select(p => p.AssetDefinitionUrl).ToArray();
 
                 await _assetDefinitionCommandProducer.CreateRetrieveAssetDefinitionCommand(updUrls);
+
+                await _log.WriteInfoAsync(nameof(UpdateAssetDataFunctions), nameof(UpdateAssets), null, "Done");
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync("UpdateAssetDataFunctions", "UpdateAssets", null, e);
+                await _log.WriteErrorAsync(nameof(UpdateAssetDataFunctions), nameof(UpdateAssets), null, e);
             }
         }
     }

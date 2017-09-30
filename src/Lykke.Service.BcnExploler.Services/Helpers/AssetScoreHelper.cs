@@ -12,14 +12,23 @@ namespace Lykke.Service.BcnExploler.Services.Helpers
         public static double CalculateAssetScore(IAssetDefinition assetDefinition, IAssetCoinholdersIndex index,
             IEnumerable<IAssetCoinholdersIndex> allIndexes)
         {
+            var assetCoinholdersIndices = allIndexes as IAssetCoinholdersIndex[] ?? allIndexes.ToArray();
+
             var isVerified = (assetDefinition?.IsVerified()??false) ? 0 : 1;
-            
+            var lastMonthTxCoubtCoef = Calc(index.LastMonthTransactionCount, assetCoinholdersIndices.Select(p => p.LastMonthTransactionCount));
+            var totalTransactionsCountCoef = Calc(index.TransactionsCount, assetCoinholdersIndices.Select(p => p.TransactionsCount));
+            var coinholdersCountCoef = Calc(index.CoinholdersCount, assetCoinholdersIndices.Select(p => p.CoinholdersCount));
+            var totalQuantityCoef = Calc(index.TotalQuantity, assetCoinholdersIndices.Select(p => p.TotalQuantity));
+            var lastTxDaysPastCoef = (index.LastTxDateDaysPast() != null
+                ? Calc(index.LastTxDateDaysPast().Value, assetCoinholdersIndices.Select(p => p.LastTxDateDaysPast() ?? 0), true)
+                : 1);
+
             var result =  Weight(Coef.IsVerified) * isVerified
-                + Weight(Coef.LastMonthTxCount) * Calc(index.LastMonthTransactionCount, allIndexes.Select(p => p.LastMonthTransactionCount))
-                + Weight(Coef.TotalTransactionsCount) * Calc(index.TransactionsCount, allIndexes.Select(p => p.TransactionsCount))
-                + Weight(Coef.CoinholdersCount) * Calc(index.CoinholdersCount, allIndexes.Select(p => p.CoinholdersCount))
-                + Weight(Coef.TotalQuantity) * Calc(index.TotalQuantity, allIndexes.Select(p => p.TotalQuantity))
-                + Weight(Coef.LastTxDateDaysPast) * (index.LastTxDateDaysPast() != null ? Calc(index.LastTxDateDaysPast().Value, allIndexes.Select(p => p.LastTxDateDaysPast() ?? 0), true) : 1)
+                + Weight(Coef.LastMonthTxCount) * lastMonthTxCoubtCoef
+                + Weight(Coef.TotalTransactionsCount) * totalTransactionsCountCoef
+                + Weight(Coef.CoinholdersCount) * coinholdersCountCoef
+                + Weight(Coef.TotalQuantity) * totalQuantityCoef
+                + Weight(Coef.LastTxDateDaysPast) * lastTxDaysPastCoef
                 + Weight(Coef.TopCoinholderShare) * index.TopCoinholderShare
                 + Weight(Coef.HerfindalShareIndex) * index.HerfindalShareIndex;
 
@@ -65,6 +74,11 @@ namespace Lykke.Service.BcnExploler.Services.Helpers
         /// </summary>
         private static double Normalize(double value, double min, double max)
         {
+            if (min == max)
+            {
+                return 1;
+            }
+
             return (value - min) / (max - min);
         }
 
