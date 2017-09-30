@@ -46,6 +46,11 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
                                 assetData.ImageUrl);
                     }
                 }
+                else
+                {
+                    await _assetDefinitionRepository.InsertEmptyAsync(context.AssetDefinitionUrl);
+                }
+                
 
                 await _log.WriteInfoAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Done");
             }

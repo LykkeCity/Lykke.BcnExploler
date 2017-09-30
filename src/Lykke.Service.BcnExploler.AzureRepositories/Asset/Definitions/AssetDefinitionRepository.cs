@@ -92,6 +92,13 @@ namespace Lykke.Service.BcnExploler.AzureRepositories.Asset.Definitions
             return await _assetTableStorage.GetDataAsync(AssetDefinitionDefinitionEntity.GenerateEmptyPartitionKey());
         }
 
+
+        public async Task DeleteEmptyAssets()
+        {
+            var empty = await _assetTableStorage.GetDataAsync(AssetDefinitionDefinitionEntity.GenerateEmptyPartitionKey());
+
+            await _assetTableStorage.DeleteAsync(empty);
+        }
         public async Task InsertOrReplaceAsync(IAssetDefinition[] assetsDefinition)
         {
             await _assetTableStorage.InsertOrReplaceBatchAsync(assetsDefinition.Select(AssetDefinitionDefinitionEntity.Create));

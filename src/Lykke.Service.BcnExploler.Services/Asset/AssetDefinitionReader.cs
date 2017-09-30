@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Log;
 using Flurl.Http;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Contracts;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
+using Newtonsoft.Json;
 
 namespace Lykke.Service.BcnExploler.Services.Asset
 {
@@ -62,17 +68,39 @@ namespace Lykke.Service.BcnExploler.Services.Asset
     }
     public class AssetDefinitionReader:IAssetDefinitionReader
     {
+        private readonly ILog _log;
+
+        public AssetDefinitionReader(ILog log)
+        {
+            _log = log;
+        }
+
         public async Task<IAssetDefinition> ReadAssetDataAsync(string absUrl)
         {
             try
             {
-                var resp = await absUrl.GetJsonAsync<AssetDefinitionContract>();
+                var respString = await GetIgnoreCertErrorAsync(absUrl);
+                var resp = JsonConvert.DeserializeObject<AssetDefinitionContract>(respString);
 
                 return AssetDefinition.Create(resp, absUrl);
             }
-            catch
+            catch (Exception e)
             {
+                await _log.WriteErrorAsync(nameof(AssetDefinitionReader), nameof(ReadAssetDataAsync), absUrl, e);
                 return null;
+            }
+        }
+
+        private async Task<string> GetIgnoreCertErrorAsync(string absUrl)
+        {
+            using (var httpClientHandler = new HttpClientHandler())
+            {
+                httpClientHandler.ServerCertificateCustomValidationCallback = (request, cert, chain, errors) => true;
+
+                using (var client = new HttpClient(httpClientHandler))
+                {
+                    return await client.GetStringAsync(absUrl);
+                }
             }
         }
     }

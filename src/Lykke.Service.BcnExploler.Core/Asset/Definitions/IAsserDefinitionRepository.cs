@@ -12,6 +12,7 @@ namespace Lykke.Service.BcnExploler.Core.Asset
         Task<IEnumerable<IAssetDefinition>> GetAllEmptyAsync();
         Task InsertOrReplaceAsync(params IAssetDefinition[] assetsDefinition);
         Task InsertEmptyAsync(string defUrl);
+        Task DeleteEmptyAssets();
         Task<bool> IsAssetExistsAsync(string defUrl);
         Task RemoveEmptyAsync(params string[] defUrls);
         Task UpdateAssetAsync(IAssetDefinition assetDefinition);
