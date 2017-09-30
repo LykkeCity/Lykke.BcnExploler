@@ -37,16 +37,6 @@ namespace Lykke.Service.BcnExploler.Services.Asset
 
                 #endregion
 
-                if (!string.IsNullOrEmpty(asset.Name))
-                {
-                    result[asset.Name] = asset;
-                }
-
-                if (!string.IsNullOrEmpty(asset.NameShort))
-                {
-                    result[asset.NameShort] = asset;
-                }
-
                 foreach (var assetId in (asset.AssetIds ?? Enumerable.Empty<string>()).Where(p=>!string.IsNullOrEmpty(p)))
                 {
                     result[assetId] = asset;

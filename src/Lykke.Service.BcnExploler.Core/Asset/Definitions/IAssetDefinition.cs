@@ -68,22 +68,4 @@ namespace Lykke.Service.BcnExploler.Core.Asset.Definitions
             return assetDefinition.AssetIds.Any() && assetDefinition.AssetIds.All(x => x != null);
         }
     }
-
-
-    public sealed class AssetDefinitionUrlEqualityComparer : IEqualityComparer<IAssetDefinition>
-    {
-        public bool Equals(IAssetDefinition x, IAssetDefinition y)
-        {
-            if (ReferenceEquals(x, y)) return true;
-            if (ReferenceEquals(x, null)) return false;
-            if (ReferenceEquals(y, null)) return false;
-            if (x.GetType() != y.GetType()) return false;
-            return string.Equals(x.AssetDefinitionUrl, y.AssetDefinitionUrl);
-        }
-
-        public int GetHashCode(IAssetDefinition obj)
-        {
-            return (obj.AssetDefinitionUrl != null ? obj.AssetDefinitionUrl.GetHashCode() : 0);
-        }
-    }
 }

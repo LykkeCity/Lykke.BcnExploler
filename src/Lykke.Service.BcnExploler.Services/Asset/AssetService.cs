@@ -59,7 +59,7 @@ namespace Lykke.Service.BcnExploler.Services.Asset
 
         public async Task<IEnumerable<IAssetDefinition>> GetAssetDefinitionsAsync()
         {
-            return (await _assetDefinitionCachedDictionary.GetDictionaryAsync()).Values.Distinct(new AssetDefinitionUrlEqualityComparer());
+            return (await _assetDefinitionCachedDictionary.GetDictionaryAsync()).Values;
         }
     }
 }
