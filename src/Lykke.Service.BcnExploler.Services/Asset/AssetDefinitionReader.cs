@@ -39,7 +39,7 @@ namespace Lykke.Service.BcnExploler.Services.Asset
         public string Version { get; set; }
         public string AssetDefinitionUrl { get; set; }
 
-        public static AssetDefinition Create(AssetDefinitionContract source)
+        public static AssetDefinition Create(AssetDefinitionContract source, string assetDefinitionUrl)
         {
             return new AssetDefinition
             {
@@ -56,7 +56,7 @@ namespace Lykke.Service.BcnExploler.Services.Asset
                 NameShort = source.NameShort,
                 Type = source.Type,
                 Version = source.Version,
-                AssetDefinitionUrl = source.AssetDefinitionUrl
+                AssetDefinitionUrl = assetDefinitionUrl
             };
         }
     }
@@ -68,7 +68,7 @@ namespace Lykke.Service.BcnExploler.Services.Asset
             {
                 var resp = await absUrl.GetJsonAsync<AssetDefinitionContract>();
 
-                return AssetDefinition.Create(resp);
+                return AssetDefinition.Create(resp, absUrl);
             }
             catch
             {

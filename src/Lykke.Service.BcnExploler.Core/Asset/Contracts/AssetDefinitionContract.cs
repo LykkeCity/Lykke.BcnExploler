@@ -45,7 +45,5 @@ namespace Lykke.Service.BcnExploler.Core.Asset.Contracts
 
         [JsonProperty("version")]
         public string Version { get; set; }
-
-        public string AssetDefinitionUrl { get; set; }
     }
 }
