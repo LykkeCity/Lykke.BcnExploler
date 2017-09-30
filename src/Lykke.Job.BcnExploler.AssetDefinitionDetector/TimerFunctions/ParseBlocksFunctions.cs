@@ -28,7 +28,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
             _parseBlockCommandProducer = parseBlockCommandProducer;
         }
 
-        //[TimerTrigger("00:10:00")]
+        [TimerTrigger("00:10:00")]
         public async Task ParseLast()
         {
             IBlockHeader blockPtr = null;
