@@ -68,12 +68,6 @@ namespace Lykke.Service.BcnExploler.Services.Asset
     }
     public class AssetDefinitionReader:IAssetDefinitionReader
     {
-        private readonly ILog _log;
-
-        public AssetDefinitionReader(ILog log)
-        {
-            _log = log;
-        }
 
         public async Task<IAssetDefinition> ReadAssetDataAsync(string absUrl)
         {
@@ -84,9 +78,9 @@ namespace Lykke.Service.BcnExploler.Services.Asset
 
                 return AssetDefinition.Create(resp, absUrl);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                await _log.WriteErrorAsync(nameof(AssetDefinitionReader), nameof(ReadAssetDataAsync), absUrl, e);
+               
                 return null;
             }
         }
