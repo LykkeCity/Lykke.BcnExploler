@@ -9,6 +9,7 @@ using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Services.Settings;
 using Lykke.Service.BcnExploler.Web.Filters;
 using Lykke.Service.BcnExploler.Web.Jobs;
 using Lykke.Service.BcnExploler.Web.Modules;
@@ -136,7 +137,7 @@ namespace Lykke.Service.BcnExploler.Web
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
-                const string appName = "Lykke.Job.BcnExploler.Web";
+                var appName = $"Lykke.Job.BcnExploler.Web.{settings.CurrentValue.BcnExploler.UsedNetwork()}";
 
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
                     appName,

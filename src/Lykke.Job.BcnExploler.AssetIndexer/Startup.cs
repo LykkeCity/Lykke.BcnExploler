@@ -12,6 +12,7 @@ using Lykke.JobTriggers.Extenstions;
 using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core.Settings;
+using Lykke.Service.BcnExploler.Services.Settings;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using Microsoft.AspNetCore.Builder;
@@ -206,7 +207,7 @@ namespace Lykke.Job.BcnExploler.AssetIndexer
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
-                const string appName = "Lykke.Job.BcnExploler.AssetIndexer";
+                var appName = $"Lykke.Job.BcnExploler.AssetIndexer.{settings.CurrentValue.BcnExploler.UsedNetwork()}";
 
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
                     appName,
