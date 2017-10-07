@@ -71,7 +71,11 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
                 AtBlockHeight = (atBlock ?? lastBlock).Height,
                 AtBlockDateTime = (atBlock ?? lastBlock).Time,
                 OffchainChannelsByAsset = OffchainChannelsByAsset.Create(channels, assetDictionary),
-                TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated
+                TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated,
+                TotalSpendedTransactions = balance.TotalSpendedTransactions,
+                TotalSpendedTransactionsCountCalculated = balance.TotalSpendedTransactionsCountCalculated,
+                TotalReceivedTransactions = balance.TotalReceivedTransactions,
+                TotalReceivedTransactionsCountCalculated = balance.TotalReceivedTransactionsCountCalculated
             };
         }
         
