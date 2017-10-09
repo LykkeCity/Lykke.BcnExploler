@@ -145,7 +145,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
 
         private static bool IsReceivedTx(AddressTransactionListItemContract source)
         {
-            if (source.Amount > 0 || (source.Amount == 0 && source.Received.Any()))
+            if (!source.Spent.Any())
             {
                 return true;
             }
