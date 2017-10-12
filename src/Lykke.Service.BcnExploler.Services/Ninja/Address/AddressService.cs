@@ -52,7 +52,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
             {
                 AddressId = address,
                 BtcBalance = coloredSummary.Confirmed.Balance,
-                TotalTransactions = coloredSummary.Confirmed.TotalTransactions,
+                TotalTransactions = coloredSummary.Confirmed.TotalTransactions + coloredSummary.Unconfirmed.TotalTransactions,
                 TotalReceivedTransactions = coloredSummary.Confirmed.ReceivedTransactions ?? TransactionsCountNotCalculated,
                 TotalSpendedTransactions = coloredSummary.Confirmed.SpendedTransactions ?? TransactionsCountNotCalculated,
                 UnconfirmedBalanceDelta = coloredSummary.Unconfirmed?.Balance ?? 0
