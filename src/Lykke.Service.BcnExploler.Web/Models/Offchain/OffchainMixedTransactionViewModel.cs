@@ -24,7 +24,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             return new OffchainMixedTransactionViewModel
             {
                 Onchain = TransactionViewModel.Create(source.FilledOnchainTransactionData, assetDictionary),
-                Offchain = OffChainTransactionViewModel.Create(source?.OffchainTransactionData, assetDictionary)
+                Offchain = OffChainTransactionViewModel.Create(source.OffchainTransactionData, assetDictionary)
             };
         }
     }
