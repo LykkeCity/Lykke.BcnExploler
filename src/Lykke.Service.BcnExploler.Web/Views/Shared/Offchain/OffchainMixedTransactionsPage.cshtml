@@ -1,0 +1,11 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model IEnumerable<OffchainMixedTransactionViewModel>
+@{
+    Layout = null;
+}
+
+
+@foreach (var item in Model)
+{
+    @Html.Partial("Offchain/OffchainMixedTransactionViewModel", item)
+}

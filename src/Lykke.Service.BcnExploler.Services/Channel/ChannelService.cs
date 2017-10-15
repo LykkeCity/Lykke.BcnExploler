@@ -13,25 +13,55 @@ namespace Lykke.Service.BcnExploler.Services.Channel
     {
         public string AssetId { get; set; }
         public bool IsColored { get; set; }
-        public string OpenTransactionId { get; set; }
-        public string CloseTransactionId { get; set; }
+        public IOnchainTransaction OpenTransaction { get; set; }
+        public IOnchainTransaction CloseTransaction { get; set; }
         public IEnumerable<IOffchainTransaction> OffchainTransactions { get; set; }
-        public ITransaction OpenTransaction { get; set; }
-        public ITransaction CloseTransaction { get; set; }
+        public ITransaction OpenFilledTransaction { get; set; }
+        public ITransaction CloseFilledTransaction { get; set; }
 
         public static FilledChannel Create(IChannel channel, ITransaction openTransaction,
             ITransaction closeTransaction)
         {
             return new FilledChannel
             {
-                OpenTransactionId = channel.OpenTransactionId,
-                CloseTransactionId = channel.CloseTransactionId,
+                OpenTransaction = channel.OpenTransaction,
+                CloseTransaction = channel.CloseTransaction,
 
                 OffchainTransactions = channel.OffchainTransactions,
-                CloseTransaction = closeTransaction,
-                OpenTransaction = openTransaction,
+                CloseFilledTransaction = closeTransaction,
+                OpenFilledTransaction = openTransaction,
                 AssetId = channel.AssetId,
                 IsColored = channel.IsColored
+            };
+        }
+    }
+
+    public class FilledMixedTransaction : IFilledMixedTransaction
+    {
+        public string AssetId { get; set; }
+        public bool IsColored { get; set; }
+        public string HubAddress { get; set; }
+        public string ClientAddress1 { get; set; }
+        public string ClientAddress2 { get; set; }
+        public bool IsOffchain { get; set; }
+        public IOnchainTransaction OnchainTransactionData { get; set; }
+        public IOffchainTransaction OffchainTransactionData { get; set; }
+        public ITransaction FilledOnchainTransactionData { get; set; }
+
+        public static FilledMixedTransaction Create(IMixedChannelTransaction mixedTransaction,
+            ITransaction onchainTransaction)
+        {
+            return new FilledMixedTransaction
+            {
+                AssetId = mixedTransaction.AssetId,
+                ClientAddress1 = mixedTransaction.ClientAddress1,
+                ClientAddress2 = mixedTransaction.ClientAddress2,
+                OnchainTransactionData = mixedTransaction.OnchainTransactionData,
+                FilledOnchainTransactionData = onchainTransaction,
+                HubAddress = mixedTransaction.HubAddress,
+                IsColored = mixedTransaction.IsColored,
+                IsOffchain = mixedTransaction.IsOffchain,
+                OffchainTransactionData = mixedTransaction.OffchainTransactionData
             };
         }
     }
@@ -51,7 +81,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             _network = network;
         }
 
-        public async Task<IFilledChannel> GetByOffchainTransactionIdAsync(string transactionId)
+        public async Task<IFilledChannel> GetChannelsByOffchainTransactionIdAsync(string transactionId)
         {
             var channel = await _offchainNotificationsApiProvider.GetByOffchainTransactionIdAsync(transactionId);
 
@@ -86,7 +116,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             return await FillChannels(dbChannels);
         }
 
-        public async Task<long> GetCountByBlockAsync(string blockId)
+        public async Task<long> GetChannelCountByBlockAsync(string blockId)
         {
             int height;
             
@@ -100,7 +130,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             }
         }
 
-        public async Task<IEnumerable<IFilledChannel>> GetByAddressFilledAsync(string address, 
+        public async Task<IEnumerable<IFilledChannel>> GetChannelsByAddressFilledAsync(string address, 
             ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
             IPageOptions pageOptions = null)
         {
@@ -111,14 +141,14 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             return await FillChannels(dbChannels);
         }
         
-        public Task<long> GetCountByAddressAsync(string address)
+        public Task<long> GetTrabsactionCountByAddressAsync(string address)
         {
             var uncoloredAddress = GetUncoloredAddress(address);
 
-            return _offchainNotificationsApiProvider.GetCountByAddressAsync(uncoloredAddress);
+            return _offchainNotificationsApiProvider.TransactionCountByAddress(uncoloredAddress);
         }
 
-        public async Task<IEnumerable<IChannel>> GetByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All)
+        public async Task<IEnumerable<IChannel>> GetChannelsByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All)
         {
             var uncoloredAddress = GetUncoloredAddress(address);
 
@@ -130,6 +160,13 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             var uncoloredAddress = GetUncoloredAddress(address);
 
             return _offchainNotificationsApiProvider.IsHubAsync(uncoloredAddress);
+        }
+
+        public async Task<IEnumerable<IFilledMixedTransaction>> GetMixedTransactionsByAddressAsync(string address, IPageOptions pageOptions)
+        {
+            var txs = await _offchainNotificationsApiProvider.GetMixedTransactions(address, pageOptions);
+
+            return await FillTransactions(txs);
         }
 
         private string GetUncoloredAddress(string address)
@@ -151,17 +188,33 @@ namespace Lykke.Service.BcnExploler.Services.Channel
 
         private async Task<IEnumerable<IFilledChannel>> FillChannels(IEnumerable<IChannel> channels)
         {
-            var txIds = channels.SelectMany(p => new[] {p.CloseTransactionId, p.OpenTransactionId})
+            var txs = channels.SelectMany(p => new[] {p.CloseTransaction, p.OpenTransaction})
+                .Where(p => !string.IsNullOrEmpty(p?.TransactionId))
+                .Distinct()
+                .ToList();
+
+            var filledTxs = (await _cachedTransactionService.GetAsync(txs.Select(p=>p.TransactionId))).ToDictionary(p => p.TransactionId);
+            
+            return channels.Select(p => 
+            FilledChannel.Create(p, 
+                p.OpenTransaction != null ? filledTxs.GetValueOrDefault(p.OpenTransaction?.TransactionId, null): null,
+                p.CloseTransaction != null ? filledTxs.GetValueOrDefault(p.CloseTransaction?.TransactionId, null): null));
+        }
+
+        private async Task<IEnumerable<IFilledMixedTransaction>> FillTransactions(
+            IEnumerable<IMixedChannelTransaction> mixedTransactions)
+        {
+            var txIds = mixedTransactions.Select(p => p.OnchainTransactionData?.TransactionId)
                 .Where(p => !string.IsNullOrEmpty(p))
                 .Distinct()
                 .ToList();
 
-            var txs = (await _cachedTransactionService.GetAsync(txIds)).ToDictionary(p => p.TransactionId);
-            
-            return channels.Select(p => 
-            FilledChannel.Create(p, 
-                p.OpenTransactionId != null ? txs.GetValueOrDefault(p.OpenTransactionId, null): null,
-                p.CloseTransactionId != null ? txs.GetValueOrDefault(p.CloseTransactionId, null): null));
+            var filledTxs = (await _cachedTransactionService.GetAsync(txIds))
+                .ToDictionary(p => p.TransactionId);
+
+            return mixedTransactions.Select(p => FilledMixedTransaction.Create(p,
+                p.OnchainTransactionData?.TransactionId != null? filledTxs.GetValueOrDefault(p.OnchainTransactionData?.TransactionId, null): null))
+                .ToList();
         }
     }
 }

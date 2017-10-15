@@ -1,5 +1,5 @@
 ﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
-@model OffchainChannelPagedList 
+@model OffchainMixedTransactionsPagedList 
 @{
     Layout = null;
 }
@@ -9,10 +9,10 @@
         <div class="row">
             <div class="col-sm-4">
                 <h3>
-                    Channels 
-                    <span class="js-offchain-loaded-channel-count">0</span>
+                    Transactions 
+                    <span class="js-offchain-loaded-transaction-count">0</span>
                     <span>
-                        of @Model.ChannelCount
+                        of @Model.TransactionCount
                     </span>
                 </h3>
             </div>

@@ -1,0 +1,16 @@
+﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model OffchainMixedTransactionViewModel 
+@{
+    Layout = null;
+}
+
+<div class="js-mixed-transaction"></div>
+@if (Model.ShowOffchain)
+{
+    Html.RenderPartial("Offchain/OffchainTransactionDetails", Model.Offchain);
+}
+
+@if (Model.ShowOnchain)
+{
+    @Html.Partial("TransactionDetails/TransactionDetails", Model.Onchain);
+}

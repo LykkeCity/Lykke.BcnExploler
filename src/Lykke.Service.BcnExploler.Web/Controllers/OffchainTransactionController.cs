@@ -24,7 +24,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         [Route("transaction/offchain/{id}")]
         public async Task<ActionResult> Index(string id)
         {
-            var channel = _channelService.GetByOffchainTransactionIdAsync(id);
+            var channel = _channelService.GetChannelsByOffchainTransactionIdAsync(id);
             var assetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 
             await Task.WhenAll(channel, assetDictionary);

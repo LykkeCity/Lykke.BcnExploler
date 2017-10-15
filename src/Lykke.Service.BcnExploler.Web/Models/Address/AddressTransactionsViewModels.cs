@@ -13,7 +13,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public TransactionIdList AllTransactionIdList { get; set; }
         public TransactionIdList SendTransactionIdList { get; set; }
         public TransactionIdList ReceivedTransactionIdList { get; set; }
-        public OffchainChannelPagedList OffchainChannelPagedList { get; set; }
+        public OffchainMixedTransactionsPagedList OffchainMixedTransactionsPagedList { get; set; }
         public bool FullLoaded { get; set; }
         private const int PageSize = 20;
 
@@ -25,10 +25,10 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
                 SendTransactionIdList = new TransactionIdList(source.Send?.Select(p => p.TransactionId), PageSize, source.FullLoaded),
                 ReceivedTransactionIdList = new TransactionIdList(source.Received?.Select(p => p.TransactionId), PageSize, source.FullLoaded),
                 FullLoaded = source.FullLoaded,
-                OffchainChannelPagedList = OffchainChannelPagedList.Create(
+                OffchainMixedTransactionsPagedList = OffchainMixedTransactionsPagedList.Create(
                     offchainChannelsCount,
                     offchainTransactionsPageSize,
-                    (url, page) => url.Action("OffchainChannelPage", "Address", new { address = address, page = page })
+                    (url, page) => url.Action("OffchainMixedTransactionsPage", "Address", new { address = address, page = page })
                 )
             };
         }

@@ -10,9 +10,9 @@ namespace Lykke.Service.BcnExploler.Core.Channel
     {
         string AssetId { get; }
         bool IsColored { get; }
-        string OpenTransactionId { get; }
+        IOnchainTransaction OpenTransaction { get; }
 
-        string CloseTransactionId { get; }
+        IOnchainTransaction CloseTransaction { get; }
 
         IEnumerable<IOffchainTransaction> OffchainTransactions { get; }
     }
@@ -36,20 +36,34 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         decimal Address1Quantity { get; }
 
         decimal Address2Quantity { get; }
+
+        bool IsRevoked { get; }
+        decimal Address1QuantityDiff { get; }
+        decimal Address2QuantityDiff { get; }
     }
 
-    public interface IOffchainNotificationsApiProvider
+    public interface IMixedChannelTransaction
     {
-        Task<IChannel> GetByOffchainTransactionIdAsync(string transactionId);
-        Task<bool> OffchainTransactionExistsAsync(string transactionId);
-        Task<IEnumerable<IChannel>> GetByBlockIdAsync(string blockId, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
-        Task<IEnumerable<IChannel>> GetByBlockHeightAsync(int blockHeight, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
-        Task<long> GetCountByBlockIdAsync(string blockId);
-        Task<long> GetCountByBlockHeightAsync(int blockHeight);
-        Task<IEnumerable<IChannel>> GetByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
+        string AssetId { get; }
+
+        bool IsColored { get; }
+
+        string HubAddress { get; }
+
+        string ClientAddress1 { get; }
+
+        string ClientAddress2 { get; }
         
-        Task<bool> IsHubAsync(string address);
-        Task<long> GetCountByAddressAsync(string address);
+        bool IsOffchain { get; }
+
+        IOnchainTransaction OnchainTransactionData { get; }
+
+        IOffchainTransaction OffchainTransactionData { get; }
+    }
+
+    public interface IOnchainTransaction
+    {
+        string TransactionId { get; }
     }
 
     public enum ChannelStatusQueryType
@@ -81,5 +95,22 @@ namespace Lykke.Service.BcnExploler.Core.Channel
                 PageSize = pageSize
             };
         }
+    }
+
+    public interface IOffchainNotificationsApiProvider
+    {
+        Task<IChannel> GetByOffchainTransactionIdAsync(string transactionId);
+        Task<bool> OffchainTransactionExistsAsync(string transactionId);
+        Task<IEnumerable<IChannel>> GetByBlockIdAsync(string blockId, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
+        Task<IEnumerable<IChannel>> GetByBlockHeightAsync(int blockHeight, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
+        Task<long> GetCountByBlockIdAsync(string blockId);
+        Task<long> GetCountByBlockHeightAsync(int blockHeight);
+        Task<IEnumerable<IChannel>> GetByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
+
+        Task<bool> IsHubAsync(string address);
+        Task<long> GetCountByAddressAsync(string address);
+
+        Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactions(string address, IPageOptions pageOptions);
+        Task<long> TransactionCountByAddress(string address);
     }
 }

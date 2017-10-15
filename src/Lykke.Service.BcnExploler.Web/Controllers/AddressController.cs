@@ -23,7 +23,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         private readonly IChannelService _channelService;
 
 
-        private const int OffchainTransactionsPageSize = 1;
+        private const int OffchainTransactionsPageSize = 20;
 
         public AddressController(IAddressService addressProvider, 
             IAssetService assetService, 
@@ -73,7 +73,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
             var balance = _addressProvider.GetBalanceAsync(id, at);
             var assetDefinitionDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
             var lastBlock = _blockService.GetLastBlockHeaderAsync();
-            var offchainChannels = _channelService.GetByAddressAsync(id, ChannelStatusQueryType.OpenOnly);
+            var offchainChannels = _channelService.GetChannelsByAddressAsync(id, ChannelStatusQueryType.OpenOnly);
             Task<IBlockHeader> atBlockTask;
 
             if (at != null)
@@ -119,24 +119,24 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         public async Task<ActionResult> Transactions(string id)
         {
             var onchainTransactions = _cachedAddressService.GetTransactions(id);
-            var offchainChannelsCount = _channelService.GetCountByAddressAsync(id);
+            var offchainTransactionCount = _channelService.GetTrabsactionCountByAddressAsync(id);
 
-            await Task.WhenAll(onchainTransactions, offchainChannelsCount);
+            await Task.WhenAll(onchainTransactions, offchainTransactionCount);
 
-            return View(AddressTransactionsViewModel.Create(id, onchainTransactions.Result, offchainChannelsCount.Result, OffchainTransactionsPageSize));
+            return View(AddressTransactionsViewModel.Create(id, onchainTransactions.Result, offchainTransactionCount.Result, OffchainTransactionsPageSize));
         }
 
         [Route("address/offchainchannelpage")]
-        public async Task<ActionResult> OffchainChannelPage(string address, int page)
+        public async Task<ActionResult> OffchainMixedTransactionsPage(string address, int page)
         {
-            var channels = _channelService.GetByAddressFilledAsync(address,
-                channelStatusQueryType: ChannelStatusQueryType.All,
-                pageOptions: PageOptions.Create(page, OffchainTransactionsPageSize));
-            var assetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
+            var getTransactions =
+                _channelService.GetMixedTransactionsByAddressAsync(address,
+                    PageOptions.Create(page, OffchainTransactionsPageSize));
+            var getAssetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 
-            await Task.WhenAll(channels, assetDictionary);
+            await Task.WhenAll(getTransactions, getAssetDictionary);
 
-            return View("Offchain/OffchainChannelPage", channels.Result.Select(p => OffchainFilledChannelViewModel.Create(p, assetDictionary.Result)));
+            return View("Offchain/OffchainMixedTransactionsPage", getTransactions.Result.Select(p => OffchainMixedTransactionViewModel.Create(p, getAssetDictionary.Result)));
         }
     }
 }

@@ -2,7 +2,7 @@
 @model AddressTransactionsViewModel
 @{
     Layout = null;
-    var showOffchainTab = Model.OffchainChannelPagedList.ChannelCount != 0;
+    var showOffchainTab = Model.OffchainMixedTransactionsPagedList.TransactionCount != 0;
 }
 
 <section class="section section--heading section--heading_with_tabs">
@@ -68,7 +68,7 @@
                     <a class="tab_item__link js-tx-toggle" href="#js-offchain-tx">
                         Off-chain 
                         <span>
-                            · @Model.OffchainChannelPagedList.ChannelCount
+                            · @Model.OffchainMixedTransactionsPagedList.TransactionCount
                         </span>
                     </a>
                 </div>
@@ -92,7 +92,7 @@
             @Html.Partial("~/Views/Transaction/TransactionIdList.cshtml", Model.ReceivedTransactionIdList)
         </div>
         <div id="js-offchain-tx" class="@(showOffchainTab?"js-active-tab":"hidden") js-select-result">
-            @Html.Partial("Offchain/OffchainChannelPagedList", Model.OffchainChannelPagedList)
+            @Html.Partial("Offchain/OffchainMixedTransactionPagedList", Model.OffchainMixedTransactionsPagedList)
         </div>
     </div>
 </section>
