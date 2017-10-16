@@ -21,6 +21,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
         OpenOnChain = 1,
         CloseOnchain = 2,
         ReOpenOnChain = 3,
+        None = 4
     }
 
     public class ChannelMetadataContract

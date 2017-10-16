@@ -26,6 +26,12 @@
                                 <span class="label label--red label--plate">Unconfirmed</span>
                             }
                         </div>
+                        @if (Model.ShowOffchainLabel)
+                        {
+                            <div class="offchain_label">
+                                <span class="label label--green">@Model.OffchainLabel</span>
+                            </div>
+                        }
                         @if (Model.ShowChangeBtn)
                         {
                             <a href="#" class="btn_show_changes pull-right text--gray js-toggle-change-btn" data-toggle-container=".@toggleChangeContainer">

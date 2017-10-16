@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Transaction;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
+using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Services.Helpers;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
 
@@ -11,6 +12,13 @@ namespace Lykke.Service.BcnExploler.Web.Models.Transaction
 {
     public class TransactionViewModel
     {
+        private static readonly IReadOnlyDictionary<MixedTransactionType?, string> OffchainLabelDescriptionDictionary = new Dictionary<MixedTransactionType?, string>
+        {
+            {MixedTransactionType.ChannelSetup, "channel setup" },
+            {MixedTransactionType.CloseChannel, "close channel" },
+            {MixedTransactionType.ReopenChannel, "reopen channel" }
+        };
+
         public string TransactionId { get; set; }
         public bool IsColor { get; set; }
         public bool IsCoinBase { get; set; }
@@ -21,6 +29,9 @@ namespace Lykke.Service.BcnExploler.Web.Models.Transaction
         public IEnumerable<ColoredAsset> ColoredAssets { get; set; }
         public int InputsCount { get; set; }
         public int OutputsCount { get; set; }
+        public MixedTransactionType? OffchainType { get; set; }
+        public string OffchainLabel => OffchainType!=null ? OffchainLabelDescriptionDictionary.GetValueOrDefault(OffchainType, null):null;
+        public bool ShowOffchainLabel => OffchainLabel != null;
 
         public bool ShowChangeBtn => Bitcoin.ShowWithoutChange || ColoredAssets.Any(p => p.ShowWithoutChange);
         
@@ -386,7 +397,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Transaction
 
         #endregion
 
-        public static TransactionViewModel Create(ITransaction ninjaTransaction, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
+        public static TransactionViewModel Create(ITransaction ninjaTransaction, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary, MixedTransactionType? offchainType = null)
         {
             if (ninjaTransaction == null)
             {
@@ -408,7 +419,8 @@ namespace Lykke.Service.BcnExploler.Web.Models.Transaction
                 Bitcoin = BitcoinAsset.Create(ninjaTransaction.Fees, ninjaTransaction.IsCoinBase, bc.TransactionIn.Union(colored.SelectMany(p => p.TransactionIn)), bc.TransactionsOut.Union(colored.SelectMany(p=>p.TransactionsOut)), assetDic ),
                 ColoredAssets = colored.Select(p => ColoredAsset.Create(p, assetDic)),
                 InputsCount = ninjaTransaction.InputsCount,
-                OutputsCount = ninjaTransaction.OutputsCount
+                OutputsCount = ninjaTransaction.OutputsCount,
+                OffchainType = offchainType
             };
             
             return result;

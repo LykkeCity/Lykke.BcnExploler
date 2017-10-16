@@ -14,8 +14,8 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
     {
         private OffchainFilledChannelViewModel(IFilledChannel channel, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary):base(channel, assetDictionary)
         {
-            this.OpenTransaction = TransactionViewModel.Create(channel.OpenFilledTransaction, assetDictionary);
-            this.CloseTransaction = TransactionViewModel.Create(channel.CloseFilledTransaction, assetDictionary);
+            this.OpenTransaction = TransactionViewModel.Create(channel.OpenFilledTransaction, assetDictionary, channel.OpenTransaction?.Type);
+            this.CloseTransaction = TransactionViewModel.Create(channel.CloseFilledTransaction, assetDictionary, channel.CloseTransaction?.Type);
         }
 
         public TransactionViewModel OpenTransaction { get; set; }

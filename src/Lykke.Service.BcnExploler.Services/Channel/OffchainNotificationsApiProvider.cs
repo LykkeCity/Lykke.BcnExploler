@@ -25,9 +25,9 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 return new Channel
                 {
                     AssetId = source.AssetId,
-                    CloseTransaction = OnchainTransaction.Create(source.CloseTransactionId),
+                    CloseTransaction = OnchainTransaction.Create(source.CloseTransactionId, source.CloseTransactionType),
                     IsColored = source.IsColored,
-                    OpenTransaction = OnchainTransaction.Create(source.OpenTransactionId),
+                    OpenTransaction = OnchainTransaction.Create(source.OpenTransactionId, source.OpenTransactionType),
                     OffchainTransactions = source.OffchainTransactions.Select(OffchainTransaction.Create)
                 };
             }
@@ -118,22 +118,34 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 IsColored = source.Metadata.IsColored,
                 IsOffchain = source.Type == ChannelTransactionType.Offchain,
                 OffchainTransactionData = OffchainTransaction.Create(source.OffchainTransactionData, source.Metadata),
-                OnchainTransactionData = OnchainTransaction.Create(source.OnchainTransactionData?.TransactionId)
+                OnchainTransactionData = OnchainTransaction.Create(source.OnchainTransactionData?.TransactionId, source.Type)
             };
         }
     }
 
     public class OnchainTransaction : IOnchainTransaction
     {
-        public string TransactionId { get; set; }
+        private static readonly IDictionary<ChannelTransactionType, MixedTransactionType> TypeMapping = new Dictionary<ChannelTransactionType, MixedTransactionType>()
+        {
+            {ChannelTransactionType.Offchain,  MixedTransactionType.Offchain},
+            {ChannelTransactionType.CloseOnchain,  MixedTransactionType.CloseChannel},
+            {ChannelTransactionType.OpenOnChain,  MixedTransactionType.ChannelSetup},
+            {ChannelTransactionType.ReOpenOnChain,  MixedTransactionType.ReopenChannel},
+            {ChannelTransactionType.None,  MixedTransactionType.None }
+        };
 
-        public static OnchainTransaction Create(string transactionId)
+        public string TransactionId { get; set; }
+        public MixedTransactionType Type { get; set; }
+
+
+        public static OnchainTransaction Create(string transactionId, ChannelTransactionType transactionType)
         {
             if (!string.IsNullOrEmpty(transactionId))
             {
                 return new OnchainTransaction
                 {
-                    TransactionId = transactionId
+                    TransactionId = transactionId,
+                    Type = TypeMapping[transactionType]
                 };
             }
 

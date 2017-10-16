@@ -61,9 +61,19 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         IOffchainTransaction OffchainTransactionData { get; }
     }
 
+    public enum MixedTransactionType
+    {
+        Offchain,
+        ChannelSetup,
+        ReopenChannel,
+        CloseChannel,
+        None
+    }
+
     public interface IOnchainTransaction
     {
         string TransactionId { get; }
+        MixedTransactionType Type { get; }
     }
 
     public enum ChannelStatusQueryType
