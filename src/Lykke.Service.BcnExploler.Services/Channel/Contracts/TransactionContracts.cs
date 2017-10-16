@@ -18,8 +18,9 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
     public enum ChannelTransactionType
     {
         Offchain = 0,
-        OpenOffchain = 1,
-        CloseOffchain = 2
+        OpenOnChain = 1,
+        CloseOnchain = 2,
+        ReOpenOnChain = 3,
     }
 
     public class ChannelMetadataContract

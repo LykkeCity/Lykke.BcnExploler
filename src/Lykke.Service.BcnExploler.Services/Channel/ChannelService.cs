@@ -92,44 +92,8 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         {
             return _offchainNotificationsApiProvider.OffchainTransactionExistsAsync(transactionId);
         }
-
-        public async Task<IEnumerable<IFilledChannel>> GetByBlockAsync(string blockId,
-            ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
-            IPageOptions pageOptions = null)
-        {
-            int height;
-
-            IEnumerable<IChannel> dbChannels;
-            if (int.TryParse(blockId, out height))
-            {
-                dbChannels = await _offchainNotificationsApiProvider.GetByBlockHeightAsync(height, 
-                    channelStatusQueryType, 
-                    pageOptions);
-            }
-            else
-            {
-                dbChannels = await _offchainNotificationsApiProvider.GetByBlockIdAsync(blockId, 
-                    channelStatusQueryType, 
-                    pageOptions);
-            }
-
-            return await FillChannels(dbChannels);
-        }
-
-        public async Task<long> GetChannelCountByBlockAsync(string blockId)
-        {
-            int height;
-            
-            if (int.TryParse(blockId, out height))
-            {
-                return await _offchainNotificationsApiProvider.GetCountByBlockHeightAsync(height);
-            }
-            else
-            {
-                return await _offchainNotificationsApiProvider.GetCountByBlockIdAsync(blockId);
-            }
-        }
-
+        
+        
         public async Task<IEnumerable<IFilledChannel>> GetChannelsByAddressFilledAsync(string address, 
             ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
             IPageOptions pageOptions = null)

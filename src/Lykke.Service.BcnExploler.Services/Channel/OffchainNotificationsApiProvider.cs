@@ -168,56 +168,6 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             return resp;
         }
 
-        public async Task<IEnumerable<IChannel>> GetByBlockIdAsync(string blockId, 
-            ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
-            IPageOptions pageOptions = null)
-        {
-            var query = _baseUrl
-                .AppendPathSegment($"api/channels/blockid/{blockId}");
-
-            query = AppendPageOptions(query, pageOptions);
-            query = AppenedChannelStatusQueryType(query, channelStatusQueryType);
-
-            var resp = await query
-                .GetJsonAsync<ChannelContract[]>();
-
-            return resp.Select(Channel.Create);
-        }
-
-        public async Task<IEnumerable<IChannel>> GetByBlockHeightAsync(int blockHeight,
-            ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
-            IPageOptions pageOptions = null)
-        {
-            var query = _baseUrl
-                .AppendPathSegment($"api/channels/height/{blockHeight}");
-
-            query = AppendPageOptions(query, pageOptions);
-            query = AppenedChannelStatusQueryType(query, channelStatusQueryType);
-
-            var resp = await query
-                .GetJsonAsync<ChannelContract[]>();
-
-            return resp.Select(Channel.Create);
-        }
-
-        public async Task<long> GetCountByBlockIdAsync(string blockId)
-        {
-            var resp = await _baseUrl
-                .AppendPathSegment($"api/channels/blockid/{blockId}/count")
-                .GetJsonAsync<long>();
-
-            return resp;
-        }
-
-        public async Task<long> GetCountByBlockHeightAsync(int blockHeight)
-        {
-            var resp = await _baseUrl
-                .AppendPathSegment($"api/channels/height/{blockHeight}/count")
-                .GetJsonAsync<long>();
-
-            return resp;
-        }
-
         public async Task<IEnumerable<IChannel>> GetByAddressAsync(string address, 
             ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
             IPageOptions pageOptions = null)

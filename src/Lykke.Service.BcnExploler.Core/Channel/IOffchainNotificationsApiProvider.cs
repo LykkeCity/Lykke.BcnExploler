@@ -101,10 +101,6 @@ namespace Lykke.Service.BcnExploler.Core.Channel
     {
         Task<IChannel> GetByOffchainTransactionIdAsync(string transactionId);
         Task<bool> OffchainTransactionExistsAsync(string transactionId);
-        Task<IEnumerable<IChannel>> GetByBlockIdAsync(string blockId, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
-        Task<IEnumerable<IChannel>> GetByBlockHeightAsync(int blockHeight, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
-        Task<long> GetCountByBlockIdAsync(string blockId);
-        Task<long> GetCountByBlockHeightAsync(int blockHeight);
         Task<IEnumerable<IChannel>> GetByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
 
         Task<bool> IsHubAsync(string address);

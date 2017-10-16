@@ -20,12 +20,6 @@ namespace Lykke.Service.BcnExploler.Core.Channel
     {
         Task<IFilledChannel> GetChannelsByOffchainTransactionIdAsync(string transactionId);
         Task<bool> OffchainTransactionExistsAsync(string transactionId);
-
-        Task<IEnumerable<IFilledChannel>> GetByBlockAsync(string blockId,
-            ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
-            IPageOptions pageOptions = null);
-
-        Task<long> GetChannelCountByBlockAsync(string blockId);
         Task<IEnumerable<IFilledChannel>> GetChannelsByAddressFilledAsync(string address, 
             ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
             IPageOptions pageOptions = null);
