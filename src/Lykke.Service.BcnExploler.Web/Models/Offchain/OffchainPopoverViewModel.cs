@@ -11,11 +11,13 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
         public string Title { get; set; }
 
+        public int MaxItemsToTake = 10;
+        
         public static OffchainPopoverViewModel Create(IEnumerable<OffchainChannelViewModel> channels, string title)
         {
             return new OffchainPopoverViewModel
             {
-                Channels = channels,
+                Channels = channels.Reverse(),
                 Title = title
             };
         }
