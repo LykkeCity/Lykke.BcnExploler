@@ -5,7 +5,7 @@
     Layout = null;
 }
 
-<div class="transaction_list__item">
+<div class="transaction_list__item" data-address="@Model.Address">
     <div class="row">
         <div class="col-xs-8">
             <a href="@Url.Action("Index", "Address", new {id = Model.Address})">
