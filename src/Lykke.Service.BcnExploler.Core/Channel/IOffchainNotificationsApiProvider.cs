@@ -8,6 +8,7 @@ namespace Lykke.Service.BcnExploler.Core.Channel
 {
     public interface IChannel
     {
+        string GroupId { get; }
         string AssetId { get; }
         bool IsColored { get; }
         IOnchainTransaction OpenTransaction { get; }
@@ -47,7 +48,6 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         string AssetId { get; }
 
         bool IsColored { get; }
-
         string HubAddress { get; }
 
         string ClientAddress1 { get; }
@@ -116,7 +116,9 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         Task<bool> IsHubAsync(string address);
         Task<long> GetCountByAddressAsync(string address);
 
-        Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactions(string address, IPageOptions pageOptions);
-        Task<long> TransactionCountByAddress(string address);
+        Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByAddress(string address, IPageOptions pageOptions);
+        Task<long> GetMixedTransactionCountByAddress(string address);
+        Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByGroup(string group, IPageOptions pageOptions);
+        Task<long> GetMixedTransactionCountByGroup(string group);
     }
 }

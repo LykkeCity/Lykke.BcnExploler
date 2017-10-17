@@ -17,7 +17,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public bool FullLoaded { get; set; }
         private const int PageSize = 20;
 
-        public static AddressTransactionsViewModel Create(string address, IAddressTransactions source, long offchainChannelsCount, int offchainTransactionsPageSize)
+        public static AddressTransactionsViewModel Create(string address, IAddressTransactions source, long offchainTransactionsCount)
         {
             return new AddressTransactionsViewModel
             {
@@ -26,9 +26,9 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
                 ReceivedTransactionIdList = new TransactionIdList(source.Received?.Select(p => p.TransactionId), PageSize, source.FullLoaded),
                 FullLoaded = source.FullLoaded,
                 OffchainMixedTransactionsPagedList = OffchainMixedTransactionsPagedList.Create(
-                    offchainChannelsCount,
-                    offchainTransactionsPageSize,
-                    (url, page) => url.Action("OffchainMixedTransactionsPage", "Address", new { address = address, page = page })
+                    offchainTransactionsCount,
+                    PageSize,
+                    (url, page) => url.Action("OffchainMixedTransactionsPage", "Address", new { address = address, page = page, pageSize = PageSize })
                 )
             };
         }

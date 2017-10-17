@@ -25,8 +25,11 @@ namespace Lykke.Service.BcnExploler.Core.Channel
             IPageOptions pageOptions = null);
         
         Task<long> GetTrabsactionCountByAddressAsync(string address);
+        Task<long> GetTrabsactionCountByGroupAsync(string group);
         Task<IEnumerable<IChannel>> GetChannelsByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All);
         Task<bool> IsHubAsync(string address);
         Task<IEnumerable<IFilledMixedTransaction>> GetMixedTransactionsByAddressAsync(string address, IPageOptions pageOptions);
+
+        Task<IEnumerable<IFilledMixedTransaction>> GetMixedTransactionsByGroupAsync(string groupId, IPageOptions pageOptions);
     }
 }

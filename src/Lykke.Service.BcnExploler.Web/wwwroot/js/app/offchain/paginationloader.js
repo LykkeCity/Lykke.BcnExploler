@@ -44,6 +44,9 @@
         $('body').on('js-tx-tab-toggled address-transaction-list-loaded', function (e) {
             loadOffchainPage($(e.target).find(selectors.offchainPage).first());
         });
+
+        loadOffchainPage($(selectors.offchainPage).first());
+
     })();
 
 })

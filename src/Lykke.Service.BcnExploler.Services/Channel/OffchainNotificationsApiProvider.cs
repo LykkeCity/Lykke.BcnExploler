@@ -12,6 +12,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
 {
     public class Channel : IChannel
     {
+        public string GroupId { get; set; }
         public string AssetId { get; set; }
         public bool IsColored { get; set; }
         public IOnchainTransaction OpenTransaction { get; set; }
@@ -28,7 +29,8 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                     CloseTransaction = OnchainTransaction.Create(source.CloseTransactionId, source.CloseTransactionType),
                     IsColored = source.IsColored,
                     OpenTransaction = OnchainTransaction.Create(source.OpenTransactionId, source.OpenTransactionType),
-                    OffchainTransactions = source.OffchainTransactions.Select(OffchainTransaction.Create)
+                    OffchainTransactions = source.OffchainTransactions.Select(OffchainTransaction.Create),
+                    GroupId = source.GroupId
                 };
             }
 
@@ -214,10 +216,10 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             return resp;
         }
 
-        public async Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactions(string address, IPageOptions pageOptions)
+        public async Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByAddress(string address, IPageOptions pageOptions)
         {
             var query = _baseUrl
-                .AppendPathSegment($"api/mixedtransactions/{address}");
+                .AppendPathSegment($"api/mixedtransactions/address/{address}");
 
             query = AppendPageOptions(query, pageOptions);
 
@@ -225,10 +227,29 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 .Select(MixedChannelTransaction.Create);
         }
 
-        public Task<long> TransactionCountByAddress(string address)
+        public Task<long> GetMixedTransactionCountByAddress(string address)
         {
             var query = _baseUrl
-                .AppendPathSegment($"api/mixedtransactions/{address}/count");
+                .AppendPathSegment($"api/mixedtransactions/address/{address}/count");
+
+            return query.GetJsonAsync<long>();
+        }
+
+        public async Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByGroup(string group, IPageOptions pageOptions)
+        {
+            var query = _baseUrl
+                .AppendPathSegment($"api/mixedtransactions/group/{group}");
+
+            query = AppendPageOptions(query, pageOptions);
+
+            return (await query.GetJsonAsync<ChannelTransactionContract[]>())
+                .Select(MixedChannelTransaction.Create);
+        }
+
+        public Task<long> GetMixedTransactionCountByGroup(string groupId)
+        {
+            var query = _baseUrl
+                .AppendPathSegment($"api/mixedtransactions/group/{groupId}/count");
 
             return query.GetJsonAsync<long>();
         }

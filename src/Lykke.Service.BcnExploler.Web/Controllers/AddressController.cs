@@ -21,10 +21,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         private readonly ICachedAddressService _cachedAddressService;
         private readonly ICachedMainChainService _mainChainService;
         private readonly IChannelService _channelService;
-
-
-        private const int OffchainTransactionsPageSize = 20;
-
+        
         public AddressController(IAddressService addressProvider, 
             IAssetService assetService, 
             IBlockService blockService,
@@ -123,15 +120,15 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
 
             await Task.WhenAll(onchainTransactions, offchainTransactionCount);
 
-            return View(AddressTransactionsViewModel.Create(id, onchainTransactions.Result, offchainTransactionCount.Result, OffchainTransactionsPageSize));
+            return View(AddressTransactionsViewModel.Create(id, onchainTransactions.Result, offchainTransactionCount.Result));
         }
 
-        [Route("address/offchainchannelpage")]
-        public async Task<ActionResult> OffchainMixedTransactionsPage(string address, int page)
+        [Route("address/offchaintransactionspage")]
+        public async Task<ActionResult> OffchainMixedTransactionsPage(string address, int page, int pageSize)
         {
             var getTransactions =
                 _channelService.GetMixedTransactionsByAddressAsync(address,
-                    PageOptions.Create(page, OffchainTransactionsPageSize));
+                    PageOptions.Create(page, pageSize));
             var getAssetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 
             await Task.WhenAll(getTransactions, getAssetDictionary);

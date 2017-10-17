@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
@@ -14,14 +14,23 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         public OffchainFilledChannelViewModel FilledChannel { get; set; }
 
         public OffChainTransactionViewModel Transaction { get; set; }
+        public OffchainMixedTransactionsPagedList OffchainMixedTransactionsPagedList { get; set; }
+        private const int PageSize = 20;
 
         public static OffchainTransactionDetailsViewModel Create(OffchainFilledChannelViewModel filledChannel,
-            string transactionId)
+            string transactionId,
+            string group,
+            long offchainTransactionsCount)
         {
             return new OffchainTransactionDetailsViewModel
             {
                 FilledChannel = filledChannel,
-                Transaction = filledChannel.OffChainTransactions.First(x => x.TransactionId == transactionId)
+                Transaction = filledChannel.OffChainTransactions.First(x => x.TransactionId == transactionId),
+                OffchainMixedTransactionsPagedList = OffchainMixedTransactionsPagedList.Create(
+                    offchainTransactionsCount,
+                    PageSize,
+                    (url, page) => url.Action("OffchainMixedTransactionsPage", "OffchainGroup", new { group = group, page = page, pageSize = PageSize })
+                )
             };
         }
     }

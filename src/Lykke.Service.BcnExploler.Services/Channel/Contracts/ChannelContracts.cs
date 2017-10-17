@@ -7,6 +7,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
     {
         public string AssetId { get; set; }
         public bool IsColored { get; set; }
+        public string GroupId { get; set; }
         public string OpenTransactionId { get; set; }
         public ChannelTransactionType OpenTransactionType { get; set; }
         public string CloseTransactionId { get; set; }

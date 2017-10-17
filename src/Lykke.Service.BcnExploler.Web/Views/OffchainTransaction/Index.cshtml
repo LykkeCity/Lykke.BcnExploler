@@ -1,5 +1,5 @@
 ﻿@using Lykke.Service.BcnExploler.Web.Models.Offchain
-@model Lykke.Service.BcnExploler.Web.Models.Offchain.OffchainTransactionDetailsViewModel
+@model OffchainTransactionDetailsViewModel
 @{
     
     ViewData["Title"] = "Offchain transaction";
@@ -9,6 +9,7 @@
 {
     <script src="~/js/app/transaction/singletransaction.js" asp-append-version="true"></script>
     <script src="~/js/app/transaction/transactionlist.js"  asp-append-version="true"></script>
+    <script src="~/js/app/offchain/paginationloader.js" asp-append-version="true"></script>
 }
 
 <section class="section section--padding">
@@ -25,8 +26,7 @@
     </div>
 </section>
 
-<section class="section section--transactions">
+<section class="section">
     
-    @Html.Partial("Offchain/OffchainChannel", Model.FilledChannel)
-
+    @Html.Partial("Offchain/OffchainMixedTransactionPagedList", Model.OffchainMixedTransactionsPagedList)
 </section>

@@ -12,7 +12,6 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         private readonly IAssetService _assetService;
         private readonly IChannelService _channelService;
 
-        
         public OffchainTransactionController(ICachedTransactionService transactionService,
             IAssetService assetService,
             IChannelService channelService)
@@ -29,14 +28,17 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
 
             await Task.WhenAll(channel, assetDictionary);
 
+
             if (channel.Result == null)
             {
                 return View("NotFound");
             }
 
+            var offchainTransactionCount =  await _channelService.GetTrabsactionCountByGroupAsync(channel.Result.GroupId);
+
             var channelViewModel = OffchainFilledChannelViewModel.Create(channel.Result, assetDictionary.Result);
 
-            return View(OffchainTransactionDetailsViewModel.Create(channelViewModel, id));
+            return View(OffchainTransactionDetailsViewModel.Create(channelViewModel, id, channel.Result.GroupId, offchainTransactionCount));
         }
     }
 }

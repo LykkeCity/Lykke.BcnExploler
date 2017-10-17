@@ -11,6 +11,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
 {
     public class FilledChannel:IFilledChannel
     {
+        public string GroupId { get; set; }
         public string AssetId { get; set; }
         public bool IsColored { get; set; }
         public IOnchainTransaction OpenTransaction { get; set; }
@@ -31,7 +32,8 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 CloseFilledTransaction = closeTransaction,
                 OpenFilledTransaction = openTransaction,
                 AssetId = channel.AssetId,
-                IsColored = channel.IsColored
+                IsColored = channel.IsColored,
+                GroupId = channel.GroupId
             };
         }
     }
@@ -109,7 +111,12 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         {
             var uncoloredAddress = GetUncoloredAddress(address);
 
-            return _offchainNotificationsApiProvider.TransactionCountByAddress(uncoloredAddress);
+            return _offchainNotificationsApiProvider.GetMixedTransactionCountByAddress(uncoloredAddress);
+        }
+
+        public Task<long> GetTrabsactionCountByGroupAsync(string group)
+        {
+            return _offchainNotificationsApiProvider.GetMixedTransactionCountByGroup(group);
         }
 
         public async Task<IEnumerable<IChannel>> GetChannelsByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All)
@@ -128,7 +135,14 @@ namespace Lykke.Service.BcnExploler.Services.Channel
 
         public async Task<IEnumerable<IFilledMixedTransaction>> GetMixedTransactionsByAddressAsync(string address, IPageOptions pageOptions)
         {
-            var txs = await _offchainNotificationsApiProvider.GetMixedTransactions(address, pageOptions);
+            var txs = await _offchainNotificationsApiProvider.GetMixedTransactionsByAddress(address, pageOptions);
+
+            return await FillTransactions(txs);
+        }
+
+        public async Task<IEnumerable<IFilledMixedTransaction>> GetMixedTransactionsByGroupAsync(string groupId, IPageOptions pageOptions)
+        {
+            var txs = await _offchainNotificationsApiProvider.GetMixedTransactionsByGroup(groupId, pageOptions);
 
             return await FillTransactions(txs);
         }
