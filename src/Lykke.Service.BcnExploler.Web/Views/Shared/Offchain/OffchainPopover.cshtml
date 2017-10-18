@@ -34,7 +34,7 @@
                     </td>
                     <td class="issuer__content text-right">
                         <div class="graph graph--multisig">
-                            @foreach (var tx in channel.OffChainTransactions.OrderBy(p => p.DateTime).Take(Model.MaxItemsToTake))
+                            @foreach (var tx in channel.OffChainTransactions.OrderBy(p => p.DateTime).TakeLast(Model.MaxItemsToTake))
                             {
                                 <div class="graph_candle">
                                     <span style="height: @tx.Address1QuanrtityPercents%"></span>
@@ -65,7 +65,7 @@
                     </td>
                     <td class="issuer__content text-right">
                         <div class="graph graph--multisig">
-                            @foreach (var tx in channel.OffChainTransactions.OrderBy(p => p.DateTime).Take(Model.MaxItemsToTake))
+                            @foreach (var tx in channel.OffChainTransactions.OrderBy(p => p.DateTime).TakeLast(Model.MaxItemsToTake))
                             {
                                 <div class="graph_candle">
                                     <span style="height: @tx.Address2QuanrtityPercents%"></span>
