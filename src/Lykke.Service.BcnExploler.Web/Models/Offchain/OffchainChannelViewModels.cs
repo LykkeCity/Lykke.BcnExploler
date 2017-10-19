@@ -45,7 +45,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             }
 
             var offchainTransactions =
-                channel.OffchainTransactions.OrderByDescending(p => p.DateTime).Select(p => OffChainTransactionViewModel.Create(p, assetDictionary));
+                channel.OffchainTransactions.OrderByDescending(p => p.DateTime).Select(OffchainTransactionViewModel.Create);
 
             this.OpenTransactionTd = channel.OpenTransaction?.TransactionId;
             this.CloseTransactionId = channel.CloseTransaction?.TransactionId;
@@ -58,10 +58,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
         public string CloseTransactionId { get; set; }
 
-        public IEnumerable<OffChainTransactionViewModel> OffChainTransactions { get; set; }
-
-        public OffChainTransactionViewModel ConfirmedOffchainTransaction =>
-            OffChainTransactions?.FirstOrDefault(p => !p.IsRevoked);
+        public IEnumerable<OffchainTransactionViewModel> OffChainTransactions { get; set; }
 
         public static OffchainChannelViewModel Create(IChannel channel, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
@@ -69,6 +66,41 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         }
     }
 
+    public class OffchainTransactionViewModel
+    {
+        public string TransactionId { get;  set; }
 
+        public DateTime DateTime { get;  set; }
 
+        public string HubAddress { get;  set; }
+
+        public string Address1 { get;  set; }
+
+        public string Address2 { get;  set; }
+
+        public string AssetId { get;  set; }
+
+        public bool IsColored { get;  set; }
+
+        public decimal Address1Quantity { get;  set; }
+
+        public decimal Address2Quantity { get;  set; }
+
+        public static OffchainTransactionViewModel Create(IOffchainTransaction source)
+        {
+            return new OffchainTransactionViewModel
+            {
+                AssetId = source.AssetId,
+                Address1 = source.Address1,
+                IsColored = source.IsColored,
+                DateTime = source.DateTime,
+                HubAddress = source.HubAddress,
+                Address1Quantity = source.Address1Quantity,
+                Address2 = source.Address2,
+                Address2Quantity = source.Address2Quantity,
+                TransactionId = source.TransactionId
+            };
+        }
+        
+    }
 }

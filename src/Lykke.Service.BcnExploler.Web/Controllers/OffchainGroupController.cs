@@ -10,19 +10,19 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
     public class OffchainGroupController:Controller
     {
         private readonly IAssetService _assetService;
-        private readonly IChannelService _channelService;
+        private readonly IOffchainNotificationsService _offchainNotificationsService;
 
-        public OffchainGroupController(IAssetService assetService, IChannelService channelService)
+        public OffchainGroupController(IAssetService assetService, IOffchainNotificationsService offchainNotificationsService)
         {
             _assetService = assetService;
-            _channelService = channelService;
+            _offchainNotificationsService = offchainNotificationsService;
         }
 
         [Route("offchain/group/offchaintransactionspage")]
         public async Task<ActionResult> OffchainMixedTransactionsPage(string group, int page, int pageSize)
         {
             var getTransactions =
-                _channelService.GetMixedTransactionsByGroupAsync(group,
+                _offchainNotificationsService.GetMixedTransactionsByGroupAsync(group,
                     PageOptions.Create(page, pageSize));
             var getAssetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 

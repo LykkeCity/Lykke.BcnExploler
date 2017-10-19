@@ -12,12 +12,12 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
         public ChannelTransactionType OpenTransactionType { get; set; }
         public string CloseTransactionId { get; set; }
         public ChannelTransactionType CloseTransactionType { get; set; }
-        public IEnumerable<OffchainTransactionContract> OffchainTransactions { get; set; }
+        public IEnumerable<OffchainChannelTransactionContract> OffchainTransactions { get; set; }
         public string PrevChannelId { get; set; }
         public string NextChanneld { get; set; }
     }
 
-    public class OffchainTransactionContract
+    public class OffchainChannelTransactionContract
     {
         public string TransactionId { get; set; }
         public DateTime DateTime { get; set; }
@@ -28,8 +28,5 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
         public bool IsColored { get; set; }
         public decimal Address1Quantity { get; set; }
         public decimal Address2Quantity { get; set; }
-        public decimal Address1QuantityDiff { get; set; }
-        public decimal Address2QuantityDiff { get; set; }
-        public bool IsRevoked { get; set; }
     }
 }

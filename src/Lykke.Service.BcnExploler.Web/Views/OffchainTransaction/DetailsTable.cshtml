@@ -3,9 +3,6 @@
 @model OffchainTransactionDetailsViewModel
 @{
     Layout =null;
-
-    var lastOnChain = Model.FilledChannel.CloseTransaction ?? Model.FilledChannel.OpenTransaction;
-    var lastOnChainConfirmed = lastOnChain?.IsConfirmed ?? false;
 }
 <div class="container ">
     <div class="page__header">
@@ -22,52 +19,21 @@
         <div class="col-xs-12 col-md-6">
             <table class="table table--be_info">
                 <tbody>
-                @if (lastOnChainConfirmed)
-                {
-                    <tr>
-                        <td><b>Date:</b></td>
-                        <td>@(lastOnChain.Block.Time.ToStringBcnExplolerFormat())</td>
-                    </tr>
-                }
                 <tr>
-                    <td><b>Assets transacted:</b></td>
-                    <td>@(Model.Transaction.Asset.IsColored ? 1 : 0)</td>
+                    <td><b>Date:</b></td>
+                    <td>@(Model.Transaction.DateTime.ToStringBcnExplolerFormat())</td>
                 </tr>
-                <tr>
-                    <td><b>Confirmations:</b></td>
-                    <td>
-                        @if (lastOnChainConfirmed)
-                        {
-                            <span>@(lastOnChain.Block.Confirmations)</span>
-                        }
-                        else
-                        {
-                            <span>Unconfirmed</span>
-                        }
-                    </td>
-                </tr>
+
                 </tbody>
             </table>
         </div>
         <div class="col-xs-12 col-md-6">
             <table class="table table--be_info">
                 <tbody>
-                @if (lastOnChainConfirmed)
-                {
                     <tr>
-                        <td><b>Block:</b></td>
-                        <td>
-                            <a href="@Url.Action("Index", "Block", new {id = lastOnChain.Block.BlockId})">
-                                <span class="truncate" title="@lastOnChain.Block.BlockId">@lastOnChain.Block.BlockId</span>
-                            </a>
-                        </td>
+                        <td><b>Assets transacted:</b></td>
+                        <td>@(Model.Transaction.Asset.IsColored ? 1 : 0)</td>
                     </tr>
-                    <tr>
-                        <td><b>Height:</b></td>
-                        <td>@lastOnChain.Block.Height</td>
-                    </tr>                       
-                }
-
                 </tbody>
             </table>
         </div>

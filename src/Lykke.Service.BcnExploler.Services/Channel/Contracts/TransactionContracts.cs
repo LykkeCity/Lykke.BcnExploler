@@ -2,14 +2,16 @@
 
 namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
 {
-    public class ChannelTransactionContract
+    public class OffchainTransactionContract
     {
         public string ChannelId { get; set; }
 
-        public ChannelMetadataContract Metadata { get; set; }
+        public string GroupId { get; set; }
+
+        public OffchainTransactionMetadataContract Metadata { get; set; }
 
         public ChannelTransactionType Type { get; set; }
-
+        public bool IsOffchain { get; set; }
         public OnchainTransactionDataContract OnchainTransactionData { get; set; }
 
         public OffchainTransactionDataContract OffchainTransactionData { get; set; }
@@ -17,14 +19,16 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
 
     public enum ChannelTransactionType
     {
-        Offchain = 0,
-        OpenOnChain = 1,
-        CloseOnchain = 2,
-        ReOpenOnChain = 3,
-        None = 4
+        RevokedOffchain = 0,
+        ConfirmedOffchain,
+        ReOpenedOffchain,
+        OpenOnChain,
+        CloseOnchain,
+        ReOpenOnChain,
+        None
     }
 
-    public class ChannelMetadataContract
+    public class OffchainTransactionMetadataContract
     {
         public string AssetId { get; set; }
 
@@ -53,9 +57,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
         public decimal Address1QuantityDiff { get; set; }
 
         public decimal Address2QuantityDiff { get; set; }
-
-        public bool IsRevoked { get; set; }
-
+        
         public DateTime Date { get; set; }
     }
 }

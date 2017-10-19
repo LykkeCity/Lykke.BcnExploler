@@ -18,15 +18,15 @@ namespace Lykke.Service.BcnExploler.Services.Search
     {
         private readonly IAssetService _assetProvider;
         private readonly AppSettings _baseSettings;
-        private readonly IChannelService _channelService;
+        private readonly IOffchainNotificationsService _offchainNotificationsService;
 
         public SearchService(IAssetService assetProvider,
             AppSettings baseSettings, 
-            IChannelService channelService)
+            IOffchainNotificationsService offchainNotificationsService)
         {
             _assetProvider = assetProvider;
             _baseSettings = baseSettings;
-            _channelService = channelService;
+            _offchainNotificationsService = offchainNotificationsService;
         }
 
         public async Task<SearchResultType?> GetTypeAsync(string id)
@@ -44,7 +44,7 @@ namespace Lykke.Service.BcnExploler.Services.Search
                 result = asset != null ? (SearchResultType?)SearchResultType.Asset : null;
             }
 
-            if (await _channelService.OffchainTransactionExistsAsync(id))
+            if (await _offchainNotificationsService.OffchainTransactionExistsAsync(id))
             {
                 return SearchResultType.OffchainTransaction;
             }

@@ -1,8 +1,9 @@
 ﻿@using Common
+@using Lykke.Service.BcnExploler.Core.Channel
 @using Lykke.Service.BcnExploler.Services.Helpers
 @using Lykke.Service.BcnExploler.Web.Models.Asset
 @using Lykke.Service.BcnExploler.Web.Models.Offchain
-@model OffChainTransactionViewModel
+@model OffChainDiffTransactionViewModel
 
 @{
     Layout = null;
@@ -15,13 +16,17 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-4 pull-right text-right">
                     <div class="confirmation_label">
-                        @if (Model.IsRevoked)
+                        @if (Model.Type == MixedTransactionType.RevokedOffchain)
                         {
                             <span class="label label--gray">Revoked off-chain</span>
                         }
-                        else
+                        else if(Model.Type == MixedTransactionType.ConfirmedOffchain)
                         {
                             <span class="label label--green">Confirmed off-chain</span>
+                        }
+                        else if(Model.Type == MixedTransactionType.ReOpenedOffchain)
+                        {
+                            <span class="label label--gray">Reopened offchain</span>
                         }
                     </div>
                 </div>

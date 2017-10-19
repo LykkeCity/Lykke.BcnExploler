@@ -10,7 +10,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 {
     public class OffchainMixedTransactionViewModel
     {
-        public OffChainTransactionViewModel Offchain { get; set; }
+        public OffChainDiffTransactionViewModel Offchain { get; set; }
 
         public bool ShowOffchain => Offchain != null;
 
@@ -24,7 +24,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             return new OffchainMixedTransactionViewModel
             {
                 Onchain = TransactionViewModel.Create(source.FilledOnchainTransactionData, assetDictionary, source.OnchainTransactionData?.Type),
-                Offchain = OffChainTransactionViewModel.Create(source.OffchainTransactionData, assetDictionary)
+                Offchain = OffChainDiffTransactionViewModel.Create(source.OffchainTransactionData, assetDictionary)
             };
         }
     }

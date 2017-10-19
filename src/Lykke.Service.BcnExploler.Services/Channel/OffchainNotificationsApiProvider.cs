@@ -10,14 +10,43 @@ using Lykke.Service.BcnExploler.Services.Channel.Contracts;
 
 namespace Lykke.Service.BcnExploler.Services.Channel
 {
+
+    public static class TransactionTypeMapperHelper
+    {
+        private static readonly IDictionary<ChannelTransactionType, MixedTransactionType> TypeMapping = new Dictionary<ChannelTransactionType, MixedTransactionType>()
+        {
+            {ChannelTransactionType.RevokedOffchain,  MixedTransactionType.RevokedOffchain},
+            {ChannelTransactionType.ConfirmedOffchain,  MixedTransactionType.ConfirmedOffchain},
+            {ChannelTransactionType.CloseOnchain,  MixedTransactionType.CloseOnchain},
+            {ChannelTransactionType.OpenOnChain,  MixedTransactionType.OpenOnChain},
+            {ChannelTransactionType.ReOpenOnChain,  MixedTransactionType.ReOpenOnChain},
+            {ChannelTransactionType.ReOpenedOffchain,  MixedTransactionType.ReOpenedOffchain},
+            {ChannelTransactionType.None,  MixedTransactionType.None }
+        };
+
+        public static MixedTransactionType Map(ChannelTransactionType source)
+        {
+            if (TypeMapping.ContainsKey(source))
+            {
+                return TypeMapping[source];
+            }
+
+            return MixedTransactionType.None;
+        }
+    }
     public class Channel : IChannel
     {
+
+
+
         public string GroupId { get; set; }
         public string AssetId { get; set; }
         public bool IsColored { get; set; }
         public IOnchainTransaction OpenTransaction { get; set; }
         public IOnchainTransaction CloseTransaction { get; set; }
         public IEnumerable<IOffchainTransaction> OffchainTransactions { get; set; }
+
+
 
         public static Channel Create(ChannelContract source)
         {
@@ -26,9 +55,9 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 return new Channel
                 {
                     AssetId = source.AssetId,
-                    CloseTransaction = OnchainTransaction.Create(source.CloseTransactionId, source.CloseTransactionType),
+                    CloseTransaction = OnchainTransaction.Create(source.CloseTransactionId, TransactionTypeMapperHelper.Map(source.CloseTransactionType)),
                     IsColored = source.IsColored,
-                    OpenTransaction = OnchainTransaction.Create(source.OpenTransactionId, source.OpenTransactionType),
+                    OpenTransaction = OnchainTransaction.Create(source.OpenTransactionId, TransactionTypeMapperHelper.Map(source.OpenTransactionType)),
                     OffchainTransactions = source.OffchainTransactions.Select(OffchainTransaction.Create),
                     GroupId = source.GroupId
                 };
@@ -38,7 +67,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         }
     }
 
-    public class OffchainTransaction: IOffchainTransaction
+    public class DiffOffchainTransaction: IDiffOffchainTransaction
     {
         public string TransactionId { get; set; }
         public DateTime DateTime { get; set; }
@@ -49,35 +78,16 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         public bool IsColored { get; set; }
         public decimal Address1Quantity { get; set; }
         public decimal Address2Quantity { get; set; }
-        public bool IsRevoked { get; set; }
         public decimal Address1QuantityDiff { get; set; }
         public decimal Address2QuantityDiff { get; set; }
+        public MixedTransactionType Type { get; set; }
 
-        public static OffchainTransaction Create(OffchainTransactionContract source)
-        {
-            return new OffchainTransaction
-            {
-                TransactionId = source.TransactionId,
-                Address1 = source.Address1,
-                Address1Quantity = source.Address1Quantity,
-                Address2 = source.Address2,
-                Address2Quantity = source.Address2Quantity,
-                AssetId = source.AssetId,
-                DateTime = source.DateTime,
-                HubAddress = source.HubAddress,
-                IsColored = source.IsColored,
-                IsRevoked = source.IsRevoked,
-                Address2QuantityDiff = source.Address2QuantityDiff,
-                Address1QuantityDiff = source.Address1QuantityDiff
-            };
-        }
-
-        public static OffchainTransaction Create(OffchainTransactionDataContract source,
-            ChannelMetadataContract metadata)
+        public static DiffOffchainTransaction Create(OffchainTransactionDataContract source,
+            OffchainTransactionMetadataContract metadata, MixedTransactionType type)
         {
             if (source != null)
             {
-                return new OffchainTransaction
+                return new DiffOffchainTransaction
                 {
                     Address1 = metadata.ClientAddress1,
                     AssetId = metadata.AssetId,
@@ -90,7 +100,7 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                     HubAddress = metadata.HubAddress,
                     IsColored = metadata.IsColored,
                     TransactionId = source.TransactionId,
-                    IsRevoked = source.IsRevoked
+                    Type = type
                 };
             }
 
@@ -98,19 +108,56 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         }
     }
 
+    public class OffchainTransaction : IOffchainTransaction
+    {
+        public string TransactionId { get; set; }
+        public DateTime DateTime { get; set; }
+        public string HubAddress { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string AssetId { get; set; }
+        public bool IsColored { get; set; }
+        public decimal Address1Quantity { get; set; }
+        public decimal Address2Quantity { get; set; }
+
+        public static OffchainTransaction Create(OffchainChannelTransactionContract source)
+        {
+            return new OffchainTransaction
+            {
+                TransactionId = source.TransactionId,
+                Address1 = source.Address1,
+                Address1Quantity = source.Address1Quantity,
+                Address2 = source.Address2,
+                Address2Quantity = source.Address2Quantity,
+                AssetId = source.AssetId,
+                DateTime = source.DateTime,
+                HubAddress = source.HubAddress,
+                IsColored = source.IsColored
+            };
+        }
+    }
+
     public class MixedChannelTransaction : IMixedChannelTransaction
     {
         public string AssetId { get; set; }
+        public string GroupId { get; set; }
         public bool IsColored { get; set; }
         public string HubAddress { get; set; }
         public string ClientAddress1 { get; set; }
         public string ClientAddress2 { get; set; }
         public bool IsOffchain { get; set; }
         public IOnchainTransaction OnchainTransactionData { get; set; }
-        public IOffchainTransaction OffchainTransactionData { get; set; }
+        public IDiffOffchainTransaction OffchainTransactionData { get; set; }
 
-        public static MixedChannelTransaction Create(ChannelTransactionContract source)
+        public static MixedChannelTransaction Create(OffchainTransactionContract source)
         {
+            if (source == null)
+            {
+                return null;
+            }
+
+            var type = TransactionTypeMapperHelper.Map(source.Type);
+
             return new MixedChannelTransaction
             {
                 AssetId = source.Metadata.AssetId,
@@ -118,36 +165,28 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 ClientAddress2 = source.Metadata.ClientAddress2,
                 HubAddress = source.Metadata.HubAddress,
                 IsColored = source.Metadata.IsColored,
-                IsOffchain = source.Type == ChannelTransactionType.Offchain,
-                OffchainTransactionData = OffchainTransaction.Create(source.OffchainTransactionData, source.Metadata),
-                OnchainTransactionData = OnchainTransaction.Create(source.OnchainTransactionData?.TransactionId, source.Type)
+                IsOffchain = source.IsOffchain,
+                OffchainTransactionData = DiffOffchainTransaction.Create(source.OffchainTransactionData, source.Metadata, type),
+                OnchainTransactionData = OnchainTransaction.Create(source.OnchainTransactionData?.TransactionId, type),
+                GroupId = source.GroupId
             };
         }
     }
 
     public class OnchainTransaction : IOnchainTransaction
     {
-        private static readonly IDictionary<ChannelTransactionType, MixedTransactionType> TypeMapping = new Dictionary<ChannelTransactionType, MixedTransactionType>()
-        {
-            {ChannelTransactionType.Offchain,  MixedTransactionType.Offchain},
-            {ChannelTransactionType.CloseOnchain,  MixedTransactionType.CloseChannel},
-            {ChannelTransactionType.OpenOnChain,  MixedTransactionType.ChannelSetup},
-            {ChannelTransactionType.ReOpenOnChain,  MixedTransactionType.ReopenChannel},
-            {ChannelTransactionType.None,  MixedTransactionType.None }
-        };
-
         public string TransactionId { get; set; }
         public MixedTransactionType Type { get; set; }
 
 
-        public static OnchainTransaction Create(string transactionId, ChannelTransactionType transactionType)
+        public static OnchainTransaction Create(string transactionId, MixedTransactionType transactionType)
         {
             if (!string.IsNullOrEmpty(transactionId))
             {
                 return new OnchainTransaction
                 {
                     TransactionId = transactionId,
-                    Type = TypeMapping[transactionType]
+                    Type = transactionType
                 };
             }
 
@@ -163,24 +202,9 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         {
             _baseUrl = baseSettings.BcnExploler.OffchainNotificationsHandlerUrl;
         }
+        
 
-        public async Task<IChannel> GetByOffchainTransactionIdAsync(string transactionId)
-        {
-            var resp = await _baseUrl
-                .AppendPathSegment($"api/offchaintransactions/{transactionId}")
-                .GetJsonAsync<ChannelContract>();
 
-            return Channel.Create(resp);
-        }
-
-        public async Task<bool> OffchainTransactionExistsAsync(string transactionId)
-        {
-            var resp = await _baseUrl
-                .AppendPathSegment($"api/offchaintransactions/{transactionId}/exists")
-                .GetJsonAsync<bool>();
-
-            return resp;
-        }
 
         public async Task<IEnumerable<IChannel>> GetByAddressAsync(string address, 
             ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
@@ -207,11 +231,20 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             return resp;
         }
 
-        public async Task<long> GetCountByAddressAsync(string address)
+        public async Task<IMixedChannelTransaction> GetOffchainTransaction(string txId)
         {
             var resp = await _baseUrl
-                .AppendPathSegment($"api/channels/address/{address}/count")
-                .GetJsonAsync<long>();
+                .AppendPathSegment($"api/transactions/offchain/{txId}")
+                .GetJsonAsync<OffchainTransactionContract>();
+
+            return MixedChannelTransaction.Create(resp);
+        }
+
+        public async Task<bool> OffchainTransactionExistsAsync(string transactionId)
+        {
+            var resp = await _baseUrl
+                .AppendPathSegment($"api/transactions/offchain/{transactionId}/exist")
+                .GetJsonAsync<bool>();
 
             return resp;
         }
@@ -219,18 +252,18 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         public async Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByAddress(string address, IPageOptions pageOptions)
         {
             var query = _baseUrl
-                .AppendPathSegment($"api/mixedtransactions/address/{address}");
+                .AppendPathSegment($"api/transactions/address/{address}");
 
             query = AppendPageOptions(query, pageOptions);
 
-            return (await query.GetJsonAsync<ChannelTransactionContract[]>())
+            return (await query.GetJsonAsync<OffchainTransactionContract[]>())
                 .Select(MixedChannelTransaction.Create);
         }
 
         public Task<long> GetMixedTransactionCountByAddress(string address)
         {
             var query = _baseUrl
-                .AppendPathSegment($"api/mixedtransactions/address/{address}/count");
+                .AppendPathSegment($"api/transactions/address/{address}/count");
 
             return query.GetJsonAsync<long>();
         }
@@ -238,18 +271,18 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         public async Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByGroup(string group, IPageOptions pageOptions)
         {
             var query = _baseUrl
-                .AppendPathSegment($"api/mixedtransactions/group/{group}");
+                .AppendPathSegment($"api/transactions/group/{group}");
 
             query = AppendPageOptions(query, pageOptions);
 
-            return (await query.GetJsonAsync<ChannelTransactionContract[]>())
+            return (await query.GetJsonAsync<OffchainTransactionContract[]>())
                 .Select(MixedChannelTransaction.Create);
         }
 
         public Task<long> GetMixedTransactionCountByGroup(string groupId)
         {
             var query = _baseUrl
-                .AppendPathSegment($"api/mixedtransactions/group/{groupId}/count");
+                .AppendPathSegment($"api/transactions/group/{groupId}/count");
 
             return query.GetJsonAsync<long>();
         }

@@ -11,31 +11,27 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
     public class OffchainTransactionDetailsViewModel
     {
-        public OffchainFilledChannelViewModel FilledChannel { get; set; }
-
-        public OffChainTransactionViewModel Transaction { get; set; }
+        public OffChainDiffTransactionViewModel Transaction { get; set; }
         public OffchainMixedTransactionsPagedList OffchainMixedTransactionsPagedList { get; set; }
         private const int PageSize = 20;
 
-        public static OffchainTransactionDetailsViewModel Create(OffchainFilledChannelViewModel filledChannel,
-            string transactionId,
-            string group,
+        public static OffchainTransactionDetailsViewModel Create(IMixedChannelTransaction tx,
+            IReadOnlyDictionary<string, IAssetDefinition> assetsDictionary,
             long offchainTransactionsCount)
         {
             return new OffchainTransactionDetailsViewModel
             {
-                FilledChannel = filledChannel,
-                Transaction = filledChannel.OffChainTransactions.First(x => x.TransactionId == transactionId),
+                Transaction = OffChainDiffTransactionViewModel.Create(tx.OffchainTransactionData, assetsDictionary),
                 OffchainMixedTransactionsPagedList = OffchainMixedTransactionsPagedList.Create(
                     offchainTransactionsCount,
                     PageSize,
-                    (url, page) => url.Action("OffchainMixedTransactionsPage", "OffchainGroup", new { group = group, page = page, pageSize = PageSize })
+                    (url, page) => url.Action("OffchainMixedTransactionsPage", "OffchainGroup", new { group = tx.GroupId, page = page, pageSize = PageSize })
                 )
             };
         }
     }
 
-    public class OffChainTransactionViewModel
+    public class OffChainDiffTransactionViewModel
     {
         public string TransactionId { get; set; }
         public DateTime DateTime { get; set; }
@@ -50,9 +46,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
         public AssetViewModel Asset { get; set; }
 
-
-        public bool IsRevoked { get; set; }
-
+        
         public decimal Address1Quantity { get; set; }
         public decimal Address1QuanrtityPercents => Math.Round((Address1Quantity / TotalQuantity) * 100);
 
@@ -67,19 +61,21 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         public decimal Address2QuantityDiff { get; set; }
         public decimal TotalQuantity => Address1Quantity + Address2Quantity;
 
-        public static OffChainTransactionViewModel Create(string transactionId,
+        public MixedTransactionType Type { get; set; }
+
+        public static OffChainDiffTransactionViewModel Create(string transactionId,
             AssetViewModel asset,
             DateTime dateTime,
-            bool isRevoked,
             string hubAddress,
             string address1,
             string address2,
             decimal address1Quantity,
             decimal address2Quantity,
             decimal address1QuantityDiff,
-            decimal address2QuantityDiff)
+            decimal address2QuantityDiff,
+            MixedTransactionType type)
         {
-            return new OffChainTransactionViewModel
+            return new OffChainDiffTransactionViewModel
             {
                 TransactionId = transactionId,
                 Address1 = address1,
@@ -89,13 +85,13 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
                 DateTime = dateTime,
                 HubAddress = hubAddress,
                 Asset = asset,
-                IsRevoked = isRevoked,
                 Address1QuantityDiff = address1QuantityDiff,
-                Address2QuantityDiff = address2QuantityDiff
+                Address2QuantityDiff = address2QuantityDiff,
+                Type = type
             };
         }
 
-        public static OffChainTransactionViewModel Create(IOffchainTransaction tx,
+        public static OffChainDiffTransactionViewModel Create(IDiffOffchainTransaction tx,
             IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
             if (tx == null)
@@ -118,18 +114,18 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
 
 
-            return OffChainTransactionViewModel.Create(
+            return OffChainDiffTransactionViewModel.Create(
                 transactionId: tx.TransactionId,
                 address1: tx.Address1,
                 asset: asset,
                 dateTime: tx.DateTime,
-                isRevoked: tx.IsRevoked,
                 hubAddress: tx.HubAddress,
                 address2: tx.Address2,
                 address1Quantity: tx.Address1Quantity,
                 address1QuantityDiff: tx.Address1QuantityDiff,
                 address2Quantity: tx.Address2Quantity,
-                address2QuantityDiff: tx.Address2QuantityDiff);
+                address2QuantityDiff: tx.Address2QuantityDiff,
+                type:tx.Type);
         }
     }
 }

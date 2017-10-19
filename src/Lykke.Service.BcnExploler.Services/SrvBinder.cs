@@ -168,8 +168,8 @@ namespace Lykke.Service.BcnExploler.Services
                 .As<IOffchainNotificationsApiProvider>()
                 .SingleInstance();
 
-            builder.RegisterType<ChannelService>()
-                .As<IChannelService>()
+            builder.RegisterType<OffchainNotificationsService>()
+                .As<IOffchainNotificationsService>()
                 .SingleInstance();
         }
     }

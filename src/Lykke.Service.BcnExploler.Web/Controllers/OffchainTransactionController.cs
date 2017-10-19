@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Core.Transaction;
@@ -10,35 +11,36 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
     public class OffchainTransactionController: Controller
     {
         private readonly IAssetService _assetService;
-        private readonly IChannelService _channelService;
+        private readonly IOffchainNotificationsService _offchainNotificationsService;
 
         public OffchainTransactionController(ICachedTransactionService transactionService,
             IAssetService assetService,
-            IChannelService channelService)
+            IOffchainNotificationsService offchainNotificationsService)
         {
             _assetService = assetService;
-            _channelService = channelService;
+            _offchainNotificationsService = offchainNotificationsService;
         }
 
         [Route("transaction/offchain/{id}")]
         public async Task<ActionResult> Index(string id)
         {
-            var channel = _channelService.GetChannelsByOffchainTransactionIdAsync(id);
-            var assetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
+            var getOffchainTx = _offchainNotificationsService.GetOffchainMixedTransaction(id);
+            var getAssetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 
-            await Task.WhenAll(channel, assetDictionary);
+            await Task.WhenAll(getOffchainTx, getAssetDictionary);
 
 
-            if (channel.Result == null)
+            if (getOffchainTx.Result == null)
             {
                 return View("NotFound");
             }
+            
 
-            var offchainTransactionCount =  await _channelService.GetTrabsactionCountByGroupAsync(channel.Result.GroupId);
+            var offchainTransactionCount =  await _offchainNotificationsService.GetTransactionCountByGroupAsync(getOffchainTx.Result.GroupId);
 
-            var channelViewModel = OffchainFilledChannelViewModel.Create(channel.Result, assetDictionary.Result);
-
-            return View(OffchainTransactionDetailsViewModel.Create(channelViewModel, id, channel.Result.GroupId, offchainTransactionCount));
+            return View(OffchainTransactionDetailsViewModel.Create(getOffchainTx.Result, 
+                getAssetDictionary.Result,
+                offchainTransactionCount));
         }
     }
 }

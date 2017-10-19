@@ -20,28 +20,28 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         private readonly IBlockService _blockService;
         private readonly ICachedAddressService _cachedAddressService;
         private readonly ICachedMainChainService _mainChainService;
-        private readonly IChannelService _channelService;
+        private readonly IOffchainNotificationsService _offchainNotificationsService;
         
         public AddressController(IAddressService addressProvider, 
             IAssetService assetService, 
             IBlockService blockService,
             ICachedMainChainService mainChainService, 
             ICachedAddressService cachedAddressService, 
-            IChannelService channelService)
+            IOffchainNotificationsService offchainNotificationsService)
         {
             _addressProvider = addressProvider;
             _assetService = assetService;
             _blockService = blockService;
             _mainChainService = mainChainService;
             _cachedAddressService = cachedAddressService;
-            _channelService = channelService;
+            _offchainNotificationsService = offchainNotificationsService;
         }
         
         [Route("address/{id}")]
         public async Task<ActionResult> Index(string id)
         {
             var mainInfo = _addressProvider.GetMainInfoAsync(id);
-            var isOffchainHub = _channelService.IsHubAsync(id);
+            var isOffchainHub = _offchainNotificationsService.IsHubAsync(id);
 
             await Task.WhenAll(mainInfo, isOffchainHub);
 
@@ -70,7 +70,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
             var balance = _addressProvider.GetBalanceAsync(id, at);
             var assetDefinitionDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
             var lastBlock = _blockService.GetLastBlockHeaderAsync();
-            var offchainChannels = _channelService.GetChannelsByAddressAsync(id, ChannelStatusQueryType.OpenOnly);
+            var offchainChannels = _offchainNotificationsService.GetChannelsByAddressAsync(id, ChannelStatusQueryType.OpenOnly);
             Task<IBlockHeader> atBlockTask;
 
             if (at != null)
@@ -116,7 +116,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         public async Task<ActionResult> Transactions(string id)
         {
             var onchainTransactions = _cachedAddressService.GetTransactions(id);
-            var offchainTransactionCount = _channelService.GetTrabsactionCountByAddressAsync(id);
+            var offchainTransactionCount = _offchainNotificationsService.GetTransactionCountByAddressAsync(id);
 
             await Task.WhenAll(onchainTransactions, offchainTransactionCount);
 
@@ -127,7 +127,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         public async Task<ActionResult> OffchainMixedTransactionsPage(string address, int page, int pageSize)
         {
             var getTransactions =
-                _channelService.GetMixedTransactionsByAddressAsync(address,
+                _offchainNotificationsService.GetMixedTransactionsByAddressAsync(address,
                     PageOptions.Create(page, pageSize));
             var getAssetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 

@@ -14,9 +14,9 @@ namespace Lykke.Service.BcnExploler.Web.Models.Transaction
     {
         private static readonly IReadOnlyDictionary<MixedTransactionType?, string> OffchainLabelDescriptionDictionary = new Dictionary<MixedTransactionType?, string>
         {
-            {MixedTransactionType.ChannelSetup, "channel setup" },
-            {MixedTransactionType.CloseChannel, "close channel" },
-            {MixedTransactionType.ReopenChannel, "reopen channel" }
+            {MixedTransactionType.OpenOnChain, "channel setup" },
+            {MixedTransactionType.CloseOnchain, "close channel" },
+            {MixedTransactionType.ReOpenOnChain, "reopen channel" }
         };
 
         public string TransactionId { get; set; }

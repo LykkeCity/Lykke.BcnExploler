@@ -37,16 +37,37 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         decimal Address1Quantity { get; }
 
         decimal Address2Quantity { get; }
+    }
 
-        bool IsRevoked { get; }
+    public interface IDiffOffchainTransaction
+    {
+        string TransactionId { get; }
+
+        DateTime DateTime { get; }
+
+        string HubAddress { get; }
+
+        string Address1 { get; }
+
+        string Address2 { get; }
+
+        string AssetId { get; }
+
+        bool IsColored { get; }
+
+        decimal Address1Quantity { get; }
+
+        decimal Address2Quantity { get; }
         decimal Address1QuantityDiff { get; }
         decimal Address2QuantityDiff { get; }
+        MixedTransactionType Type { get; }
     }
 
     public interface IMixedChannelTransaction
     {
         string AssetId { get; }
 
+        string GroupId { get; }
         bool IsColored { get; }
         string HubAddress { get; }
 
@@ -58,15 +79,17 @@ namespace Lykke.Service.BcnExploler.Core.Channel
 
         IOnchainTransaction OnchainTransactionData { get; }
 
-        IOffchainTransaction OffchainTransactionData { get; }
+        IDiffOffchainTransaction OffchainTransactionData { get; }
     }
 
     public enum MixedTransactionType
     {
-        Offchain,
-        ChannelSetup,
-        ReopenChannel,
-        CloseChannel,
+        RevokedOffchain = 0,
+        ConfirmedOffchain,
+        ReOpenedOffchain,
+        OpenOnChain,
+        CloseOnchain,
+        ReOpenOnChain,
         None
     }
 
@@ -109,12 +132,11 @@ namespace Lykke.Service.BcnExploler.Core.Channel
 
     public interface IOffchainNotificationsApiProvider
     {
-        Task<IChannel> GetByOffchainTransactionIdAsync(string transactionId);
+        Task<IMixedChannelTransaction> GetOffchainTransaction(string txId);
         Task<bool> OffchainTransactionExistsAsync(string transactionId);
         Task<IEnumerable<IChannel>> GetByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
 
         Task<bool> IsHubAsync(string address);
-        Task<long> GetCountByAddressAsync(string address);
 
         Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByAddress(string address, IPageOptions pageOptions);
         Task<long> GetMixedTransactionCountByAddress(string address);

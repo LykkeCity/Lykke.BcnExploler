@@ -41,13 +41,14 @@ namespace Lykke.Service.BcnExploler.Services.Channel
     public class FilledMixedTransaction : IFilledMixedTransaction
     {
         public string AssetId { get; set; }
+        public string GroupId { get; set; }
         public bool IsColored { get; set; }
         public string HubAddress { get; set; }
         public string ClientAddress1 { get; set; }
         public string ClientAddress2 { get; set; }
         public bool IsOffchain { get; set; }
         public IOnchainTransaction OnchainTransactionData { get; set; }
-        public IOffchainTransaction OffchainTransactionData { get; set; }
+        public IDiffOffchainTransaction OffchainTransactionData { get; set; }
         public ITransaction FilledOnchainTransactionData { get; set; }
 
         public static FilledMixedTransaction Create(IMixedChannelTransaction mixedTransaction,
@@ -63,19 +64,20 @@ namespace Lykke.Service.BcnExploler.Services.Channel
                 HubAddress = mixedTransaction.HubAddress,
                 IsColored = mixedTransaction.IsColored,
                 IsOffchain = mixedTransaction.IsOffchain,
-                OffchainTransactionData = mixedTransaction.OffchainTransactionData
+                OffchainTransactionData = mixedTransaction.OffchainTransactionData,
+                GroupId = mixedTransaction.GroupId
             };
         }
     }
 
 
-    public class ChannelService:IChannelService
+    public class OffchainNotificationsService:IOffchainNotificationsService
     {
         private readonly IOffchainNotificationsApiProvider _offchainNotificationsApiProvider;
         private readonly ICachedTransactionService _cachedTransactionService;
         private readonly Network _network;
 
-        public ChannelService(IOffchainNotificationsApiProvider offchainNotificationsApiProvider,
+        public OffchainNotificationsService(IOffchainNotificationsApiProvider offchainNotificationsApiProvider,
             ICachedTransactionService cachedTransactionService, Network network)
         {
             _offchainNotificationsApiProvider = offchainNotificationsApiProvider;
@@ -83,11 +85,10 @@ namespace Lykke.Service.BcnExploler.Services.Channel
             _network = network;
         }
 
-        public async Task<IFilledChannel> GetChannelsByOffchainTransactionIdAsync(string transactionId)
-        {
-            var channel = await _offchainNotificationsApiProvider.GetByOffchainTransactionIdAsync(transactionId);
 
-            return await FillChannel(channel);
+        public async Task<IMixedChannelTransaction> GetOffchainMixedTransaction(string txId)
+        {
+            return await _offchainNotificationsApiProvider.GetOffchainTransaction(txId);
         }
 
         public Task<bool> OffchainTransactionExistsAsync(string transactionId)
@@ -96,25 +97,14 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         }
         
         
-        public async Task<IEnumerable<IFilledChannel>> GetChannelsByAddressFilledAsync(string address, 
-            ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All,
-            IPageOptions pageOptions = null)
-        {
-            var uncoloredAddress = GetUncoloredAddress(address);
-
-            var dbChannels = await _offchainNotificationsApiProvider.GetByAddressAsync(uncoloredAddress, channelStatusQueryType, pageOptions);
-
-            return await FillChannels(dbChannels);
-        }
-        
-        public Task<long> GetTrabsactionCountByAddressAsync(string address)
+        public Task<long> GetTransactionCountByAddressAsync(string address)
         {
             var uncoloredAddress = GetUncoloredAddress(address);
 
             return _offchainNotificationsApiProvider.GetMixedTransactionCountByAddress(uncoloredAddress);
         }
 
-        public Task<long> GetTrabsactionCountByGroupAsync(string group)
+        public Task<long> GetTransactionCountByGroupAsync(string group)
         {
             return _offchainNotificationsApiProvider.GetMixedTransactionCountByGroup(group);
         }
@@ -137,14 +127,14 @@ namespace Lykke.Service.BcnExploler.Services.Channel
         {
             var txs = await _offchainNotificationsApiProvider.GetMixedTransactionsByAddress(address, pageOptions);
 
-            return await FillTransactions(txs);
+            return await FillTransactions(txs.ToArray());
         }
 
         public async Task<IEnumerable<IFilledMixedTransaction>> GetMixedTransactionsByGroupAsync(string groupId, IPageOptions pageOptions)
         {
             var txs = await _offchainNotificationsApiProvider.GetMixedTransactionsByGroup(groupId, pageOptions);
 
-            return await FillTransactions(txs);
+            return await FillTransactions(txs.ToArray());
         }
 
         private string GetUncoloredAddress(string address)
@@ -158,29 +148,9 @@ namespace Lykke.Service.BcnExploler.Services.Channel
 
             return address;
         }
-
-        private async Task<IFilledChannel> FillChannel(IChannel channel)
-        {
-            return (await FillChannels(new [] { channel })).First();
-        }
-
-        private async Task<IEnumerable<IFilledChannel>> FillChannels(IEnumerable<IChannel> channels)
-        {
-            var txs = channels.SelectMany(p => new[] {p.CloseTransaction, p.OpenTransaction})
-                .Where(p => !string.IsNullOrEmpty(p?.TransactionId))
-                .Distinct()
-                .ToList();
-
-            var filledTxs = (await _cachedTransactionService.GetAsync(txs.Select(p=>p.TransactionId))).ToDictionary(p => p.TransactionId);
-            
-            return channels.Select(p => 
-            FilledChannel.Create(p, 
-                p.OpenTransaction != null ? filledTxs.GetValueOrDefault(p.OpenTransaction?.TransactionId, null): null,
-                p.CloseTransaction != null ? filledTxs.GetValueOrDefault(p.CloseTransaction?.TransactionId, null): null));
-        }
-
+        
         private async Task<IEnumerable<IFilledMixedTransaction>> FillTransactions(
-            IEnumerable<IMixedChannelTransaction> mixedTransactions)
+            params IMixedChannelTransaction[] mixedTransactions)
         {
             var txIds = mixedTransactions.Select(p => p.OnchainTransactionData?.TransactionId)
                 .Where(p => !string.IsNullOrEmpty(p))
