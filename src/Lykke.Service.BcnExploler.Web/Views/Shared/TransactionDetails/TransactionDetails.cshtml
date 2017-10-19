@@ -19,7 +19,10 @@
                         <div class="confirmation_label">
                             @if (Model.IsConfirmed)
                             {
-                                <span class="label label--green @(Model.Block?.Confirmations >= 5 ? "label--green" : "label--gray")">@(Model.Block?.Confirmations) Confirmations</span>
+                                <span class="label @(Model.Block?.Confirmations >= 5 ? "label--green" : "label--gray")">
+                                    <span class="check"></span>
+                                    @(Model.Block?.Confirmations)
+                                </span>
                             }
                             else
                             {
@@ -32,14 +35,7 @@
                                 <span class="label label--green">@Model.OffchainLabel</span>
                             </div>
                         }
-                        @if (Model.ShowChangeBtn)
-                        {
-                            <a href="#" class="btn_show_changes pull-right text--gray js-toggle-change-btn" data-toggle-container=".@toggleChangeContainer">
-                                <span class="js-toggle-change-label">Show</span>
-                                <span class="hidden js-toggle-change-label">Hide</span>
-                                change
-                            </a>
-                        }
+
                     </div>
                     <div class="col-sm-9">
                         <div class="address_code">
@@ -54,8 +50,19 @@
                             <span class="middot">·</span>
                         }
                         <span class="action_text">@Model.InputsCount @Utils.GenderAmount(Model.InputsCount, "input", "inputs", "inputs")</span>
+                        
                         <span class="middot">·</span>
                         <span class="action_text">@Model.OutputsCount @Utils.GenderAmount(Model.OutputsCount, "output", "outputs", "outputs")</span>
+                        
+                        @if (Model.ShowChangeBtn)
+                        {                        
+                            <span class="middot">·</span>
+                            <a href="#" class="action_text js-toggle-change-btn" data-toggle-container=".@toggleChangeContainer">
+                                <span class="js-toggle-change-label">Show</span>
+                                <span class="hidden js-toggle-change-label">Hide</span>
+                                change
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
