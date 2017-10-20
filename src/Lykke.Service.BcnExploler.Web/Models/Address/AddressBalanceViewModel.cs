@@ -4,7 +4,7 @@ using System.Linq;
 using Lykke.Service.BcnExploler.Core.Address;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Block;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
 using Lykke.Service.BcnExploler.Web.Models.Offchain;
 
@@ -39,12 +39,12 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public int PrevBlock => AtBlockHeight - 1;
         public int NextBlock => AtBlockHeight + 1;
 
-        public OffchainChannelsByAsset OffchainChannelsByAsset { get; set; }
+        public OffchainGroupsByAsset OffchainGroupsByAsset { get; set; }
         public static AddressBalanceViewModel Create(IAddressBalance balance, 
             IReadOnlyDictionary<string, IAssetDefinition> assetDictionary, 
             IBlockHeader lastBlock, 
             IBlockHeader atBlock,
-            IEnumerable<IChannel> channels)
+            IEnumerable<IGroup> offchainGroups)
         {
             var onchainColoredBalances =
                 (balance.ColoredBalances ?? Enumerable.Empty<IColoredBalance>()).Select(p =>
@@ -53,7 +53,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
             var existedOnchainAssetsBalances = onchainColoredBalances.Select(p => p.AssetId).ToDictionary(p => p);
 
             //show balances for offchain assets with 0 onchain balance
-            var missedOffchainColoredBalances = channels.Where(p => p.IsColored && !existedOnchainAssetsBalances.ContainsKey(p.AssetId))
+            var missedOffchainColoredBalances = offchainGroups.Where(p => p.IsColored && !existedOnchainAssetsBalances.ContainsKey(p.AssetId))
                 .Select(p => p.AssetId)
                 .Distinct()
                 .Select(assetId => ColoredBalance.CreateEmpty(assetId, assetDictionary));
@@ -70,7 +70,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
                 LastBlockDateTime = lastBlock.Time,
                 AtBlockHeight = (atBlock ?? lastBlock).Height,
                 AtBlockDateTime = (atBlock ?? lastBlock).Time,
-                OffchainChannelsByAsset = OffchainChannelsByAsset.Create(channels, assetDictionary),
+                OffchainGroupsByAsset = OffchainGroupsByAsset.Create(offchainGroups, assetDictionary),
                 TotalTransactionsCountCalculated = balance.TotalTransactionsCountCalculated,
                 TotalSpendedTransactions = balance.TotalSpendedTransactions,
                 TotalSpendedTransactionsCountCalculated = balance.TotalSpendedTransactionsCountCalculated,

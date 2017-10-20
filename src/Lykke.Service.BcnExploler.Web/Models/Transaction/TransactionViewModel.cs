@@ -4,7 +4,7 @@ using System.Linq;
 using Core.Transaction;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Services.Helpers;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
 

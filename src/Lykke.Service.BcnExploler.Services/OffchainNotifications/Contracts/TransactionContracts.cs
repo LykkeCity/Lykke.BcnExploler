@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
+namespace Lykke.Service.BcnExploler.Services.OffchainNotifications.Contracts
 {
-    public class OffchainTransactionContract
+    public class MixedTransactionContract
     {
         public string ChannelId { get; set; }
 

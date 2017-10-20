@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
 using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Core.Search;
 using Lykke.Service.BcnExploler.Core.Settings;
 using Lykke.Service.BcnExploler.Services.Helpers;

@@ -1,45 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Lykke.Service.BcnExploler.Core.Channel
+namespace Lykke.Service.BcnExploler.Core.OffchainNotifcations
 {
-    public interface IChannel
-    {
-        string GroupId { get; }
-        string AssetId { get; }
-        bool IsColored { get; }
-        IOnchainTransaction OpenTransaction { get; }
-
-        IOnchainTransaction CloseTransaction { get; }
-
-        IEnumerable<IOffchainTransaction> OffchainTransactions { get; }
-    }
-
     public interface IOffchainTransaction
-    {
-        string TransactionId { get; }
-
-        DateTime DateTime { get; }
-
-        string HubAddress { get; }
-
-        string Address1 { get; }
-
-        string Address2 { get; }
-
-        string AssetId { get; }
-
-        bool IsColored { get; }
-
-        decimal Address1Quantity { get; }
-
-        decimal Address2Quantity { get; }
-    }
-
-    public interface IDiffOffchainTransaction
     {
         string TransactionId { get; }
 
@@ -63,7 +28,7 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         MixedTransactionType Type { get; }
     }
 
-    public interface IMixedChannelTransaction
+    public interface IMixedTransaction
     {
         string AssetId { get; }
 
@@ -79,7 +44,7 @@ namespace Lykke.Service.BcnExploler.Core.Channel
 
         IOnchainTransaction OnchainTransactionData { get; }
 
-        IDiffOffchainTransaction OffchainTransactionData { get; }
+        IOffchainTransaction OffchainTransactionData { get; }
     }
 
     public enum MixedTransactionType
@@ -98,18 +63,28 @@ namespace Lykke.Service.BcnExploler.Core.Channel
         string TransactionId { get; }
         MixedTransactionType Type { get; }
     }
-
-    public enum ChannelStatusQueryType
-    {
-        All,
-        OpenOnly,
-        ClosedOnly
-    }
-
+    
     public interface IPageOptions
     {
         int ItemsToSkip { get; }
         int ItemsToTake { get; }
+    }
+
+    public interface IGroup
+    {
+        string GroupId { get;  }
+
+        string AssetId { get;  }
+
+        bool IsColored { get;  }
+
+        string HubAddress { get;  }
+
+        string Address1 { get;  }
+
+        string Address2 { get;  }
+
+        IEnumerable<IMixedTransaction> Transactions { get; }
     }
 
     public class PageOptions : IPageOptions
@@ -132,15 +107,17 @@ namespace Lykke.Service.BcnExploler.Core.Channel
 
     public interface IOffchainNotificationsApiProvider
     {
-        Task<IMixedChannelTransaction> GetOffchainTransaction(string txId);
+        Task<IMixedTransaction> GetOffchainTransaction(string txId);
         Task<bool> OffchainTransactionExistsAsync(string transactionId);
-        Task<IEnumerable<IChannel>> GetByAddressAsync(string address, ChannelStatusQueryType channelStatusQueryType = ChannelStatusQueryType.All, IPageOptions pageOptions = null);
-
         Task<bool> IsHubAsync(string address);
 
-        Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByAddress(string address, IPageOptions pageOptions);
+        Task<IEnumerable<IMixedTransaction>> GetMixedTransactionsByAddress(string address, IPageOptions pageOptions);
         Task<long> GetMixedTransactionCountByAddress(string address);
-        Task<IEnumerable<IMixedChannelTransaction>> GetMixedTransactionsByGroup(string group, IPageOptions pageOptions);
+        Task<IEnumerable<IMixedTransaction>> GetMixedTransactionsByGroup(string group, IPageOptions pageOptions);
         Task<long> GetMixedTransactionCountByGroup(string group);
+
+        Task<IEnumerable<IGroup>> GetGroups(string address, bool openOnly = true, int take = 10,
+            bool offchainOnly = true);
+
     }
 }

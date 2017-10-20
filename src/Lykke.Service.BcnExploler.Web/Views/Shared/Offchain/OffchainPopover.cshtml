@@ -9,9 +9,9 @@
     <div class="popover-content">
 
 
-        @foreach (var channel in Model.Channels)
+        @foreach (var group in Model.Groups)
         {
-            var confirmedTx = channel.ConfirmedOffchainTransaction;
+            var confirmedTx = group.OffChainTransactions.First();
 
             <h3>Multisig key holders</h3>
 
@@ -21,7 +21,7 @@
                     <td class="issuer__content">
 
                         <div class="issuer__name">
-                            @confirmedTx.Address1Quantity.ToStringBtcFormat() @confirmedTx.Asset.NameShort
+                            @confirmedTx.Address1Quantity.ToStringBtcFormat() @group.Asset.NameShort
                             <span class="_change @DiffClass(confirmedTx.Address1QuantityDiff)">
                                 @confirmedTx.Address1QuantityDiff.ToStringBtcFormat()
                             </span>
@@ -34,7 +34,7 @@
                     </td>
                     <td class="issuer__content text-right">
                         <div class="graph graph--multisig">
-                            @foreach (var tx in channel.OffChainTransactions.OrderBy(p => p.DateTime).TakeLast(Model.MaxItemsToTake))
+                            @foreach (var tx in group.OffChainTransactions.OrderBy(p => p.DateTime))
                             {
                                 <div class="graph_candle">
                                     <span style="height: @tx.Address1QuanrtityPercents%"></span>
@@ -52,7 +52,7 @@
                     <td class="issuer__content">
 
                         <div class="issuer__name">
-                            @confirmedTx.Address2Quantity.ToStringBtcFormat() @confirmedTx.Asset.NameShort
+                            @confirmedTx.Address2Quantity.ToStringBtcFormat() @group.Asset.NameShort
                             <span class="_change @DiffClass(confirmedTx.Address2QuantityDiff)">
                                 @confirmedTx.Address2QuantityDiff.ToStringBtcFormat()
                             </span>
@@ -65,7 +65,7 @@
                     </td>
                     <td class="issuer__content text-right">
                         <div class="graph graph--multisig">
-                            @foreach (var tx in channel.OffChainTransactions.OrderBy(p => p.DateTime).TakeLast(Model.MaxItemsToTake))
+                            @foreach (var tx in group.OffChainTransactions.OrderBy(p => p.DateTime))
                             {
                                 <div class="graph_candle">
                                     <span style="height: @tx.Address2QuanrtityPercents%"></span>

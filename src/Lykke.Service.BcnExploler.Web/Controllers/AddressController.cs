@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Lykke.Service.BcnExploler.Core.Address;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Block;
-using Lykke.Service.BcnExploler.Core.Channel;
 using Lykke.Service.BcnExploler.Core.MainChain;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Services.Helpers;
 using Lykke.Service.BcnExploler.Web.Models.Address;
 using Lykke.Service.BcnExploler.Web.Models.Offchain;
@@ -21,7 +21,9 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         private readonly ICachedAddressService _cachedAddressService;
         private readonly ICachedMainChainService _mainChainService;
         private readonly IOffchainNotificationsService _offchainNotificationsService;
-        
+
+        private const int MaxOffchainPopoverChannels = 10;
+
         public AddressController(IAddressService addressProvider, 
             IAssetService assetService, 
             IBlockService blockService,
@@ -70,7 +72,8 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
             var balance = _addressProvider.GetBalanceAsync(id, at);
             var assetDefinitionDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
             var lastBlock = _blockService.GetLastBlockHeaderAsync();
-            var offchainChannels = _offchainNotificationsService.GetChannelsByAddressAsync(id, ChannelStatusQueryType.OpenOnly);
+            var offchainBlocks = _offchainNotificationsService.GetGroups(address: id, openOnly: true,
+                take: MaxOffchainPopoverChannels, offchainOnly: true);
             Task<IBlockHeader> atBlockTask;
 
             if (at != null)
@@ -82,7 +85,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
                 atBlockTask = Task.FromResult<IBlockHeader>(null);
             }
 
-            await Task.WhenAll(balance, assetDefinitionDictionary, lastBlock, atBlockTask, offchainChannels);
+            await Task.WhenAll(balance, assetDefinitionDictionary, lastBlock, atBlockTask, offchainBlocks);
 
             if (balance.Result != null)
             {
@@ -90,7 +93,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
                     assetDefinitionDictionary.Result,
                     lastBlock.Result,
                     atBlockTask.Result,
-                    offchainChannels.Result));
+                    offchainBlocks.Result));
             }
 
             if (at != null && atBlockTask.Result == null)

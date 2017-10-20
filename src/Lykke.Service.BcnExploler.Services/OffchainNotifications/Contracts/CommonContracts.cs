@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.Service.BcnExploler.Services.Channel.Contracts
+﻿namespace Lykke.Service.BcnExploler.Services.OffchainNotifications.Contracts
 {
     public class PageOptionsRequestContract
     {

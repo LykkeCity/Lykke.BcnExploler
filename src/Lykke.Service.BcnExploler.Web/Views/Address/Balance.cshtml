@@ -97,9 +97,9 @@
                                     @{
                                         var btcQuantityDescription = $"{BitcoinUtils.SatoshiToBtc(Model.Balance).ToStringBtcFormat()} BTC";
                                     }
-                                    @if (Model.OffchainChannelsByAsset.ExistsBtc())
+                                    @if (Model.OffchainGroupsByAsset.ExistsBtc())
                                     {
-                                        @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainChannelsByAsset.GetBtc(), btcQuantityDescription))
+                                        @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainGroupsByAsset.GetBtc(), btcQuantityDescription))
                                     }
                                     else
                                     {
@@ -115,7 +115,7 @@
                         </tbody>
                     </table>
                 </li>
-                @foreach (var assetBalance in Model.Assets.Where(p => p.HasOnChainBalance || Model.OffchainChannelsByAsset.Exists(p.Asset)))
+                @foreach (var assetBalance in Model.Assets.Where(p => p.HasOnChainBalance || Model.OffchainGroupsByAsset.Exists(p.Asset)))
                 {
                     var assetDivisibity = Model.AssetDic.GetAssetProp(assetBalance.AssetId, p => p.Divisibility, 0);
                     var assetShortName = Model.AssetDic.GetAssetProp(assetBalance.AssetId, p => p.NameShort, "");
@@ -150,9 +150,9 @@
                                             @{
                                                 var assetQuantityDescription = $"{BitcoinUtils.CalculateColoredAssetQuantity(assetBalance.Quantity, assetDivisibity).ToStringBtcFormat()} {assetShortName}";
                                             }
-                                            @if (Model.OffchainChannelsByAsset.Exists(assetBalance.Asset))
+                                            @if (Model.OffchainGroupsByAsset.Exists(assetBalance.Asset))
                                             {
-                                                @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainChannelsByAsset.Get(assetBalance.Asset), assetQuantityDescription))
+                                                @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainGroupsByAsset.Get(assetBalance.Asset), assetQuantityDescription))
                                             }
                                             else
                                             {

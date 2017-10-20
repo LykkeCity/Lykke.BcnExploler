@@ -2,67 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
-using Lykke.Service.BcnExploler.Web.Models.Transaction;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 {
-    public class OffchainFilledChannelViewModel: OffchainChannelViewModel
+    public class OffchainGroupViewModel
     {
-        private OffchainFilledChannelViewModel(IFilledChannel channel, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary):base(channel, assetDictionary)
-        {
-            this.OpenTransaction = TransactionViewModel.Create(channel.OpenFilledTransaction, assetDictionary, channel.OpenTransaction?.Type);
-            this.CloseTransaction = TransactionViewModel.Create(channel.CloseFilledTransaction, assetDictionary, channel.CloseTransaction?.Type);
-        }
-
-        public TransactionViewModel OpenTransaction { get; set; }
-
-        public TransactionViewModel CloseTransaction { get; set; }
-
-        public static OffchainFilledChannelViewModel Create(IFilledChannel channel, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
-        {
-            return new OffchainFilledChannelViewModel(channel, assetDictionary);
-        }
-    }
-
-    public class OffchainChannelViewModel
-    {
-        protected OffchainChannelViewModel(IChannel channel, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
+        protected OffchainGroupViewModel(IGroup group, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
             AssetViewModel asset;
-            if (channel.IsColored)
+            if (group.IsColored)
             {
-                asset = assetDictionary.ContainsKey(channel.AssetId) ?
-                    AssetViewModel.Create(assetDictionary[channel.AssetId]) :
-                    AssetViewModel.CreateNotFoundAsset(channel.AssetId);
+                asset = assetDictionary.ContainsKey(group.AssetId) ?
+                    AssetViewModel.Create(assetDictionary[group.AssetId]) :
+                    AssetViewModel.CreateNotFoundAsset(group.AssetId);
             }
             else
             {
                 asset = AssetViewModel.BtcAsset.Value;
             }
 
-            var offchainTransactions =
-                channel.OffchainTransactions.OrderByDescending(p => p.DateTime).Select(OffchainTransactionViewModel.Create);
-
-            this.OpenTransactionTd = channel.OpenTransaction?.TransactionId;
-            this.CloseTransactionId = channel.CloseTransaction?.TransactionId;
+            var offchainTransactions =group.Transactions.Where(p=>p.OffchainTransactionData!=null).Select(p=> OffchainTransactionViewModel.Create(p.OffchainTransactionData));
+            
             this.OffChainTransactions = offchainTransactions;
             this.Asset = asset;
         }
 
         public AssetViewModel Asset { get; set; }
-        public string OpenTransactionTd { get; set; }
-
-        public string CloseTransactionId { get; set; }
 
         public IEnumerable<OffchainTransactionViewModel> OffChainTransactions { get; set; }
 
-        public static OffchainChannelViewModel Create(IChannel channel, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
+        public static OffchainGroupViewModel Create(IGroup group, IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
-            return new OffchainChannelViewModel(channel, assetDictionary);
+            return new OffchainGroupViewModel(group, assetDictionary);
         }
     }
 
@@ -83,8 +56,15 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         public bool IsColored { get;  set; }
 
         public decimal Address1Quantity { get;  set; }
+        public decimal Address1QuantityDiff { get; set; }
+        
 
+        public decimal Address1QuanrtityPercents => Math.Round((Address1Quantity / TotalQuantity) * 100);
         public decimal Address2Quantity { get;  set; }
+        public decimal Address2QuantityDiff { get; set; }
+        public decimal Address2QuanrtityPercents => Math.Round((Address2Quantity / TotalQuantity) * 100);
+
+        public decimal TotalQuantity => Address1Quantity + Address2Quantity;
 
         public static OffchainTransactionViewModel Create(IOffchainTransaction source)
         {
@@ -98,7 +78,9 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
                 Address1Quantity = source.Address1Quantity,
                 Address2 = source.Address2,
                 Address2Quantity = source.Address2Quantity,
-                TransactionId = source.TransactionId
+                TransactionId = source.TransactionId,
+                Address1QuantityDiff = source.Address1QuantityDiff,
+                Address2QuantityDiff = source.Address2QuantityDiff
             };
         }
         

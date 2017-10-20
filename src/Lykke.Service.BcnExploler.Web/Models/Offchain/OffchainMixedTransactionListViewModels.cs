@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
-using Lykke.Service.BcnExploler.Core.Channel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Offchain

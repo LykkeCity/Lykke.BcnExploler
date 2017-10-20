@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Web.Models.Asset;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Offchain
@@ -15,7 +15,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         public OffchainMixedTransactionsPagedList OffchainMixedTransactionsPagedList { get; set; }
         private const int PageSize = 20;
 
-        public static OffchainTransactionDetailsViewModel Create(IMixedChannelTransaction tx,
+        public static OffchainTransactionDetailsViewModel Create(IMixedTransaction tx,
             IReadOnlyDictionary<string, IAssetDefinition> assetsDictionary,
             long offchainTransactionsCount)
         {
@@ -91,7 +91,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             };
         }
 
-        public static OffChainDiffTransactionViewModel Create(IDiffOffchainTransaction tx,
+        public static OffChainDiffTransactionViewModel Create(IOffchainTransaction tx,
             IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
             if (tx == null)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Web.Models.Transaction;
 
 namespace Lykke.Service.BcnExploler.Web.Models.Offchain

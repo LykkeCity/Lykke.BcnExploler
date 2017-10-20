@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.BcnExploler.Core.Asset;
-using Lykke.Service.BcnExploler.Core.Channel;
+using Lykke.Service.BcnExploler.Core.OffchainNotifcations;
 using Lykke.Service.BcnExploler.Web.Models.Offchain;
 using Microsoft.AspNetCore.Mvc;
 
