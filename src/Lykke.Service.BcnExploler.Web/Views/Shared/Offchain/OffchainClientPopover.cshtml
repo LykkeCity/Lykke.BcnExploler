@@ -1,0 +1,72 @@
+﻿@using Lykke.Service.BcnExploler.Services.Helpers
+@using Lykke.Service.BcnExploler.Web.Models.Offchain
+@model OffchainClientPopoverViewModel
+
+<div class="popover_control multisig_popover">
+    <a class="js-offchain-balance-popover" tabindex="0" role="button" data-toggle="popover" data-placement="bottom" data-original-title="" title="">
+        @Model.Title
+    </a>
+    <div class="popover-content">
+
+
+        @foreach (var group in Model.Groups)
+        {
+            var confirmedTx = group.Transactions.First();
+
+            <h3>Off-chain channels</h3>
+
+            <table class="issuer">
+                <tbody>
+                <tr>
+                    <td class="issuer__content">
+
+                        <div class="issuer__name">
+                            @confirmedTx.AddressQuantity.ToStringBtcFormat() @group.Asset.NameShort
+                            <span class="_change @DiffClass(confirmedTx.AddressQuantityDiff)">
+                                @confirmedTx.AddressQuantityDiff.ToStringBtcFormat()
+                            </span>
+                        </div>
+                        <div class="links_group text-muted">
+                            <a href="@Url.Action("Index", "Address", new {id = confirmedTx.HubAddress})">
+                                <span class="truncate" title="@confirmedTx.HubAddress">@confirmedTx.HubAddress</span>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="issuer__content text-right">
+                        <div class="graph graph--multisig">
+                            @foreach (var tx in group.Transactions.OrderBy(p => p.DateTime))
+                            {
+                                <div class="graph_candle">
+                                    <span style="height: @tx.AddressQuanrtityPercents%"></span>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        }
+
+    </div>
+</div>
+
+@functions
+{
+
+    public string DiffClass(decimal quantityDiff)
+    {
+        var diffClass = "text--gray";
+        if (quantityDiff > 0)
+        {
+            diffClass = "text--green";
+        }
+        else if(quantityDiff<0)
+        {
+            diffClass = "text--red";
+        }
+
+        return diffClass;}
+
+
+}

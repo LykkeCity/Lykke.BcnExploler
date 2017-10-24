@@ -39,12 +39,15 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public int PrevBlock => AtBlockHeight - 1;
         public int NextBlock => AtBlockHeight + 1;
 
+        public bool IsOffchainHub { get; set; }
+
         public OffchainGroupsByAsset OffchainGroupsByAsset { get; set; }
         public static AddressBalanceViewModel Create(IAddressBalance balance, 
             IReadOnlyDictionary<string, IAssetDefinition> assetDictionary, 
             IBlockHeader lastBlock, 
             IBlockHeader atBlock,
-            IEnumerable<IGroup> offchainGroups)
+            IEnumerable<IGroup> offchainGroups,
+            bool isHub)
         {
             var onchainColoredBalances =
                 (balance.ColoredBalances ?? Enumerable.Empty<IColoredBalance>()).Select(p =>
@@ -75,7 +78,8 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
                 TotalSpendedTransactions = balance.TotalSpendedTransactions,
                 TotalSpendedTransactionsCountCalculated = balance.TotalSpendedTransactionsCountCalculated,
                 TotalReceivedTransactions = balance.TotalReceivedTransactions,
-                TotalReceivedTransactionsCountCalculated = balance.TotalReceivedTransactionsCountCalculated
+                TotalReceivedTransactionsCountCalculated = balance.TotalReceivedTransactionsCountCalculated,
+                IsOffchainHub = isHub
             };
         }
         

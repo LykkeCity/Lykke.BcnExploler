@@ -74,8 +74,8 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
             var lastBlock = _blockService.GetLastBlockHeaderAsync();
             var offchainBlocks = _offchainNotificationsService.GetGroups(address: id, openOnly: true,
                 take: MaxOffchainPopoverChannels, offchainOnly: true);
+            var isOffchainHub = _offchainNotificationsService.IsHubAsync(id);
             Task<IBlockHeader> atBlockTask;
-
             if (at != null)
             {
                 atBlockTask = _blockService.GetBlockHeaderAsync(at.ToString());
@@ -85,7 +85,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
                 atBlockTask = Task.FromResult<IBlockHeader>(null);
             }
 
-            await Task.WhenAll(balance, assetDefinitionDictionary, lastBlock, atBlockTask, offchainBlocks);
+            await Task.WhenAll(balance, assetDefinitionDictionary, lastBlock, atBlockTask, offchainBlocks, isOffchainHub);
 
             if (balance.Result != null)
             {
@@ -93,7 +93,8 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
                     assetDefinitionDictionary.Result,
                     lastBlock.Result,
                     atBlockTask.Result,
-                    offchainBlocks.Result));
+                    offchainBlocks.Result,
+                    isOffchainHub.Result));
             }
 
             if (at != null && atBlockTask.Result == null)

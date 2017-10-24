@@ -99,7 +99,15 @@
                                     }
                                     @if (Model.OffchainGroupsByAsset.ExistsBtc())
                                     {
-                                        @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainGroupsByAsset.GetBtc(), btcQuantityDescription))
+                                        if (Model.IsOffchainHub)
+                                        {
+                                            @Html.Partial("Offchain/OffchainHubPopover", OffchainHubPopoverViewModel.Create(Model.OffchainGroupsByAsset.GetBtc(), btcQuantityDescription))
+                                        }
+                                        else
+                                        {
+
+                                            @Html.Partial("Offchain/OffchainClientPopover", OffchainClientPopoverViewModel.Create(Model.OffchainGroupsByAsset.GetBtc(), btcQuantityDescription, Model.AddressId))
+                                        }
                                     }
                                     else
                                     {
@@ -152,7 +160,15 @@
                                             }
                                             @if (Model.OffchainGroupsByAsset.Exists(assetBalance.Asset))
                                             {
-                                                @Html.Partial("Offchain/OffchainPopover", OffchainPopoverViewModel.Create(Model.OffchainGroupsByAsset.Get(assetBalance.Asset), assetQuantityDescription))
+                                                if (Model.IsOffchainHub)
+                                                {
+                                                    @Html.Partial("Offchain/OffchainHubPopover", OffchainHubPopoverViewModel.Create(Model.OffchainGroupsByAsset.Get(assetBalance.Asset), assetQuantityDescription))
+                                                }
+                                                else
+                                                {
+
+                                                    @Html.Partial("Offchain/OffchainClientPopover", OffchainClientPopoverViewModel.Create(Model.OffchainGroupsByAsset.Get(assetBalance.Asset), assetQuantityDescription, Model.AddressId))
+                                                }
                                             }
                                             else
                                             {

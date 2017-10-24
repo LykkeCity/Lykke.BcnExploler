@@ -11,7 +11,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
     public class OffchainTransactionDetailsViewModel
     {
-        public OffChainDiffTransactionViewModel Transaction { get; set; }
+        public OffChainTransactionViewModel Transaction { get; set; }
         public OffchainMixedTransactionsPagedList OffchainMixedTransactionsPagedList { get; set; }
         private const int PageSize = 20;
 
@@ -21,7 +21,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         {
             return new OffchainTransactionDetailsViewModel
             {
-                Transaction = OffChainDiffTransactionViewModel.Create(tx.OffchainTransactionData, assetsDictionary),
+                Transaction = OffChainTransactionViewModel.Create(tx.OffchainTransactionData, assetsDictionary),
                 OffchainMixedTransactionsPagedList = OffchainMixedTransactionsPagedList.Create(
                     offchainTransactionsCount,
                     PageSize,
@@ -31,7 +31,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         }
     }
 
-    public class OffChainDiffTransactionViewModel
+    public class OffChainTransactionViewModel
     {
         public string TransactionId { get; set; }
         public DateTime DateTime { get; set; }
@@ -63,7 +63,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
         public MixedTransactionType Type { get; set; }
 
-        public static OffChainDiffTransactionViewModel Create(string transactionId,
+        public static OffChainTransactionViewModel Create(string transactionId,
             AssetViewModel asset,
             DateTime dateTime,
             string hubAddress,
@@ -75,7 +75,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             decimal address2QuantityDiff,
             MixedTransactionType type)
         {
-            return new OffChainDiffTransactionViewModel
+            return new OffChainTransactionViewModel
             {
                 TransactionId = transactionId,
                 Address1 = address1,
@@ -91,7 +91,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             };
         }
 
-        public static OffChainDiffTransactionViewModel Create(IOffchainTransaction tx,
+        public static OffChainTransactionViewModel Create(IOffchainTransaction tx,
             IReadOnlyDictionary<string, IAssetDefinition> assetDictionary)
         {
             if (tx == null)
@@ -114,7 +114,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
 
 
 
-            return OffChainDiffTransactionViewModel.Create(
+            return OffChainTransactionViewModel.Create(
                 transactionId: tx.TransactionId,
                 address1: tx.Address1,
                 asset: asset,
