@@ -22,9 +22,6 @@
 
                         <div class="issuer__name">
                             @confirmedTx.Address1Quantity.ToStringBtcFormat() @group.Asset.NameShort
-                            <span class="_change @DiffClass(confirmedTx.Address1QuantityDiff)">
-                                @confirmedTx.Address1QuantityDiff.ToStringBtcFormat()
-                            </span>
                         </div>
                         <div class="links_group text-muted">
                             <a href="@Url.Action("Index", "Address", new {id = confirmedTx.Address1})">
@@ -53,9 +50,6 @@
 
                         <div class="issuer__name">
                             @confirmedTx.Address2Quantity.ToStringBtcFormat() @group.Asset.NameShort
-                            <span class="_change @DiffClass(confirmedTx.Address2QuantityDiff)">
-                                @confirmedTx.Address2QuantityDiff.ToStringBtcFormat()
-                            </span>
                         </div>
                         <div class="links_group text-muted">
                             <a href="@Url.Action("Index", "Address", new {id = confirmedTx.Address2})">
@@ -80,23 +74,3 @@
 
     </div>
 </div>
-
-@functions
-{
-
-    public string DiffClass(decimal quantityDiff)
-    {
-        var diffClass = "text--gray";
-        if (quantityDiff > 0)
-        {
-            diffClass = "text--green";
-        }
-        else if(quantityDiff<0)
-        {
-            diffClass = "text--red";
-        }
-
-        return diffClass;}
-
-
-}

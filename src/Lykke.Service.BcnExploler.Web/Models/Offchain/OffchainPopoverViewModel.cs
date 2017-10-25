@@ -48,19 +48,16 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
             public static Group Create(OffchainGroupViewModel source, string currentUncoloredAddress)
             {
                 Func<OffchainTransactionViewModel, decimal> qtySelector;
-                Func<OffchainTransactionViewModel, decimal> diffSelector;
 
                 var latestOffchainTx = source.OffChainTransactions.OrderBy(p => p.DateTime).Last();
 
                 if (latestOffchainTx.Address1 == currentUncoloredAddress)
                 {
                     qtySelector = p => p.Address1Quantity;
-                    diffSelector = p => p.Address1QuantityDiff;
                 }
                 else if (latestOffchainTx.Address2 == currentUncoloredAddress)
                 {
                     qtySelector = p => p.Address2Quantity;
-                    diffSelector = p => p.Address2QuantityDiff;
                 }
                 else
                 {
@@ -71,7 +68,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
                 {
                     Asset = source.Asset,
                     Transactions = source.OffChainTransactions
-                        .Select(p => Transaction.Create(p, qtySelector, diffSelector))
+                        .Select(p => Transaction.Create(p, qtySelector))
                 };
             }
         }
@@ -80,19 +77,16 @@ namespace Lykke.Service.BcnExploler.Web.Models.Offchain
         {
             public string HubAddress { get; set; }
             public decimal AddressQuantity { get; set; }
-            public decimal AddressQuantityDiff { get; set; }
             public decimal TotalQuantity { get; set; }
             public DateTime DateTime { get; set; }
             public decimal AddressQuanrtityPercents => Math.Round((AddressQuantity / TotalQuantity) * 100);
 
             public static Transaction Create(OffchainTransactionViewModel source, 
-                Func<OffchainTransactionViewModel, decimal> qtySelector, 
-                Func<OffchainTransactionViewModel, decimal> diffSelector)
+                Func<OffchainTransactionViewModel, decimal> qtySelector)
             {
                 return new Transaction
                 {
                     AddressQuantity = qtySelector(source),
-                    AddressQuantityDiff = diffSelector(source),
                     TotalQuantity = source.TotalQuantity,
                     HubAddress = source.HubAddress,
                     DateTime = source.DateTime
