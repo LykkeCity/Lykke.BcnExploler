@@ -4,31 +4,32 @@
         loader: '#js-offchain-page-loader',
         showMoreBtn: '.js-load-offchain-page',
         mixedTransaction: '.js-transaction-details, .js-offchain-transaction-details',
-        loadedTrannsactionCount: '.js-offchain-loaded-transaction-count'
+        loadedTrannsactionCount: '.js-offchain-loaded-transaction-count',
+        offchainPageList:'.js-offchain-page-list'
     };
 
 
     (function() {
-        var loadOffchainPage = function ($container) {
-            if ($container.length === 0) {
+        var loadOffchainPage = function ($page) {
+            if ($page.length === 0) {
                 return;
             }
 
-            var loadUrl = $container.data('load-url');
+            var loadUrl = $page.data('load-url');
             var loadedClass = "js-offchain-loaded";
 
-            if (!$container.hasClass(loadedClass)) {
-
+            if (!$page.hasClass(loadedClass)) {
+                var $pageContainer = $page.parents(selectors.offchainPageList);
                 $(selectors.loader).removeClass('hidden');
                 $.ajax(loadUrl).success(function(resp) {
                     $(selectors.loader).addClass('hidden');
-                    $container.html(resp)
-                    $container.removeClass('hidden');
-                    $container.next().removeClass('hidden'); // show Load more btn on next page"
+                    $page.html(resp)
+                    $page.removeClass('hidden');
+                    $page.next().removeClass('hidden'); // show Load more btn on next page"
 
-                    $container.trigger('transactions-loaded');
-                    $container.addClass(loadedClass);
-                    $(selectors.loadedTrannsactionCount).html($(selectors.mixedTransaction, $container).length);
+                    $page.trigger('transactions-loaded');
+                    $page.addClass(loadedClass);
+                    $(selectors.loadedTrannsactionCount).html($(selectors.mixedTransaction, $pageContainer).length);
                 });  
             }
         };
