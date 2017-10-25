@@ -10,29 +10,38 @@
 
 @if (Model != null)
 {
-    
     <div class="panel transaction_panel js-transaction-details @toggleChangeContainer" >
         <div class="container">
             <div class="panel__header">
                 <div class="row">
                     <div class="col-xs-12 col-sm-3 pull-right text-right">
-                        <div class="confirmation_label">
-                            @if (Model.IsConfirmed)
-                            {
-                                <span class="label @(Model.Block?.Confirmations >= 5 ? "label--green" : "label--gray")">
-                                    <span class="check"></span>
-                                    @(Model.Block?.Confirmations)
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="label label--red label--plate">Unconfirmed</span>
-                            }
-                        </div>
+                        @{
+                            var confirmationsClass = Model.Block?.Confirmations >= 5 ? "label--green" : "label--gray";
+                        }
                         @if (Model.ShowOffchainLabel)
                         {
-                            <div class="offchain_label">
-                                <span class="label label--green">@Model.OffchainLabel</span>
+
+                            <div class="confirmation_label label_group">
+                                <span href="" class="label @confirmationsClass label--muted">@Model.OffchainLabel</span>
+                                <span class="label @confirmationsClass">
+                                    <i class="icon icon--check"></i>
+                                    @(Model.Block?.Confirmations??0)
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="confirmation_label">
+                                @if (Model.IsConfirmed)
+                                {
+                                    <span class="label @confirmationsClass">
+                                        @(Model.Block?.Confirmations) Confirmations
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="label label--red label--plate">Unconfirmed</span>
+                                }
                             </div>
                         }
 

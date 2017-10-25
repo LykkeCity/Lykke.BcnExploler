@@ -3,7 +3,7 @@
         offchainPage: '.js-offchain-page',
         loader: '#js-offchain-page-loader',
         showMoreBtn: '.js-load-offchain-page',
-        mixedTransaction: '.js-mixed-transaction',
+        mixedTransaction: '.js-transaction-details, .js-offchain-transaction-details',
         loadedTrannsactionCount: '.js-offchain-loaded-transaction-count'
     };
 
@@ -28,7 +28,7 @@
 
                     $container.trigger('transactions-loaded');
                     $container.addClass(loadedClass);
-                    $(selectors.loadedTrannsactionCount).html($(selectors.mixedTransaction).length);
+                    $(selectors.loadedTrannsactionCount).html($(selectors.mixedTransaction, $container).length);
                 });  
             }
         };
