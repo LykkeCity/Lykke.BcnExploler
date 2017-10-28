@@ -35,7 +35,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
 
             try
             {
-                await _log.WriteInfoAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Started");
+                await _log.WriteMonitorAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Started");
 
                 blockPtr = await _blockService.GetLastBlockHeaderAsync();
                 
@@ -53,7 +53,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
                     blockPtr = await _blockService.GetBlockHeaderAsync((blockPtr.Height - 1).ToString());
                 }
 
-                await _log.WriteInfoAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Done");
+                await _log.WriteMonitorAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Done");
 
             }
             catch (Exception e)

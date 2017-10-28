@@ -35,7 +35,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         {
             try
             {
-                await _log.WriteInfoAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Started");
+                await _log.WriteMonitorAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Started");
                 var assetData = await _assetDefinitionReader.ReadAssetDataAsync(context.AssetDefinitionUrl);
                 if (assetData != null)
                 {
@@ -51,12 +51,11 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
                     await _assetDefinitionRepository.InsertEmptyAsync(context.AssetDefinitionUrl);
                 }
                 
-
-                await _log.WriteInfoAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Done");
+                await _log.WriteMonitorAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Done");
             }
             catch (Exception e)
             {
-                await _log.WriteErrorAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), e);
+                await _log.WriteWarningAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), e.ToString());
 
                 if (!await _assetDefinitionRepository.IsAssetExistsAsync(context.AssetDefinitionUrl))
                 {
