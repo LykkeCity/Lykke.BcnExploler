@@ -58,7 +58,7 @@
 
         <div class="transaction_item__right">
             <div class="transaction_list">
-                @foreach (var output in Model.Bitcoin.AggregatedOuts)
+                @foreach (var output in Model.AggregatedOuts)
                     {
                         var aggregatedContainerId = Guid.NewGuid().ToString("N");
                         @await Html.PartialAsync("~/Views/Shared/TransactionDetails/InOut.cshtml", InOutsViewModel.Create(output.TitleItem, aggregatedContainerId))
