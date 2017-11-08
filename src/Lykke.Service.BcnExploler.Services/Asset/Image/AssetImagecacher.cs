@@ -72,7 +72,11 @@ namespace Lykke.Service.BcnExploler.Services.Asset.Image
 
                 return ImageSaveResult.Ok(savedUrl);
             }
-            catch (Exception e)
+            catch (FlurlHttpException)
+            {
+	            return ImageSaveResult.Fail();
+            }
+			catch (Exception e)
             {
                 await _log.WriteInfoAsync("AssetImageCacher", "Save", url, e.ToString());
 
