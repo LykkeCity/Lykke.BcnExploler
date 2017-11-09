@@ -14,7 +14,10 @@ namespace Lykke.Service.BcnExploler.Web.Models.Address
         public TransactionIdList SendTransactionIdList { get; set; }
         public TransactionIdList ReceivedTransactionIdList { get; set; }
         public OffchainMixedTransactionsPagedList OffchainMixedTransactionsPagedList { get; set; }
-        public bool FullLoaded { get; set; }
+
+	    public bool ShowOffchainTab => OffchainMixedTransactionsPagedList.TransactionCount > 0;
+
+		public bool FullLoaded { get; set; }
         private const int PageSize = 20;
 
         public static AddressTransactionsViewModel Create(string address, IAddressTransactions source, long offchainTransactionsCount)
