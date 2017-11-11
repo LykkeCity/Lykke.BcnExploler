@@ -7,9 +7,11 @@ using Core.Transaction;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.BcnExploler.AzureRepositories.Constants;
 using Lykke.Service.BcnExploler.Core.Asset;
+using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Asset.Indexes;
 using Lykke.Service.BcnExploler.Core.Asset.Indexes.Commands;
 using Lykke.Service.BcnExploler.Core.AssetBalanceChanges;
+using Lykke.Service.BcnExploler.Core.Helpers;
 using Lykke.Service.BcnExploler.Core.MainChain;
 using Lykke.Service.BcnExploler.Services.Helpers;
 
@@ -23,13 +25,15 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TriggerHandlers
         private readonly IAssetService _assetService;
         private readonly ITransactionService _transactionService;
         private readonly IMainChainService _mainChainService;
+	    private readonly IConsole _console;
 
         public AssetCoinholderIndexesCommandsQueueConsumer(ILog log, 
             IAssetCoinholdersIndexRepository assetCoinholdersIndexRepository, 
             IAssetBalanceChangesRepository balanceChangesRepository, 
             IAssetService assetService, 
             ITransactionService transactionService, 
-            IMainChainService mainChainService)
+            IMainChainService mainChainService,
+			IConsole console)
         {
             _log = log;
             _assetCoinholdersIndexRepository = assetCoinholdersIndexRepository;
@@ -37,6 +41,7 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TriggerHandlers
             _assetService = assetService;
             _transactionService = transactionService;
             _mainChainService = mainChainService;
+	        _console = console;
         }
 
 
@@ -45,11 +50,11 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TriggerHandlers
         {
             try
             {
-                await _log.WriteInfoAsync(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
+                _console.Write(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
                     context.ToJson(), "Started");
 
                 var asset = await _assetService.GetAssetAsync(context.AssetId);
-                if (asset != null)
+                if (asset != null && asset.IsValid())
                 {
                     var mainChain = await _mainChainService.GetMainChainAsync();
 
@@ -71,7 +76,7 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TriggerHandlers
                                 allTxs.Result.Count(), lastMonthTxs.Result.Count(), lastTxDate.Unwrap().Result));
                 }
 
-                await _log.WriteInfoAsync(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
+	            _console.Write(nameof(AssetCoinholderIndexesCommandsQueueConsumer), nameof(UpdateCoinholersIndex),
                     context.ToJson(), "Done");
             }
             catch (Exception e)

@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
 using Lykke.JobTriggers.Extenstions;
@@ -35,7 +36,9 @@ namespace Lykke.Service.BcnExploler.Web.Modules
                 .As<ILog>()
                 .SingleInstance();
 
-            builder.RegisterType<HealthService>()
+	        builder.RegisterInstance(new ConsoleLWriter(Console.WriteLine)).As<IConsole>();
+
+			builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
             

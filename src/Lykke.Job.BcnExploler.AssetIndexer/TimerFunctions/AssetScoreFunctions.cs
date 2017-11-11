@@ -5,6 +5,7 @@ using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Indexes;
+using Lykke.Service.BcnExploler.Core.Helpers;
 using Lykke.Service.BcnExploler.Services.Helpers;
 
 namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
@@ -15,16 +16,18 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
         private readonly IAssetScoreRepository _assetScoreRepository;
         private readonly ILog _log;
         private readonly IAssetService _assetService;
+	    private readonly IConsole _console;
         
         public AssetScoreFunctions(IAssetCoinholdersIndexRepository indexRepository, 
             ILog log, 
             IAssetService assetService, 
-            IAssetScoreRepository assetScoreRepository)
+            IAssetScoreRepository assetScoreRepository, IConsole console)
         {
             _indexRepository = indexRepository;
             _log = log;
             _assetService = assetService;
             _assetScoreRepository = assetScoreRepository;
+	        _console = console;
         }
 
         [TimerTrigger("23:59:00")]
@@ -32,7 +35,7 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
         {
             try
             {
-                await _log.WriteInfoAsync(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, "Started");
+	            _console.Write(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, "Started");
                 var indexes = (await _indexRepository.GetAllAsync()).ToList();
 
                 foreach (var index in indexes)
@@ -42,7 +45,7 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
                     await _assetScoreRepository.InsertOrReplaceAsync(AssetScore.Create(index.AssetIds, score));
                 }
 
-                await _log.WriteInfoAsync(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, "Done");
+	            _console.Write(nameof(AssetScoreFunctions), nameof(UpdateAssetScores), null, "Done");
             }
             catch (Exception e)
             {

@@ -31,11 +31,13 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterInstance(_settings.CurrentValue);
-            builder.RegisterInstance(_log)
-                .As<ILog>()
-                .SingleInstance();
+	        builder.RegisterInstance(_log)
+		        .As<ILog>()
+		        .SingleInstance();
 
-            builder.RegisterType<HealthService>()
+	        builder.RegisterInstance(new ConsoleLWriter(Console.WriteLine)).As<IConsole>();
+
+			builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
 

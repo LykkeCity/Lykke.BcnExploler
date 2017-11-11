@@ -8,6 +8,7 @@ using Lykke.Service.BcnExploler.AzureRepositories.Constants;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
+using Lykke.Service.BcnExploler.Core.Helpers;
 
 namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
 {
@@ -17,16 +18,19 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         private readonly IAssetDefinitionReader _assetDefinitionReader;
         private readonly IAssetDefinitionRepository _assetDefinitionRepository;
         private readonly IAssetImageCommandProducer _assetImageCommandProducer;
+	    private readonly IConsole _console;
 
         public AssetDataCommandQueueConsumer(ILog log, 
             IAssetDefinitionReader assetDefinitionReader, 
             IAssetDefinitionRepository assetDefinitionRepository,
-            IAssetImageCommandProducer assetImageCommandProducer)
+            IAssetImageCommandProducer assetImageCommandProducer, 
+			IConsole console)
         {
             _log = log;
             _assetDefinitionReader = assetDefinitionReader;
             _assetDefinitionRepository = assetDefinitionRepository;
             _assetImageCommandProducer = assetImageCommandProducer;
+	        _console = console;
         }
 
 
@@ -35,7 +39,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         {
             try
             {
-                await _log.WriteMonitorAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Started");
+                _console.Write(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Started");
                 var assetData = await _assetDefinitionReader.ReadAssetDataAsync(context.AssetDefinitionUrl);
                 if (assetData != null)
                 {
@@ -50,8 +54,8 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
                 {
                     await _assetDefinitionRepository.InsertEmptyAsync(context.AssetDefinitionUrl);
                 }
-                
-                await _log.WriteMonitorAsync(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Done");
+
+	            _console.Write(nameof(AssetDataCommandQueueConsumer), nameof(RetrieveAssetDefinition), context.ToJson(), "Done");
             }
             catch (Exception e)
             {

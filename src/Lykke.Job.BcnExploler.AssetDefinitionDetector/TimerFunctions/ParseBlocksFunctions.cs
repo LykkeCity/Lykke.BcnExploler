@@ -7,6 +7,7 @@ using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 using Lykke.Service.BcnExploler.Core.Block;
+using Lykke.Service.BcnExploler.Core.Helpers;
 
 namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
 {
@@ -16,16 +17,18 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
         private readonly IAssetDefinitionParseBlockCommandProducer _parseBlockCommandProducer;
         private readonly IAssetDefinitionParsedBlockRepository _assetDefinitionParsedBlockRepository;
         private readonly IBlockService _blockService;
+	    private readonly IConsole _console;
 
         public ParseBlocksFunctions(ILog log, 
             IAssetDefinitionParsedBlockRepository assetDefinitionParsedBlockRepository,
             IBlockService blockService, 
-            IAssetDefinitionParseBlockCommandProducer parseBlockCommandProducer)
+            IAssetDefinitionParseBlockCommandProducer parseBlockCommandProducer, IConsole console)
         {
             _log = log;
             _assetDefinitionParsedBlockRepository = assetDefinitionParsedBlockRepository;
             _blockService = blockService;
             _parseBlockCommandProducer = parseBlockCommandProducer;
+	        _console = console;
         }
 
         [TimerTrigger("00:10:00")]
@@ -35,7 +38,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
 
             try
             {
-                await _log.WriteMonitorAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Started");
+	            _console.Write(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Started");
 
                 blockPtr = await _blockService.GetLastBlockHeaderAsync();
                 
@@ -43,7 +46,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
                     !await _assetDefinitionParsedBlockRepository
                         .IsBlockExistsAsync(AssetDefinitionParsedBlock.Create(blockPtr.Hash)))
                 {
-                    await _log.WriteInfoAsync(nameof(ParseBlocksFunctions),
+	                _console.Write(nameof(ParseBlocksFunctions),
                         nameof(ParseLast),
                         new {blockPtr.Hash, blockPtr.Height}.ToJson(),
                         $"Add parse block command {blockPtr.Height}");
@@ -53,7 +56,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TimerFunctions
                     blockPtr = await _blockService.GetBlockHeaderAsync((blockPtr.Height - 1).ToString());
                 }
 
-                await _log.WriteMonitorAsync(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Done");
+                _console.Write(nameof(ParseBlocksFunctions), nameof(ParseLast), null, "Done");
 
             }
             catch (Exception e)

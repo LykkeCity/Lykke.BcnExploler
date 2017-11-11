@@ -8,6 +8,7 @@ using Lykke.Service.BcnExploler.AzureRepositories.Constants;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions.Commands;
 using Lykke.Service.BcnExploler.Core.Asset.Definitions.Images;
+using Lykke.Service.BcnExploler.Core.Helpers;
 
 namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
 {
@@ -16,12 +17,17 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         private readonly ILog _log;
         private readonly IAssetImageCacher _assetImageCacher;
         private readonly IAssetImageRepository _assetImageRepository;
+	    private readonly IConsole _console;
 
-        public AssetImagesCommandQueueConsumer(ILog log, IAssetImageCacher assetImageCacher, IAssetImageRepository assetImageRepository)
+        public AssetImagesCommandQueueConsumer(ILog log,
+			IAssetImageCacher assetImageCacher,
+			IAssetImageRepository assetImageRepository,
+			IConsole console)
         {
             _log = log;
             _assetImageCacher = assetImageCacher;
             _assetImageRepository = assetImageRepository;
+	        _console = console;
         }
 
         [QueueTrigger(QueueNames.AssetDefinitionScanner.UpsertImages)]
@@ -29,7 +35,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
         {
             try
             {
-                await _log.WriteMonitorAsync(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), "Started");
+	            _console.Write(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), "Started");
 
                 var iconResult = await _assetImageCacher.SaveAssetIconAsync(context.IconUrl, context.AssetIds.First());
                 var imageResult = await _assetImageCacher.SaveAssetImageAsync(context.ImageUrl, context.AssetIds.First());
@@ -39,7 +45,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector.TriggerHandlers
                     iconResult,
                     imageResult));
 
-                await _log.WriteMonitorAsync(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), "Done");
+	            _console.Write(nameof(AssetImagesCommandQueueConsumer), nameof(UpdateAssetImage), context.ToJson(), "Done");
 
             }
             catch (Exception e)

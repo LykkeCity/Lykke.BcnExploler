@@ -4,6 +4,7 @@ using Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Asset.Indexes.Commands;
+using Lykke.Service.BcnExploler.Core.Helpers;
 
 namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
 {
@@ -11,26 +12,25 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.TimerFunctions
     {
         private readonly IAssetCoinholdersIndexesCommandProducer _assetCoinholdersIndexesCommandProducer;
         private readonly IAssetDefinitionRepository _assetDefinitionRepository;
-        private readonly ILog _log;
+        private readonly IConsole _console;
 
         public AssetIndexFunctions(IAssetCoinholdersIndexesCommandProducer assetCoinholdersIndexesCommandProducer,
-            IAssetDefinitionRepository assetDefinitionRepository, 
-            ILog log)
+            IAssetDefinitionRepository assetDefinitionRepository, IConsole console)
         {
             _assetCoinholdersIndexesCommandProducer = assetCoinholdersIndexesCommandProducer;
             _assetDefinitionRepository = assetDefinitionRepository;
-            _log = log;
+	        _console = console;
         }
 
         [TimerTrigger("23:00:00")]
         public async Task UpdateIndexCoinholdersData()
         {
-            await _log.WriteInfoAsync(nameof(AssetIndexFunctions), nameof(UpdateIndexCoinholdersData), null, "Started");
+            _console.Write(nameof(AssetIndexFunctions), nameof(UpdateIndexCoinholdersData), null, "Started");
 
             var assets = await _assetDefinitionRepository.GetAllAsync();
             await _assetCoinholdersIndexesCommandProducer.CreateAssetCoinholdersUpdateIndexCommand(assets.ToArray());
 
-            await _log.WriteInfoAsync(nameof(AssetIndexFunctions), nameof(UpdateIndexCoinholdersData), null, "Done");
+	        _console.Write(nameof(AssetIndexFunctions), nameof(UpdateIndexCoinholdersData), null, "Done");
         }
     }
 }
