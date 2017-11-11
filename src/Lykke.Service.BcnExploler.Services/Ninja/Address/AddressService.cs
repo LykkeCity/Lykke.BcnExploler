@@ -48,11 +48,17 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.Address
 
         public static AddressBalance Create(AddressSummaryContract coloredSummary, string address)
         {
-            var result = new AddressBalance
+	        var totalTransactions = coloredSummary.Confirmed.TotalTransactions;
+	        if (totalTransactions != TransactionsCountNotCalculated) // if address tx count not calculated = do not show full tx count
+	        {
+		        totalTransactions = coloredSummary.Confirmed.TotalTransactions + coloredSummary.Unconfirmed.TotalTransactions;
+	        }
+
+			var result = new AddressBalance
             {
                 AddressId = address,
                 BtcBalance = coloredSummary.Confirmed.Balance,
-                TotalTransactions = coloredSummary.Confirmed.TotalTransactions + coloredSummary.Unconfirmed.TotalTransactions,
+                TotalTransactions = totalTransactions,
                 TotalReceivedTransactions = coloredSummary.Confirmed.ReceivedTransactions ?? TransactionsCountNotCalculated,
                 TotalSpendedTransactions = coloredSummary.Confirmed.SpendedTransactions ?? TransactionsCountNotCalculated,
                 UnconfirmedBalanceDelta = coloredSummary.Unconfirmed?.Balance ?? 0
