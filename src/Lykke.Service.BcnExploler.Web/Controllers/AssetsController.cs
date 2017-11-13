@@ -52,6 +52,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
 
         #region owners
 
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
         [Route("asset/owners/{id}")]
         public Task<ActionResult> Owners(string id)
         {

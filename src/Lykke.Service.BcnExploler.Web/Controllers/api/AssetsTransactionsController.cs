@@ -20,6 +20,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers.api
             _assetService = assetService;
         }
 
+        [ResponseCache(Duration = 600)]
         [HttpGet("api/assetstransactions/{id}")]
         public async Task<IEnumerable<AssetTransactionViewModel>> Get(string id)
         {

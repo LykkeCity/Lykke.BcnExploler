@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using BCNExplorer.Web.Models;
+using Common;
 using Core.Transaction;
 using Lykke.Service.BcnExploler.Core.Asset;
 using Lykke.Service.BcnExploler.Core.Transaction;
@@ -45,11 +47,14 @@ namespace Lykke.Service.BcnExploler.Web.Controllers
         {
             var assetDictionary = _assetService.GetAssetDefinitionDictionaryAsync();
 
-            var loadTransactionTask = _cachedTransactionService.GetAsync(ids);
+            var loadTransactionTask = _cachedTransactionService.GetAsync(ids); 
 
             await Task.WhenAll(loadTransactionTask, assetDictionary);
 
-            return View(loadTransactionTask.Result.Select(p => TransactionViewModel.Create(p, assetDictionary.Result)).OrderBy(p => ids.IndexOf(p.TransactionId)));
+            var mappedTxs = await loadTransactionTask.Result.SelectAsync(p =>
+                Task.Run(() => TransactionViewModel.Create(p, assetDictionary.Result)));
+
+            return View(mappedTxs.ToList().OrderBy(p => ids.IndexOf(p.TransactionId)));
         }
     }
 }
