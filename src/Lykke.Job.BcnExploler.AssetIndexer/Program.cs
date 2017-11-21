@@ -21,7 +21,7 @@ namespace Lykke.Job.BcnExploler.AssetIndexer
                 .UseUrls("http://*:5000")
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .Build();
 
             webHost.Run();

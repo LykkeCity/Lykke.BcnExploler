@@ -20,7 +20,7 @@ namespace Lykke.Service.BcnExploler
                 .UseUrls("http://*:5000")
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .Build();
 
             host.Run();
