@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using Lykke.Job.BcnExploler.AssetIndexer.Models;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
 
 namespace Lykke.Job.BcnExploler.AssetIndexer.Controllers
 {
@@ -16,9 +14,6 @@ namespace Lykke.Job.BcnExploler.AssetIndexer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation("IsAlive")]
-        [ProducesResponseType(typeof(IsAliveResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public IActionResult Get()
         {
             // NOTE: Feel free to extend IsAliveResponse, to display job-specific indicators

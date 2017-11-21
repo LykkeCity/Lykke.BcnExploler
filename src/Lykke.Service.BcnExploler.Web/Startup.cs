@@ -5,7 +5,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using Common.Log;
-using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.JobTriggers.Triggers;
 using Lykke.Logs;
 using Lykke.Service.BcnExploler.Core.Settings;

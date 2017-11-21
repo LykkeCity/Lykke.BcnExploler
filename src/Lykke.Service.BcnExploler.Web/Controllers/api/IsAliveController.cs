@@ -4,9 +4,8 @@ using System.Net;
 using Lykke.Service.BcnExploler.Core.Health;
 using Lykke.Service.BcnExploler.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
 
-namespace Lykke.Service.BcnExploler.Controllers
+namespace Lykke.Service.BcnExploler.Web.Controllers.api
 {
     // NOTE: See https://lykkex.atlassian.net/wiki/spaces/LKEWALLET/pages/35755585/Add+your+app+to+Monitoring
     [Route("api/[controller]")]
@@ -24,9 +23,6 @@ namespace Lykke.Service.BcnExploler.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation("IsAlive")]
-        [ProducesResponseType(typeof(IsAliveResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public IActionResult Get()
         {
             var healthViloationMessage = _healthService.GetHealthViolationMessage();

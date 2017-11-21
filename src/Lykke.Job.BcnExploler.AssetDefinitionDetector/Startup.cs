@@ -96,8 +96,6 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
                 app.UseLykkeMiddleware("BcnExploler_AssetDefinitionDetector", ex => new ErrorResponse {ErrorMessage = "Technical problem"});
 
                 app.UseMvc();
-                app.UseSwagger();
-                app.UseSwaggerUi();
                 app.UseStaticFiles();
 
                 appLifetime.ApplicationStarted.Register(StartApplication);
