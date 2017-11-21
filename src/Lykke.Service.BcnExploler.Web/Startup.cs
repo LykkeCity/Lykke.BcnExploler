@@ -143,12 +143,12 @@ namespace Lykke.Service.BcnExploler.Web
                     AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "BcnExploleWebLog", consoleLogger),
                     consoleLogger);
 
-                var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(appName, slackService, consoleLogger);
+                //var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(appName, slackService, consoleLogger);
 
                 var azureStorageLogger = new LykkeLogToAzureStorage(
                     appName,
                     persistenceManager,
-                    slackNotificationsManager,
+                    null,
                     consoleLogger);
 
                 azureStorageLogger.Start();
