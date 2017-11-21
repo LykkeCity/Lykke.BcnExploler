@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.AzureStorage" Version="2.1.4" />
-    <PackageReference Include="Lykke.SettingsReader" Version="1.0.42" />
+    <PackageReference Include="Lykke.AzureStorage" Version="3.0.2" />
+    <PackageReference Include="Lykke.SettingsReader" Version="1.0.43" />
   </ItemGroup>
 
   <ItemGroup>
