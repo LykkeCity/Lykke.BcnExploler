@@ -17,14 +17,14 @@ namespace Lykke.Service.BcnExploler.Web.Controllers.api
         }
 
         [HttpGet("api/assets")]
-        public async Task<IEnumerable<AssetDirectoryViewModel.Asset>> Get()
+        public async Task<IEnumerable<AssetDirectoryViewModel.Asset>> Get([FromQuery]int take = 1000)
         {
             var assetDefinitions = _assetService.GetAssetDefinitionsAsync();
             var assetCoinholdersIndexes = _assetService.GetAssetCoinholdersIndexAsync();
             var assetScores = _assetService.GetAssetScoreDictionaryAsync();
 
             await Task.WhenAll(assetCoinholdersIndexes, assetDefinitions, assetScores);
-            var result = AssetDirectoryViewModel.Create(assetDefinitions.Result, assetCoinholdersIndexes.Result, assetScores.Result);
+            var result = AssetDirectoryViewModel.Create(assetDefinitions.Result, assetCoinholdersIndexes.Result, assetScores.Result, take);
             return result.Assets;
         }
     }

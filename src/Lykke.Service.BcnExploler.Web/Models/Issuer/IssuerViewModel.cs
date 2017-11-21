@@ -25,7 +25,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Issuer
             {
                 return new IssuerViewModel
                 {
-                    IsVerified = true, //Temp Solution
+                    IsVerified = assetDefinitions.First().IsVerified(), 
                     IssuerWebsite = assetDefinitions.Where(p => !string.IsNullOrEmpty(p.IssuerWebsite())).Select(p => p.IssuerWebsite()).FirstOrDefault(),
                     Issuer = issuer,
                     AssetDirectory = AssetDirectoryViewModel.Create(assetDefinitions, assetCoinholdersIndices, assetScoresDictionaries)

@@ -14,7 +14,8 @@ namespace Lykke.Service.BcnExploler.Web.Models.Asset
 
         public static AssetDirectoryViewModel Create(IEnumerable<IAssetDefinition> assetDefinitions,
             IDictionary<string, IAssetCoinholdersIndex> assetCoinholdersIndices,
-            IDictionary<string, IAssetScore> assetScoresDictionaries)
+            IDictionary<string, IAssetScore> assetScoresDictionaries,
+            int take = int.MaxValue)
         {
             return new AssetDirectoryViewModel
             {
@@ -36,7 +37,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Asset
 
                     return Asset.Create(p, index, assetScore);
                 })
-                    .OrderBy(p => p.Score).ToList()
+                    .OrderBy(p => p.Score).ToList().Take(take)
             };
         }
 
@@ -52,6 +53,7 @@ namespace Lykke.Service.BcnExploler.Web.Models.Asset
 
             public string Issuer { get; set; }
 
+            
             public string Description { get; set; }
 
             public string DescriptionMime { get; set; }
