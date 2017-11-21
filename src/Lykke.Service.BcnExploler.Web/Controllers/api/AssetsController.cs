@@ -17,7 +17,7 @@ namespace Lykke.Service.BcnExploler.Web.Controllers.api
         }
 
         [HttpGet("api/assets")]
-        public async Task<IEnumerable<AssetDirectoryViewModel.Asset>> Get([FromQuery]int take = 1000)
+        public async Task<IEnumerable<AssetDirectoryViewModel.Asset>> Get([FromQuery]int take = int.MaxValue)
         {
             var assetDefinitions = _assetService.GetAssetDefinitionsAsync();
             var assetCoinholdersIndexes = _assetService.GetAssetCoinholdersIndexAsync();

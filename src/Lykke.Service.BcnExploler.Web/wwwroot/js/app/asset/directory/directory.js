@@ -4,7 +4,8 @@ angular.module('app', [])
     .factory('assetService', ['$http', function ($http) {
         var result = {
             async: function () {
-                var promise = $http.get('/api/assets').then(function (response) {
+                var itemCount = 500;
+                var promise = $http.get('/api/assets?take='+itemCount).then(function (response) {
                     return response.data;
                 });
 
