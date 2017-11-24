@@ -17,17 +17,10 @@ namespace Lykke.Service.BcnExploler.Web.Jobs
         }
 
 
-        [TimerTrigger("00:30:00")]
-        public Task UpdatePersistentCache()
+        [TimerTrigger("00:05:00")]
+        public Task UpdateCache()
         {
-            return _cachedMainChainService.UpdatePersistentCacheAsync();
-        }
-
-
-        [TimerTrigger("00:02:00")]
-        public Task UpdateTemporaryCache()
-        {
-            return _cachedMainChainService.UpdateTemporaryCacheAsync();
+            return _cachedMainChainService.UpdateCacheAsync();
         }
     }
 }

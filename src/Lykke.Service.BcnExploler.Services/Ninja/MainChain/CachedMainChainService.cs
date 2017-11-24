@@ -32,14 +32,6 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
         private const string BlobContainerName = "mainchain";
         private const string CacheKey = "MainChainSource";
 
-        public async Task UpdateTemporaryCacheAsync()
-        {
-            var mc = await GetFromPersistentCacheAsync()
-                     ?? await _mainChainService.GetMainChainAsync();
-
-            await SetToTemporaryCache(mc);
-        }
-
         public async Task<ConcurrentChain> GetMainChainAsync()
         {
             var result = GetFromTemporaryCache() 
@@ -62,10 +54,11 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
             _cacheManager.Set(CacheKey, chain, int.MaxValue);
         }
 
-        public async Task UpdatePersistentCacheAsync()
+        public async Task UpdateCacheAsync()
         {
-            var mc = await _mainChainService.GetMainChainAsync();
-
+            var mc = await GetMainChainAsync();
+            mc = await _mainChainService.UpdateChain(mc);
+            
             await SetToPersistentCacheAsync(mc);
         }
 

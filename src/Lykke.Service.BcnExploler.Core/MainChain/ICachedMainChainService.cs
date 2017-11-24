@@ -8,8 +8,7 @@ namespace Lykke.Service.BcnExploler.Core.MainChain
 {
     public interface ICachedMainChainService
     {
-        Task UpdatePersistentCacheAsync();
-        Task UpdateTemporaryCacheAsync();
+        Task UpdateCacheAsync();
         Task<ConcurrentChain> GetMainChainAsync();
     }
 }
