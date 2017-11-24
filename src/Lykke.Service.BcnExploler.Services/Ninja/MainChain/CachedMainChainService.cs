@@ -34,7 +34,8 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
 
         public async Task UpdateTemporaryCacheAsync()
         {
-            var mc = await GetMainChainAsync();
+            var mc = await GetFromPersistentCacheAsync()
+                     ?? await _mainChainService.GetMainChainAsync();
 
             await SetToTemporaryCache(mc);
         }
@@ -63,7 +64,7 @@ namespace Lykke.Service.BcnExploler.Services.Ninja.MainChain
 
         public async Task UpdatePersistentCacheAsync()
         {
-            var mc = await GetMainChainAsync();
+            var mc = await _mainChainService.GetMainChainAsync();
 
             await SetToPersistentCacheAsync(mc);
         }
