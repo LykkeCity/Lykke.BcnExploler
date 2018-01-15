@@ -47,7 +47,7 @@ namespace Lykke.Service.BcnExploler.Web.Modules
             builder.AddTriggers(pool =>
             {
                 // default connection must be initialized
-                pool.AddDefaultConnection(_settings.CurrentValue.BcnExploler.Db.AssetsConnString);
+                pool.AddDefaultConnection(_settings.Nested(p=>p.BcnExploler.Db.AssetsConnString));
             });
 
             builder.Populate(_services);

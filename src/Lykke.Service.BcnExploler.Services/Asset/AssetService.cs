@@ -37,7 +37,8 @@ namespace Lykke.Service.BcnExploler.Services.Asset
 
         public async Task<IReadOnlyDictionary<string, IAssetDefinition>> GetAssetDefinitionDictionaryAsync()
         {
-            return new ReadOnlyDictionary<string, IAssetDefinition>(await _assetDefinitionCachedDictionary.GetDictionaryAsync());
+            var values = await _assetDefinitionCachedDictionary.GetDictionaryAsync();
+            return new ReadOnlyDictionary<string, IAssetDefinition>(values.ToDictionary(p => p.Key, p => p.Value));
         }
 
         public async Task<IEnumerable<IAssetDefinition>> GetAssetDefinitionsAsync(string issuer)
@@ -49,12 +50,12 @@ namespace Lykke.Service.BcnExploler.Services.Asset
 
         public async Task<IDictionary<string, IAssetCoinholdersIndex>> GetAssetCoinholdersIndexAsync()
         {
-            return await _assetCoinholdersIndexesDictionary.GetDictionaryAsync();
+            return (await _assetCoinholdersIndexesDictionary.GetDictionaryAsync()).ToDictionary(p => p.Key, p => p.Value);
         }
 
         public async Task<IDictionary<string, IAssetScore>> GetAssetScoreDictionaryAsync()
         {
-            return await _assetScoreDictionary.GetDictionaryAsync();
+            return (await _assetScoreDictionary.GetDictionaryAsync()).ToDictionary(p => p.Key, p => p.Value);
         }
 
         public async Task<IEnumerable<IAssetDefinition>> GetAssetDefinitionsAsync()
