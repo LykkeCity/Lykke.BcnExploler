@@ -64,7 +64,7 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
 
                 builder.RegisterModule(new JobModule(appSettings, Log));
 
-                RegisterJobTriggers(appSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString).CurrentValue, builder);
+                RegisterJobTriggers(appSettings.ConnectionString(x => x.BcnExploler.Db.AssetsConnString), builder);
 
                 builder.Populate(services);
 
@@ -169,20 +169,13 @@ namespace Lykke.Job.BcnExploler.AssetDefinitionDetector
             }
         }
 
-        private static void RegisterJobTriggers(string connectionString, ContainerBuilder builder)
+        private static void RegisterJobTriggers(IReloadingManager<string> connectionString, ContainerBuilder builder)
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                builder.AddTriggers();
-            }
-            else
-            {
-                builder.AddTriggers(
-                    pool =>
-                    {
-                        pool.AddDefaultConnection(connectionString);
-                    });
-            }
+            builder.AddTriggers(
+                pool =>
+                {
+                    pool.AddDefaultConnection(connectionString);
+                });
         }
 
         private static ILog CreateLogWithSlack(IServiceCollection services, IReloadingManager<AppSettings> settings)
